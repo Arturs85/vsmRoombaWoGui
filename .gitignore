@@ -1,0 +1,9 @@
+CMakeFiles/
+
+*.cmake
+*.vsmlog
+CMakeCache.txt
+CMakeLists.txt.user*
+
+Makefile
+
