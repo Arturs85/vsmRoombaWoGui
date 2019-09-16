@@ -97,12 +97,12 @@ static uint32 status_reg = 0;
 
 //from initiator.c
 /* This is the delay from the end of the frame transmission to the enable of the receiver, as programmed for the DW1000's wait for response feature. */
-#define POLL_TX_TO_RESP_RX_DLY_UUS 200//150
+#define POLL_TX_TO_RESP_RX_DLY_UUS 1000//150
 /* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function. This includes the
  * frame length of approximately 2.66 ms with above configuration. */
 #define RESP_RX_TO_FINAL_TX_DLY_UUS 7000//3100
 /* Receive response timeout. See NOTE 5 below. */
-#define RESP_RX_TIMEOUT_UUS 9000//2900//2700
+#define RESP_RX_TIMEOUT_UUS 11000//2900//2700
 /* Preamble timeout, in multiple of PAC size. See NOTE 6 below. */
 //#define PRE_TIMEOUT 64//8
 
