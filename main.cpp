@@ -12,6 +12,8 @@
 #include "roombaBehaviour.hpp"
 #include "localMap.hpp"
 
+
+
 class MyApp
 {
 public:
@@ -28,11 +30,24 @@ public:
     int main(int ac,char**av);
 
 };
+    int main(int ac,char**av){
+		MyApp myapp;
+		myapp.main(0,0);
+		}
 
 RoombaController* MyApp::roombaController=0;
 RoombaBehaviour* MyApp::roombaBehaviour=0;
 
+void exit_handler(int s){
+    printf("Caught signal %d\n",s);
+    MyApp::roombaController->shutDown();
+    if(MyApp::roombaBehaviour!=0)
+        delete(MyApp::roombaBehaviour);
+    // uartTest.waitUartThreadsEnd();
+    usleep(100000);
+    exit(1);
 
+}
 int MyApp::main(int argc, char** av)
 {
 
@@ -43,8 +58,8 @@ int MyApp::main(int argc, char** av)
 
     //uartTest.setDataToTransmit(arr, 9);
     //keyboard reading
-
-    while(0){
+cout<<"OnInit compleate\n";
+    while(1){
         std::string command;
         getline (cin, command);
 
@@ -112,7 +127,7 @@ int MyApp::main(int argc, char** av)
             roombaBehaviour->isRunning=false;
             roombaController->drive(0,0);
         }
-        else if(!command.compare("dist")){
+        else if(!command.compare("lastdist")){
             int16_t dist = roombaController->readDistance();
             cout<<"distance: "<<dist;
         }
@@ -126,6 +141,10 @@ int MyApp::main(int argc, char** av)
         }
         else if(!command.compare("roam")){
             //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
+        }
+         else if(!command.compare("end")){
+            //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
+        exit_handler(0);
         }
         else if(!command.compare("dist"))
            {
@@ -142,16 +161,7 @@ int MyApp::main(int argc, char** av)
     return 0;
 }
 
-void exit_handler(int s){
-    printf("Caught signal %d\n",s);
-    MyApp::roombaController->shutDown();
-    if(MyApp::roombaBehaviour!=0)
-        delete(MyApp::roombaBehaviour);
-    // uartTest.waitUartThreadsEnd();
-    usleep(100000);
-    exit(1);
 
-}
 
 
 
