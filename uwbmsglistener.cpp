@@ -44,7 +44,7 @@ static dwt_config_t config = {
     9,               /* TX preamble code. Used in TX only. */
     9,               /* RX preamble code. Used in RX only. */
     1,               /* 0 to use standard SFD, 1 to use non-standard SFD. */
-     DWT_BR_110K,//DWT_BR_6M8,//DWT_BR_110K,     /* Data rate. */
+    DWT_BR_110K,//DWT_BR_6M8,//DWT_BR_110K,     /* Data rate. */
     DWT_PHRMODE_STD, /* PHY header mode. */
     (2049 + 64 - 64) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
@@ -137,6 +137,7 @@ static void final_msg_set_ts(uint8 *ts_field, uint64 ts);
 pthread_mutex_t UwbMsgListener::txBufferLock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t UwbMsgListener::dwmDeviceLock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t UwbMsgListener::rangingInitBufferLock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t UwbMsgListener::rxDequeLock = PTHREAD_MUTEX_INITIALIZER;
 
 std::deque<RawTxMessage> UwbMsgListener::txDeque;
 std::deque<VSMMessage> UwbMsgListener::rxDeque;
@@ -292,7 +293,7 @@ void UwbMsgListener::initialize()
     VSMMessage m;
     int conversionOk =VSMMessage::stringToVsmMessage(s,&m);
     if(conversionOk){
-    cout <<"string to msg conversion--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
+        cout <<"string to msg conversion--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
     }
 
     //if (argc > 2 && strcmp(argv[1], "average") == 0) {
@@ -386,13 +387,16 @@ void *UwbMsgListener::receivingLoop(void *arg)
                 string rxWHeader=string(rxData,length);
                 string rxString= string(rxWHeader,ALL_MSG_COMMON_LEN,length-2-ALL_MSG_COMMON_LEN);
                 VSMMessage m;
-                                cout<<"rx: "<<rxString<<"\n";
+                cout<<"rx: "<<rxString<<"\n";
 
                 int res =VSMMessage::stringToVsmMessage(rxString,&m);
                 if(res){
-                rxDeque.push_back(m); // mutex to be added for access to rxdeque
-                cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                cout <<"rx valid msg--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
+                    pthread_mutex_lock(&rxDequeLock);
+                    rxDeque.push_back(m); // mutex to be added for access to rxdeque
+                    pthread_mutex_unlock(&rxDequeLock);
+
+                    cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
+                    cout <<"rx valid msg--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
                 }
 
                 t = clock();
@@ -460,7 +464,7 @@ void *UwbMsgListener::sendingLoop(void *arg)
 
         }
         else
-        pthread_mutex_unlock(&rangingInitBufferLock); //release blocking access to ranging initation Deque  buffer
+            pthread_mutex_unlock(&rangingInitBufferLock); //release blocking access to ranging initation Deque  buffer
 
         usleep(SLEEP_BETWEEN_SENDING_US);
     }
@@ -486,6 +490,12 @@ void UwbMsgListener::addToTxDeque(std::string msgText){
     txDeque.push_front(msg);
     pthread_mutex_unlock(&txBufferLock);
 
+}
+
+void UwbMsgListener::addToTxDeque(VSMMessage msg)
+{
+string s = msg.toString();
+addToTxDeque(s);
 }
 
 void UwbMsgListener::addToRangingInitDeque(int rangingTarget)
@@ -541,7 +551,7 @@ void UwbMsgListener::respondToRangingRequest()
         printf("final msg received\n");
 
         /* A frame has been received, read it into the local buffer. */
-       uint32 frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
+        uint32 frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
         if (frame_len <= RX_BUF_LEN)
         {
             dwt_readrxdata(rx_buffer, frame_len, 0);
@@ -599,11 +609,11 @@ void UwbMsgListener::respondToRangingRequest()
 
 void UwbMsgListener::initiateRanging()
 {
-  dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
+    dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
     dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
     dwt_setpreambledetecttimeout(PRE_TIMEOUT);
 
-  //  dwt_setpreambledetecttimeout(PRE_TIMEOUT);
+    //  dwt_setpreambledetecttimeout(PRE_TIMEOUT);
     
     /* Write frame data to DW1000 and prepare transmission. See NOTE 8 below. */
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
@@ -700,6 +710,20 @@ void UwbMsgListener::initiateRanging()
 
     /* Execute a delay between ranging exchanges. */
     deca_sleep(RNG_DELAY_MS);
+}
+
+//returns 0 if there is no messages
+VSMMessage* UwbMsgListener::getFirstRxMessageFromDeque()//and remove it from deque
+{
+    VSMMessage* msg = 0;
+    pthread_mutex_lock(&rxDequeLock);
+
+    if(rxDeque.size()>0){
+        msg = new VSMMessage(rxDeque.front());
+        rxDeque.pop_front();
+    }
+    pthread_mutex_unlock(&rxDequeLock);
+    return msg;
 }
 
 void UwbMsgListener::stopSending()
@@ -830,7 +854,7 @@ static uint64 get_rx_timestamp_u64(void)
  *
  * @return none
  */
- static void final_msg_set_ts(uint8 *ts_field, uint64 ts)
+static void final_msg_set_ts(uint8 *ts_field, uint64 ts)
 {
     int i;
     for (i = 0; i < FINAL_MSG_TS_LEN; i++)

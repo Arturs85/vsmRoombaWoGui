@@ -22,6 +22,16 @@ using namespace std;
 enum VSMSubsystems{S1,S2,S3,S4};
 typedef struct RawTxMessage {char macHeader[10]; char data[127]; int dataLength; } RawTxMessage;
 typedef struct VSMMessage {VSMSubsystems sender; VSMSubsystems receiver;string paramName;float paramValue;
+                          VSMMessage():paramName(0),paramValue(0),sender(S1),receiver(S1){}
+                          VSMMessage(VSMSubsystems sender, VSMSubsystems receiver,string paramName,float paramValue):paramName(paramName),paramValue(paramValue),sender(sender),receiver(receiver){}
+
+                          VSMMessage(VSMMessage* old){
+                          this->paramName = old->paramName;
+                              this->paramValue = old->paramValue;
+                              this->receiver=old->receiver;
+                              this->sender = old->sender;
+                          }
+
                            string toString(){
                                return to_string((int)sender)+","+to_string((int)receiver)+","+paramName+","+to_string(paramValue);
                                //VSMMessage()
@@ -65,8 +75,8 @@ public:
     pthread_t sendingThreadUwb;
     static pthread_mutex_t txBufferLock;
     static pthread_mutex_t rangingInitBufferLock;
-
     static pthread_mutex_t dwmDeviceLock;
+    static pthread_mutex_t rxDequeLock;
 
     //static pthread_mutex_t mutexSend;
     static char tx_buffer[];
@@ -93,9 +103,12 @@ public:
 
     static void* receive(void* arg);
     static void addToTxDeque(std::string msgText);
+    static void addToTxDeque(VSMMessage msg);
+
     static void addToRangingInitDeque(int rangingTarget);
     static void respondToRangingRequest();
     static void initiateRanging();
+    static VSMMessage *getFirstRxMessageFromDeque();//and remove it from deque
 
     //static void final_msg_get_ts(uint8 *ts_field, uint64 ts);
 
