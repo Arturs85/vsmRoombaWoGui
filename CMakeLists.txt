@@ -26,7 +26,7 @@ SET_SOURCE_FILES_PROPERTIES(
   GENERATED true
 ) 
 
-list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "localMap.cpp" "logfilesaver.cpp" "main.cpp" "uwbmsglistener.cpp")
+list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "roombaAgent.cpp" "localMap.cpp" "logfilesaver.cpp" "main.cpp" "uwbmsglistener.cpp" "behaviours/s3Behaviour.cpp")
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${OBJS})
 
 set (CMAKE_CXX_FLAGS "-D_DEFAULT_SOURCE=1")
