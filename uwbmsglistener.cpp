@@ -61,7 +61,10 @@ static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x2
 static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
 static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 /* Length of the common part of the message (up to and including the function code, see NOTE 2 below). */
-#define ALL_MSG_COMMON_LEN 10
+#define ALL_MSG_COMMON_LEN 10-2 //modified from 10 to add sender and receiver id's to the mssage
+#define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN-2
+#define RESPONDER_ID_IDX ALL_MSG_COMMON_LEN-1
+
 /* Index to access some of the fields in the frames involved in the process. */
 #define ALL_MSG_SN_IDX 2
 #define FINAL_MSG_POLL_TX_TS_IDX 10
@@ -286,16 +289,16 @@ void UwbMsgListener::initialize()
         int r=0;
         try{
             r = stoi(subStr);
-                }
+        }
         catch(std::invalid_argument& e){
             std::cout<< "cant convert to int\n";
         }
-            idFromHostname = (uint8_t)r;
+        idFromHostname = (uint8_t)r;
     }
     else
         printf ("unable to get device hostname\n");
 
-    cout<<" Id from hostname: "<<idFromHostname<<"\n";
+    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
 
     VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
     string s =vsmmsg.toString();
@@ -391,7 +394,10 @@ void *UwbMsgListener::receivingLoop(void *arg)
             rx_buffer[ALL_MSG_SN_IDX] = 0;
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
+               {
+                cout<<"poll from "<<rx_poll_msg[INITIATOR_ID_IDX]+0<<"\n";
                 respondToRangingRequest();
+                        }
             else
             {
                 std::size_t length = frame_len;
@@ -630,8 +636,12 @@ void UwbMsgListener::initiateRanging(int targetId )
     /* Write frame data to DW1000 and prepare transmission. See NOTE 8 below. */
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
     int msgLengthToCompare = ALL_MSG_COMMON_LEN;
-    if(targetId != 0)
-        msgLengthToCompare =ALL_MSG_COMMON_LEN-1;//reserve last symbol for target id
+    if(targetId != 0){// id targeted measurement
+      //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
+        tx_poll_msg[INITIATOR_ID_IDX]=idFromHostname;// own id
+        tx_poll_msg[RESPONDER_ID_IDX]=targetId;
+
+    }
     dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0); /* Zero offset in TX buffer. */
     dwt_writetxfctrl(sizeof(tx_poll_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
 
