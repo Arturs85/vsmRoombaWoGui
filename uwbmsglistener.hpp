@@ -22,7 +22,7 @@ using namespace std;
 enum VSMSubsystems{S1,S2,S3,S4};
 typedef struct RawTxMessage {char macHeader[10]; char data[127]; int dataLength; } RawTxMessage;
 typedef struct VSMMessage {VSMSubsystems sender; VSMSubsystems receiver;string paramName;float paramValue;
-                          VSMMessage():paramName(0),paramValue(0),sender(S1),receiver(S1){}
+                          VSMMessage():paramName(""),paramValue(0),sender(S1),receiver(S1){}
                           VSMMessage(VSMSubsystems sender, VSMSubsystems receiver,string paramName,float paramValue):paramName(paramName),paramValue(paramValue),sender(sender),receiver(receiver){}
 
                           VSMMessage(VSMMessage* old){
