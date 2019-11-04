@@ -85,6 +85,7 @@ public:
     static struct termios orig_termios;
     static bool isSending;
     static bool isReceivingThreadRunning;
+    static uint8_t idFromHostname;
     //size_t rawTxMessageNominalSize = 150;// header+127=?
     static std::deque<RawTxMessage> txDeque;
     static std::deque<VSMMessage> rxDeque;
@@ -108,7 +109,7 @@ public:
 
     static void addToRangingInitDeque(int rangingTarget);
     static void respondToRangingRequest();
-    static void initiateRanging();
+    static void initiateRanging(int targetId=0);
     static VSMMessage *getFirstRxMessageFromDeque();//and remove it from deque
 
     //static void final_msg_get_ts(uint8 *ts_field, uint64 ts);

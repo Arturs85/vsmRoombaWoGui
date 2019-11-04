@@ -278,13 +278,24 @@ void UwbMsgListener::initialize()
 {
 
 
-
     char hostname[HOST_NAME_MAX];
     int res =gethostname(hostname, HOST_NAME_MAX);
-    if(!res)
+    if(!res){
         printf ("device hostname: %s\n",hostname);
+        std::string subStr = string(hostname).substr (4,5);     // id position in hostname
+        int r=0;
+        try{
+            r = stoi(subStr);
+                }
+        catch(std::invalid_argument& e){
+            std::cout<< "cant convert to int\n";
+        }
+            idFromHostname = (uint8_t)r;
+    }
     else
         printf ("unable to get device hostname\n");
+
+    cout<<" Id from hostname: "<<idFromHostname<<"\n";
 
     VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
     string s =vsmmsg.toString();
@@ -337,6 +348,7 @@ void UwbMsgListener::initialize()
 }
 
 bool UwbMsgListener::isReceivingThreadRunning =1;
+uint8_t UwbMsgListener::idFromHostname=0;
 
 void *UwbMsgListener::receivingLoop(void *arg)
 {
@@ -494,8 +506,8 @@ void UwbMsgListener::addToTxDeque(std::string msgText){
 
 void UwbMsgListener::addToTxDeque(VSMMessage msg)
 {
-string s = msg.toString();
-addToTxDeque(s);
+    string s = msg.toString();
+    addToTxDeque(s);
 }
 
 void UwbMsgListener::addToRangingInitDeque(int rangingTarget)
@@ -607,7 +619,7 @@ void UwbMsgListener::respondToRangingRequest()
 
 }
 
-void UwbMsgListener::initiateRanging()
+void UwbMsgListener::initiateRanging(int targetId )
 {
     dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
     dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
@@ -617,6 +629,9 @@ void UwbMsgListener::initiateRanging()
     
     /* Write frame data to DW1000 and prepare transmission. See NOTE 8 below. */
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+    int msgLengthToCompare = ALL_MSG_COMMON_LEN;
+    if(targetId != 0)
+        msgLengthToCompare =ALL_MSG_COMMON_LEN-1;//reserve last symbol for target id
     dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0); /* Zero offset in TX buffer. */
     dwt_writetxfctrl(sizeof(tx_poll_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
 
