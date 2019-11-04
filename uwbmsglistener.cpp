@@ -394,10 +394,10 @@ void *UwbMsgListener::receivingLoop(void *arg)
             rx_buffer[ALL_MSG_SN_IDX] = 0;
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
-               {
+            {
                 cout<<"poll from "<<rx_poll_msg[INITIATOR_ID_IDX]+0<<"\n";
-                respondToRangingRequest();
-                        }
+                respondToRangingRequest(rx_poll_msg[INITIATOR_ID_IDX]);
+            }
             else
             {
                 std::size_t length = frame_len;
@@ -524,7 +524,7 @@ void UwbMsgListener::addToRangingInitDeque(int rangingTarget)
 
 }
 
-void UwbMsgListener::respondToRangingRequest()
+void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 {
     uint32 resp_tx_time;
     int ret;
@@ -543,6 +543,9 @@ void UwbMsgListener::respondToRangingRequest()
 
     /* Write and send the response message. See NOTE 10 below.*/
     tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+    tx_resp_msg[RESPONDER_ID_IDX]=idFromHostname;//set responder (this) hostname
+    tx_resp_msg[INITIATOR_ID_IDX]=initiatorId;//set initiator hostname
+
     dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buffer. */
     dwt_writetxfctrl(sizeof(tx_resp_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
     ret = dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
@@ -580,6 +583,17 @@ void UwbMsgListener::respondToRangingRequest()
         rx_buffer[ALL_MSG_SN_IDX] = 0;
         if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
         {
+            if(initiatorId != 0){// id targeted measurement
+                if(tx_poll_msg[RESPONDER_ID_IDX]!=idFromHostname||tx_poll_msg[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
+                {
+                    /* Reset RX to properly reinitialise LDE operation. */
+                    dwt_rxreset();
+                    /* Execute a delay between ranging exchanges. */
+                    deca_sleep(RNG_DELAY_MS);
+                    return;
+                }
+            }
+            cout<<"initiator id"<<initiatorId<<"\n";
             uint32 poll_tx_ts, resp_rx_ts, final_tx_ts;
             uint32 poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
             double Ra, Rb, Da, Db;
@@ -637,7 +651,7 @@ void UwbMsgListener::initiateRanging(int targetId )
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
     int msgLengthToCompare = ALL_MSG_COMMON_LEN;
     if(targetId != 0){// id targeted measurement
-      //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
+        //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
         tx_poll_msg[INITIATOR_ID_IDX]=idFromHostname;// own id
         tx_poll_msg[RESPONDER_ID_IDX]=targetId;
 
@@ -676,6 +690,16 @@ void UwbMsgListener::initiateRanging(int targetId )
         rx_buffer[ALL_MSG_SN_IDX] = 0;
         if (memcmp(rx_buffer, rx_resp_msg, ALL_MSG_COMMON_LEN) == 0)
         {
+            if(targetId != 0){// id targeted measurement
+                if(tx_poll_msg[RESPONDER_ID_IDX]!=targetId||tx_poll_msg[INITIATOR_ID_IDX]!=idFromHostname)//response from other responder rather than current one
+                {
+                    /* Reset RX to properly reinitialise LDE operation. */
+                    dwt_rxreset();
+                    /* Execute a delay between ranging exchanges. */
+                    deca_sleep(RNG_DELAY_MS);
+                    return;
+                }
+            }
             uint32 final_tx_time;
             int ret;
             printf("response received\n");
@@ -697,6 +721,10 @@ void UwbMsgListener::initiateRanging(int targetId )
 
             /* Write and send final message. See NOTE 8 below. */
             tx_final_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+
+            tx_final_msg[INITIATOR_ID_IDX] = idFromHostname;
+            tx_final_msg[RESPONDER_ID_IDX] = targetId;
+
             dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0); /* Zero offset in TX buffer. */
             dwt_writetxfctrl(sizeof(tx_final_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
             ret = dwt_starttx(DWT_START_TX_DELAYED);

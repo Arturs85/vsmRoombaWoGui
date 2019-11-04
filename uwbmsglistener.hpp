@@ -108,7 +108,7 @@ public:
     static void addToTxDeque(VSMMessage msg);
 
     static void addToRangingInitDeque(int rangingTarget);
-    static void respondToRangingRequest();
+    static void respondToRangingRequest(uint8_t initiatorId=0);
     static void initiateRanging(int targetId=0);
     static VSMMessage *getFirstRxMessageFromDeque();//and remove it from deque
 
