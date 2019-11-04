@@ -20,6 +20,7 @@ extern "C" {
 }
 using namespace std;
 enum VSMSubsystems{S1,S2,S3,S4};
+enum Behaviours{BEACON};
 typedef struct RawTxMessage {char macHeader[10]; char data[127]; int dataLength; } RawTxMessage;
 typedef struct VSMMessage {VSMSubsystems sender; VSMSubsystems receiver;string paramName;float paramValue;
                           VSMMessage():paramName(""),paramValue(0),sender(S1),receiver(S1){}
