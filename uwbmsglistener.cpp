@@ -54,12 +54,12 @@ static dwt_config_t config = {
 /* Frames used in the ranging process. See NOTE 2 below. */
 static uint8 rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
 static uint8 tx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
-static uint8 rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static uint8 rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'F', 'I', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint8 tx_poll_mod_msg[] = {0x41, 0x88, 0x41, 0xCA, 0xDE, 'V', 'I', 'A', 'B', 0x21, 0, 0};
 //from initiaator.c
 static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
 static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
-static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'F', 'I', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 /* Length of the common part of the message (up to and including the function code, see NOTE 2 below). */
 #define ALL_MSG_COMMON_LEN 10-3 //modified from 10 to add sender and receiver id's to the mssage
 #define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN+1
@@ -402,6 +402,7 @@ cout<<"rx: ";
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
                 cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
+               
                 respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX]);
             }
 
@@ -590,9 +591,9 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
         rx_buffer[ALL_MSG_SN_IDX] = 0;
         if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
         {
-            cout<<"initiator id"<<initiatorId<<"\n";
+            cout<<"initiator id "<<initiatorId+0<<"\n";
 
-            if(initiatorId != 10||initiatorId != 12){//======temp---- id targeted measurement
+            if(rx_buffer[RESPONDER_ID_IDX]!= 0){//======temp---- id targeted measurement
                 if(rx_buffer[RESPONDER_ID_IDX]!=idFromHostname||rx_buffer[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
                 {
                     /* Reset RX to properly reinitialise LDE operation. */
@@ -708,6 +709,9 @@ void UwbMsgListener::initiateRanging(int targetId )
                     return;
                 }
             }
+            else{
+				targetId = rx_buffer[RESPONDER_ID_IDX];//if initial target was 0 (broadcast), then for final msg use id from response
+				}
             uint32 final_tx_time;
             int ret;
             printf("response received\n");
