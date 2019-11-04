@@ -61,9 +61,9 @@ static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x2
 static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
 static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 /* Length of the common part of the message (up to and including the function code, see NOTE 2 below). */
-#define ALL_MSG_COMMON_LEN 10-2 //modified from 10 to add sender and receiver id's to the mssage
-#define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN-1
-#define RESPONDER_ID_IDX ALL_MSG_COMMON_LEN
+#define ALL_MSG_COMMON_LEN 10-3 //modified from 10 to add sender and receiver id's to the mssage
+#define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN+1
+#define RESPONDER_ID_IDX ALL_MSG_COMMON_LEN+2
 
 /* Index to access some of the fields in the frames involved in the process. */
 #define ALL_MSG_SN_IDX 2
@@ -392,12 +392,19 @@ void *UwbMsgListener::receivingLoop(void *arg)
             /* Check that the frame is a poll sent by "DS TWR initiator" example.
              * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
             rx_buffer[ALL_MSG_SN_IDX] = 0;
+cout<<"rx: ";
+            for (int var = 0; var < ALL_MSG_COMMON_LEN; ++var) {
+                cout<<rx_buffer[var]+0<<" ";
+
+            }
+            cout<<"\n ";
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
                 cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
                 respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX]);
             }
+
             else
             {
                 std::size_t length = frame_len;
