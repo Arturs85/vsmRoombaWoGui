@@ -62,8 +62,8 @@ static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x1
 static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 /* Length of the common part of the message (up to and including the function code, see NOTE 2 below). */
 #define ALL_MSG_COMMON_LEN 10-2 //modified from 10 to add sender and receiver id's to the mssage
-#define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN-2
-#define RESPONDER_ID_IDX ALL_MSG_COMMON_LEN-1
+#define INITIATOR_ID_IDX ALL_MSG_COMMON_LEN-1
+#define RESPONDER_ID_IDX ALL_MSG_COMMON_LEN
 
 /* Index to access some of the fields in the frames involved in the process. */
 #define ALL_MSG_SN_IDX 2
@@ -395,8 +395,8 @@ void *UwbMsgListener::receivingLoop(void *arg)
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
-                cout<<"poll from "<<rx_poll_msg[INITIATOR_ID_IDX]+0<<"\n";
-                respondToRangingRequest(rx_poll_msg[INITIATOR_ID_IDX]);
+                cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
+                respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX]);
             }
             else
             {
@@ -583,8 +583,10 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
         rx_buffer[ALL_MSG_SN_IDX] = 0;
         if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
         {
-            if(initiatorId != 0){// id targeted measurement
-                if(tx_poll_msg[RESPONDER_ID_IDX]!=idFromHostname||tx_poll_msg[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
+            cout<<"initiator id"<<initiatorId<<"\n";
+
+            if(initiatorId != 10||initiatorId != 12){//======temp---- id targeted measurement
+                if(rx_buffer[RESPONDER_ID_IDX]!=idFromHostname||rx_buffer[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
                 {
                     /* Reset RX to properly reinitialise LDE operation. */
                     dwt_rxreset();
@@ -593,7 +595,6 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
                     return;
                 }
             }
-            cout<<"initiator id"<<initiatorId<<"\n";
             uint32 poll_tx_ts, resp_rx_ts, final_tx_ts;
             uint32 poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
             double Ra, Rb, Da, Db;
@@ -650,12 +651,12 @@ void UwbMsgListener::initiateRanging(int targetId )
     /* Write frame data to DW1000 and prepare transmission. See NOTE 8 below. */
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
     int msgLengthToCompare = ALL_MSG_COMMON_LEN;
-    if(targetId != 0){// id targeted measurement
+   // if(targetId != 0){// id targeted measurement
         //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
         tx_poll_msg[INITIATOR_ID_IDX]=idFromHostname;// own id
         tx_poll_msg[RESPONDER_ID_IDX]=targetId;
 
-    }
+    //}
     dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0); /* Zero offset in TX buffer. */
     dwt_writetxfctrl(sizeof(tx_poll_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
 
@@ -691,7 +692,7 @@ void UwbMsgListener::initiateRanging(int targetId )
         if (memcmp(rx_buffer, rx_resp_msg, ALL_MSG_COMMON_LEN) == 0)
         {
             if(targetId != 0){// id targeted measurement
-                if(tx_poll_msg[RESPONDER_ID_IDX]!=targetId||tx_poll_msg[INITIATOR_ID_IDX]!=idFromHostname)//response from other responder rather than current one
+                if(rx_buffer[INITIATOR_ID_IDX]!=idFromHostname||rx_buffer[RESPONDER_ID_IDX]!=targetId)//response from other responder rather than current one
                 {
                     /* Reset RX to properly reinitialise LDE operation. */
                     dwt_rxreset();
