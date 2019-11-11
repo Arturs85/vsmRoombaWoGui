@@ -497,6 +497,7 @@ void *UwbMsgListener::sendingLoop(void *arg)
 
 void UwbMsgListener::addToTxDeque(std::string msgText){
     //while(isSending){
+
     RawTxMessage msg;
 
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;

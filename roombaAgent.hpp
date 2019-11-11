@@ -18,7 +18,7 @@ std::string getRoleListForMsg();
 void initHardware();
 RoombaAgent();
 void getId();
-
+void advertise();
 private:
 
 

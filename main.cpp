@@ -124,6 +124,9 @@ int MyApp::main(int argc, char** av)
             uint8_t lb = roombaAgent.roombaController->readLightBumps();
             cout<<"light bumps: "<<lb;
         }
+        else if(!command.compare("advert")){
+           roombaAgent.advertise();
+        }
         else if(!command.compare("roam")){
             //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
         }

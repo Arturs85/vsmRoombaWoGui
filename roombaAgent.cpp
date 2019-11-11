@@ -5,11 +5,11 @@
 string RoombaAgent::getRoleListForMsg()
 {
     std::stringstream ss;
-    ss<<id;
+    ss<<(int)id;
     for (VSMSubsystems role: roleList) {
         ss<<","<<(int)role;
     }
-    cout<<"roleList"<<ss.str()<<"\n";
+    cout<<"roleList: "<<ss.str()<<"\n";
     return ss.str();
 
 }
@@ -54,4 +54,9 @@ void RoombaAgent::getId()
 
     cout<<" Id from hostname: "<<id+0<<"\n";
 
+}
+
+void RoombaAgent::advertise()// send msg with own id and role list
+{
+   uwbMsgListener.addToTxDeque(getRoleListForMsg());
 }
