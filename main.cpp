@@ -11,7 +11,7 @@
 #include "roombaController.hpp"
 #include "roombaBehaviour.hpp"
 #include "localMap.hpp"
-
+#include "roombaAgent.hpp"
 
 
 class MyApp
@@ -19,12 +19,8 @@ class MyApp
 public:
     bool OnInit();
 
-
+RoombaAgent roombaAgent;
     LocalMap* localMap;
-    UartTest uartTest;
-    static RoombaBehaviour* roombaBehaviour;
-    static RoombaController* roombaController;
-    UwbMsgListener uwbMsgListener; // start uwb device
 
 public:
     int main(int ac,char**av);
@@ -35,19 +31,8 @@ int main(int ac,char**av){
     myapp.main(0,0);
 }
 
-RoombaController* MyApp::roombaController=0;
-RoombaBehaviour* MyApp::roombaBehaviour=0;
 
-void exit_handler(int s){
-    printf("Caught signal %d\n",s);
-    MyApp::roombaController->shutDown();
-    if(MyApp::roombaBehaviour!=0)
-        delete(MyApp::roombaBehaviour);
-    // uartTest.waitUartThreadsEnd();
-    usleep(100000);
-    exit(1);
 
-}
 int MyApp::main(int argc, char** av)
 {
 
@@ -88,10 +73,10 @@ int MyApp::main(int argc, char** av)
             char *ar = &mystr[0];
             //printf("first char you entered: %d", (uint8_t)(*ar));
             //uartTest.setDataToTransmit(ar, mystr.size());
-            uartTest.setDataToTransmit(comm);
+            roombaAgent.uartTest.setDataToTransmit(comm);
 
             if(comm[0]==142 && comm[1]==25){
-                vector<uint8_t> ch = uartTest.readNumberOfBytes(2);
+                vector<uint8_t> ch = roombaAgent.uartTest.readNumberOfBytes(2);
                 cout<<"vector ch size: "<<ch.size()<<"\n";
                 if(ch.size()==2)
                 {//convertData
@@ -102,7 +87,7 @@ int MyApp::main(int argc, char** av)
             }
 
             else if(comm[0]==142 && comm[1]==26){
-                vector<uint8_t> ch = uartTest.readNumberOfBytes(2);
+                vector<uint8_t> ch = roombaAgent.uartTest.readNumberOfBytes(2);
                 cout<<"vector ch size: "<<ch.size()<<"\n";
                 if(ch.size()==2)
                 {//convertData
@@ -115,28 +100,28 @@ int MyApp::main(int argc, char** av)
             comm.clear();
         }
         else if(!command.compare("bat")){
-            uint16_t ca = roombaController->readBattCapacity();
-            uint16_t ch = roombaController->readBattCharge();
+            uint16_t ca = roombaAgent.roombaController->readBattCapacity();
+            uint16_t ch = roombaAgent.roombaController->readBattCharge();
 
             cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
         }
         else if(!command.compare("turn r")){
-            roombaController->drive(50,-1);
+            roombaAgent.roombaController->drive(50,-1);
         }
         else if(!command.compare("stop")){
-            roombaBehaviour->isRunning=false;
-            roombaController->drive(0,0);
+           // roombaBehaviour->isRunning=false;
+            roombaAgent.roombaController->drive(0,0);
         }
         else if(!command.compare("lastdist")){
-            int16_t dist = roombaController->readDistance();
+            int16_t dist = roombaAgent.roombaController->readDistance();
             cout<<"distance: "<<dist;
         }
         else if(!command.compare("angle")){
-            int16_t ang = roombaController->readAngle();
+            int16_t ang = roombaAgent.roombaController->readAngle();
             cout<<"angle: "<<ang;
         }
         else if(!command.compare("lbumps")){
-            uint8_t lb = roombaController->readLightBumps();
+            uint8_t lb = roombaAgent.roombaController->readLightBumps();
             cout<<"light bumps: "<<lb;
         }
         else if(!command.compare("roam")){
@@ -144,7 +129,7 @@ int MyApp::main(int argc, char** av)
         }
         else if(!command.compare("end")){
             //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
-            exit_handler(0);
+            //exit_handler(0);
         }
         else if(!command.compare("dist"))
         {
@@ -153,16 +138,16 @@ int MyApp::main(int argc, char** av)
             cin>>nr;
             cout<<"target: "<<nr<<"/n";
 
-            uwbMsgListener.addToRangingInitDeque(nr);
+            roombaAgent.uwbMsgListener.addToRangingInitDeque(nr);
         }
 
         else if(command.find("send")!=std::string::npos)
         {
-            uwbMsgListener.addToTxDeque(command.substr(4,std::string::npos));
+            roombaAgent.uwbMsgListener.addToTxDeque(command.substr(4,std::string::npos));
         }
 
     }
-    uartTest.waitUartThreadsEnd();
+    roombaAgent.uartTest.waitUartThreadsEnd();
 
     return 0;
 }
@@ -174,24 +159,24 @@ int MyApp::main(int argc, char** av)
 bool MyApp::OnInit()
 {
 
+roombaAgent.initHardware();
+
+//    uwbMsgListener.initialize();
+//    uwbMsgListener.startReceiving();
+//    uwbMsgListener.startSending();
+
+//    uartTest.initialize();
+//    uartTest.startReceiveing();//starts receiving and sending threads
+//    roombaController=new RoombaController(&uartTest);
+
+//    localMap = new LocalMap();
+//    roombaBehaviour = new RoombaBehaviour(roombaController,localMap,&uwbMsgListener);
 
 
-    uwbMsgListener.initialize();
-    uwbMsgListener.startReceiving();
-    uwbMsgListener.startSending();
 
-    uartTest.initialize();
-    uartTest.startReceiveing();//starts receiving and sending threads
-    roombaController=new RoombaController(&uartTest);
+//    roombaController->startFull();
 
-    localMap = new LocalMap();
-    roombaBehaviour = new RoombaBehaviour(roombaController,localMap,&uwbMsgListener);
-
-
-
-    roombaController->startFull();
-
-    roombaController->sevenSegmentDisplay(65);// use display as ON indicator
+//    roombaController->sevenSegmentDisplay(65);// use display as ON indicator
 
     return true;
 }

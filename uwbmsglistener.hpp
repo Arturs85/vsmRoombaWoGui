@@ -94,7 +94,7 @@ public:
 
     UwbMsgListener();
     ~UwbMsgListener();
-    static void initialize();
+    static void initialize(char hostId);
     static void* receivingLoop(void* arg);
 
     void startReceiving();

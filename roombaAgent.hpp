@@ -12,8 +12,12 @@ public:
 RoombaController* roombaController;
 UwbMsgListener uwbMsgListener; // start uwb device
 UartTest uartTest;
-
+vector<VSMSubsystems> roleList;
+char id=0;
+std::string getRoleListForMsg();
 void initHardware();
+RoombaAgent();
+void getId();
 
 private:
 

@@ -3,6 +3,7 @@ CMakeFiles/
 *.cmake
 *.vsmlog
 CMakeCache.txt
+CMakeLists.txt.user
 CMakeLists.txt.user*
 vsmRoombaWoGui
 Makefile

@@ -26,8 +26,7 @@
 #include <sys/select.h>
 #include <termios.h>
 
-#include <unistd.h>
-#include <limits.h>
+
 
 /* Example application name and version to display on LCD screen. */
 #define APP_NAME "UWB Listener"
@@ -277,28 +276,28 @@ void UwbMsgListener::readDeviceData(){
 
 }
 
-void UwbMsgListener::initialize()
+void UwbMsgListener::initialize(char hostId)
 {
 
+idFromHostname = hostId;
+//    char hostname[HOST_NAME_MAX];
+//    int res =gethostname(hostname, HOST_NAME_MAX);
+//    if(!res){
+//        printf ("device hostname: %s\n",hostname);
+//        std::string subStr = string(hostname).substr (4,5);     // id position in hostname
+//        int r=0;
+//        try{
+//            r = stoi(subStr);
+//        }
+//        catch(std::invalid_argument& e){
+//            std::cout<< "cant convert to int\n";
+//        }
+//        idFromHostname = (uint8_t)r;
+//    }
+//    else
+//        printf ("unable to get device hostname\n");
 
-    char hostname[HOST_NAME_MAX];
-    int res =gethostname(hostname, HOST_NAME_MAX);
-    if(!res){
-        printf ("device hostname: %s\n",hostname);
-        std::string subStr = string(hostname).substr (4,5);     // id position in hostname
-        int r=0;
-        try{
-            r = stoi(subStr);
-        }
-        catch(std::invalid_argument& e){
-            std::cout<< "cant convert to int\n";
-        }
-        idFromHostname = (uint8_t)r;
-    }
-    else
-        printf ("unable to get device hostname\n");
-
-    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
+//    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
 
     VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
     string s =vsmmsg.toString();
@@ -356,7 +355,7 @@ uint8_t UwbMsgListener::idFromHostname=0;
 void *UwbMsgListener::receivingLoop(void *arg)
 {
     clock_t t;
-    initialize();
+    //initialize();
     uint32_t cycleCounter= 0;
     /* Loop forever initiating ranging exchanges. */
     while (isReceivingThreadRunning)
