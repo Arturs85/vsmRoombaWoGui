@@ -30,10 +30,10 @@ public:
     int main(int ac,char**av);
 
 };
-    int main(int ac,char**av){
-		MyApp myapp;
-		myapp.main(0,0);
-		}
+int main(int ac,char**av){
+    MyApp myapp;
+    myapp.main(0,0);
+}
 
 RoombaController* MyApp::roombaController=0;
 RoombaBehaviour* MyApp::roombaBehaviour=0;
@@ -58,7 +58,7 @@ int MyApp::main(int argc, char** av)
 
     //uartTest.setDataToTransmit(arr, 9);
     //keyboard reading
-cout<<"OnInit compleate\n";
+    cout<<"OnInit compleate\n";
     while(1){
         std::string command;
         getline (cin, command);
@@ -142,18 +142,24 @@ cout<<"OnInit compleate\n";
         else if(!command.compare("roam")){
             //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
         }
-         else if(!command.compare("end")){
+        else if(!command.compare("end")){
             //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
-        exit_handler(0);
+            exit_handler(0);
         }
         else if(!command.compare("dist"))
-           {
-           uwbMsgListener.addToRangingInitDeque(1);
-           }
+        {
+            int nr=0;
+            printf( "enter measurement target nr!\n");
+            cin>>nr;
+            cout<<"target: "<<nr<<"/n";
+
+            uwbMsgListener.addToRangingInitDeque(nr);
+        }
+
         else if(command.find("send")!=std::string::npos)
-            {
+        {
             uwbMsgListener.addToTxDeque(command.substr(4,std::string::npos));
-            }
+        }
 
     }
     uartTest.waitUartThreadsEnd();
