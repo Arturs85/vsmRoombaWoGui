@@ -484,7 +484,7 @@ void *UwbMsgListener::sendingLoop(void *arg)
 
             pthread_mutex_lock(&dwmDeviceLock); //wait until device is free to use
 
-            initiateRanging();// later target will be added as parameter
+            initiateRanging(rangingTargetNr);// later target will be added as parameter
 
             pthread_mutex_unlock(&dwmDeviceLock); //release device for receiving
 
@@ -633,11 +633,11 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
             /* Display computed twrDistance on LCD. */
             printf("DIST: %3.2f m\n", twrDistance);
-            VSMMessage replymsg={VSMSubsystems::S1,S2,"measuredDistance",twrDistance*100};
+            VSMMessage replymsg={VSMSubsystems::S1,S2,"measuredDistance",twrDistance*100};// todo- update receiver and sender with id
+        //usleep(SLEEP_BETWEEN_SENDING_US);
 
             addToTxDeque(replymsg);
-
-        }
+       }
     }
     else
     {
@@ -776,7 +776,7 @@ void UwbMsgListener::initiateRanging(int targetId )
     }
 
     /* Execute a delay between ranging exchanges. */
-    deca_sleep(RNG_DELAY_MS);
+   // deca_sleep(RNG_DELAY_MS);
 }
 
 //returns 0 if there is no messages
