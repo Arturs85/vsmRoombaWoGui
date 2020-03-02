@@ -16,52 +16,53 @@ extern "C" {
 #include "deca_device_api.h"
 #include "deca_regs.h"
 #include "platform.h"
-
 }
 using namespace std;
 enum VSMSubsystems{S1,S2,S3,S4};
+enum Topics{BROADCAST,S1_,S2_,S3_,S4_,BEACON_IN,SIZE_OF_THIS_ENUM};
+
 enum Behaviours{BEACON};
 typedef struct RawTxMessage {char macHeader[10]; char data[127]; int dataLength; } RawTxMessage;
-typedef struct VSMMessage {VSMSubsystems sender; VSMSubsystems receiver;string paramName;float paramValue;
-                          VSMMessage():paramName(""),paramValue(0),sender(S1),receiver(S1){}
-                          VSMMessage(VSMSubsystems sender, VSMSubsystems receiver,string paramName,float paramValue):paramName(paramName),paramValue(paramValue),sender(sender),receiver(receiver){}
+typedef struct VSMMessage {VSMSubsystems sender; Topics receiver;string paramName;float paramValue;
+                           VSMMessage():paramName(""),paramValue(0),sender(S1),receiver(BROADCAST){}
+                                                  VSMMessage(VSMSubsystems sender, Topics receiver,string paramName,float paramValue):paramName(paramName),paramValue(paramValue),sender(sender),receiver(receiver){}
 
-                          VSMMessage(VSMMessage* old){
-                          this->paramName = old->paramName;
-                              this->paramValue = old->paramValue;
-                              this->receiver=old->receiver;
-                              this->sender = old->sender;
-                          }
-
-                           string toString(){
-                               return to_string((int)sender)+","+to_string((int)receiver)+","+paramName+","+to_string(paramValue);
-                               //VSMMessage()
-                           }
-                                                  static int stringToVsmMessage(std::string msgStr, VSMMessage *destMsg){
-                                                      vector<string> msgFields = split(msgStr);
-                                                      if(msgFields.size()!=4) return 0;
-                                                      try{
-                                                      destMsg->sender =static_cast<VSMSubsystems>(stoi(msgFields[0]));
-                                                      destMsg->receiver =static_cast<VSMSubsystems>(stoi(msgFields[1]));
-												  }catch(std::invalid_argument){
-													  cout<<"stoi error: "<<msgFields[0]<<"\n";
-													  return 0;
-													  }
-                                                      destMsg->paramName = msgFields[2];
-                                                      destMsg->paramValue = stof(msgFields[3]);
-                                                      return 1;
-                                                  }
-                                                                         static vector<string> split(string src,char delimChar=','){
-                                                                             vector<string> result;
-                                                                             stringstream ss(src);
-                                                                             while( ss.good() )
-                                                                             {
-                                                                                 string substr;
-                                                                                 getline( ss, substr, delimChar );
-                                                                                 result.push_back( substr );
-                                                                             }
-                                                                             return result;
+                                                                         VSMMessage(VSMMessage* old){
+                                                                             this->paramName = old->paramName;
+                                                                             this->paramValue = old->paramValue;
+                                                                             this->receiver=old->receiver;
+                                                                             this->sender = old->sender;
                                                                          }
+
+                                                                                                string toString(){
+                                                                                                    return to_string((int)sender)+","+to_string((int)receiver)+","+paramName+","+to_string(paramValue);
+                                                                                                    //VSMMessage()
+                                                                                                }
+                                                                                                                       static int stringToVsmMessage(std::string msgStr, VSMMessage *destMsg){
+                                                                                                                           vector<string> msgFields = split(msgStr);
+                                                                                                                           if(msgFields.size()!=4) return 0;
+                                                                                                                           try{
+                                                                                                                               destMsg->sender =static_cast<VSMSubsystems>(stoi(msgFields[0]));
+                                                                                                                               destMsg->receiver =static_cast<Topics>(stoi(msgFields[1]));
+                                                                                                                           }catch(std::invalid_argument){
+                                                                                                                               cout<<"stoi error: "<<msgFields[0]<<"\n";
+                                                                                                                               return 0;
+                                                                                                                           }
+                                                                                                                           destMsg->paramName = msgFields[2];
+                                                                                                                           destMsg->paramValue = stof(msgFields[3]);
+                                                                                                                           return 1;
+                                                                                                                       }
+                                                                                                                                              static vector<string> split(string src,char delimChar=','){
+                                                                                                                                                  vector<string> result;
+                                                                                                                                                  stringstream ss(src);
+                                                                                                                                                  while( ss.good() )
+                                                                                                                                                  {
+                                                                                                                                                      string substr;
+                                                                                                                                                      getline( ss, substr, delimChar );
+                                                                                                                                                      result.push_back( substr );
+                                                                                                                                                  }
+                                                                                                                                                  return result;
+                                                                                                                                              }
 
                           } VSMMessage;
 

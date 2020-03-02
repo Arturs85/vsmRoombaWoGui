@@ -273,6 +273,10 @@ void UwbMsgListener::readDeviceData(){
     printf("Channel controlh: %x\n",chanelControl);
     usleep(sleepdelayus);
 
+    uint32 rfConfTxCtrl = dwt_read32bitoffsetreg(RF_CONF_ID,RF_TXCTRL_OFFSET);
+    printf("Channel controlh: %x\n",rfConfTxCtrl);
+    usleep(sleepdelayus);
+
 
 }
 
@@ -299,7 +303,7 @@ idFromHostname = hostId;
 
 //    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
 
-    VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
+    VSMMessage vsmmsg={VSMSubsystems::S1,BROADCAST,"testParam",123};
     string s =vsmmsg.toString();
     cout<<s<<"\n";
 
@@ -633,7 +637,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
             /* Display computed twrDistance on LCD. */
             printf("DIST: %3.2f m\n", twrDistance);
-            VSMMessage replymsg={VSMSubsystems::S1,S2,"measuredDistance",twrDistance*100};// todo- update receiver and sender with id
+            VSMMessage replymsg={VSMSubsystems::S1,BROADCAST,"measuredDistance",twrDistance*100};// todo- update receiver and sender with id
         //usleep(SLEEP_BETWEEN_SENDING_US);
 
             addToTxDeque(replymsg);
