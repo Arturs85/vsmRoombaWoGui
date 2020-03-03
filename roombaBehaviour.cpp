@@ -65,8 +65,8 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
         localMap->updateObstaclePosition(dist,angle);
 if(uwbMsgListener->rxDeque.size()>0){
 VSMMessage msg = uwbMsgListener->rxDeque.back();
-if(msg.paramName=="stop")
-roombaController->stopMoving();
+//if(msg.contentDescription=="stop")
+//roombaController->stopMoving();
 uwbMsgListener->rxDeque.pop_back();
 }
 

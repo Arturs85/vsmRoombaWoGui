@@ -11,6 +11,7 @@ aux_source_directory(. SRC_LIST)
 include_directories(${PROJECT_SOURCE_DIR})# so that files in subfolders can access to includes from root folder
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/behaviours)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/protocols)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/decadriver)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/raspberry)
 
@@ -30,7 +31,8 @@ SET_SOURCE_FILES_PROPERTIES(
 ) 
 
 list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "roombaAgent.cpp" "localMap.cpp" "logfilesaver.cpp" "main.cpp" "uwbmsglistener.cpp"
-    "behaviours/s3Behaviour.cpp" "behaviours/baseCommunicationBehaviour.cpp" "behaviours/roleCheckingBehaviour.cpp")
+    "behaviours/s3Behaviour.cpp" "behaviours/baseCommunicationBehaviour.cpp" "behaviours/roleCheckingBehaviour.cpp" "protocols/baseProtocol.cpp" "protocols/roleCheckingProtocol.cpp"
+    "vSMMessage.cpp")
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${OBJS})
 
 set (CMAKE_CXX_FLAGS "-D_DEFAULT_SOURCE=1")
