@@ -303,14 +303,14 @@ idFromHostname = hostId;
 
 //    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
 
-    VSMMessage vsmmsg={VSMSubsystems::S1,BROADCAST,Test,"123"};
+    VSMMessage vsmmsg={VSMSubsystems::S1,Topics::BROADCAST,MessageContents::NONE,"123"};
     string s =vsmmsg.toString();
     cout<<s<<"\n";
 
     VSMMessage m;
     int conversionOk =VSMMessage::stringToVsmMessage(s,&m);
     if(conversionOk){
-        cout <<"string to msg conversion--> sender: "<<m.sender<<" paramName: "<<m.contentDescription<<" value: "<<m.content<<"\n";
+        cout <<"string to msg conversion--> sender: "<<(int)m.sender<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<"\n";
     }
 
     //if (argc > 2 && strcmp(argv[1], "average") == 0) {
@@ -425,7 +425,7 @@ cout<<"rx: ";
                     pthread_mutex_unlock(&rxDequeLock);
 
                     cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                    cout <<"rx valid msg--> sender: "<<m.sender<<" paramName: "<<m.contentDescription<<" value: "<<m.content<<"\n";
+                    cout <<"rx valid msg--> sender: "<<(int)m.sender<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<"\n";
                 }
 
                 t = clock();
@@ -637,7 +637,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
             /* Display computed twrDistance on LCD. */
             printf("DIST: %3.2f m\n", twrDistance);
-            VSMMessage replymsg={VSMSubsystems::S1,BROADCAST,MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
+            VSMMessage replymsg={VSMSubsystems::S1,Topics::BROADCAST,MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
         //usleep(SLEEP_BETWEEN_SENDING_US);
 
             addToTxDeque(replymsg);

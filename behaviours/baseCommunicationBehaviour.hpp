@@ -4,6 +4,9 @@
 //#include <deque>
 #include "uwbmsglistener.hpp"
 //#include "roombaAgent.hpp"
+
+#define TICK_PERIOD_MS 1000
+
 class RoombaAgent;
 
 
@@ -14,6 +17,7 @@ public:
 RoombaAgent* owner;
      std::deque<VSMMessage> msgDeque;
 
+VSMMessage* receive(MessageContents messageContents);
 void subscribeToTopic(Topics topic);
 void unSubscribeToTopic(Topics topic);
 virtual void behaviourStep();

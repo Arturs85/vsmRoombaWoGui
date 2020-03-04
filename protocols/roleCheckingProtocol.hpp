@@ -5,11 +5,13 @@
 
 class RoleCheckingProtocol: public BaseProtocol {
 
-   
+RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh);
+
+int retrysSoFar =0;
    virtual bool tick();
 virtual void start();
-
-
+bool initiatorTick();
+bool responderTick();
 
 };
 

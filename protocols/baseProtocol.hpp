@@ -3,19 +3,21 @@
 #include "baseCommunicationBehaviour.hpp"
 
 enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
+enum RoleInProtocol{INITIATOR, RESPONDER};
 
 
 class BaseProtocol{
+
 public:
     BaseProtocol(BaseCommunicationBehaviour* ownerBeh);
-
+RoleInProtocol roleInProtocol;
 protected:
-
+int waitTicksCounter =0;
     ProtocolStates state;
 BaseCommunicationBehaviour* behaviour;
+bool wasSuccessful =false;
 
 private:
-bool wasSuccessful =false;
 virtual bool tick();
 virtual void start();
 

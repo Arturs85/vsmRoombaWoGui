@@ -34,7 +34,7 @@ RoombaAgent::RoombaAgent()
     roleList.push_back(VSMSubsystems::S3);//for test
 getRoleListForMsg();
 vector<BaseCommunicationBehaviour*> init;
-subscribersMap.resize(Topics::SIZE_OF_THIS_ENUM,init);// initialize map with empty lists
+subscribersMap.resize(static_cast<int>(Topics::SIZE_OF_THIS_ENUM),init);// initialize map with empty lists
 }
 
 void RoombaAgent::getId()
@@ -69,7 +69,7 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
 {
    VSMMessage* msg = uwbMsgListener.getFirstRxMessageFromDeque();
    Topics rec = msg->receiver;// change to topics
-   vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(rec);
+   vector<BaseCommunicationBehaviour*> subs = subscribersMap.at((int)rec);
 
    if(subs.empty()) delete msg;// delete msg if there is no subscribers for it
 
