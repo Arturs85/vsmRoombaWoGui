@@ -12,14 +12,15 @@
 #include "roombaBehaviour.hpp"
 #include "localMap.hpp"
 #include "roombaAgent.hpp"
-
+#include <pthread.h>
 
 class MyApp
 {
 public:
-    bool OnInit();
+   static void* OnInit(void* arg);
+    pthread_t agentThread;
 
-RoombaAgent roombaAgent;
+static RoombaAgent* roombaAgent;
     LocalMap* localMap;
 
 public:
@@ -35,9 +36,23 @@ int main(int ac,char**av){
 
 int MyApp::main(int argc, char** av)
 {
+  RoombaAgent roombaAgent=*this->roombaAgent;
+    pthread_t threadId;
+
+    // Create a thread that will function threadFunc()
+    int err = pthread_create(&threadId, NULL, &OnInit, NULL);
+    // Check if thread is created sucessfuly
+    if (err)
+    {
+        std::cout << "agent thread creation failed : " << strerror(err);
+        return err;
+    }
+    else
+        std::cout << "agent thread Created with ID : " << threadId << std::endl;
+
 
     printf("main started\n");
-    OnInit();
+    //OnInit();
     std::string tmp = "test data";
     char *arr = &tmp[0];
 
@@ -159,11 +174,11 @@ int MyApp::main(int argc, char** av)
 
 
 
-bool MyApp::OnInit()
+void* MyApp::OnInit(void* arg)
 {
-
-roombaAgent.initHardware();
-
+roombaAgent = new RoombaAgent();
+roombaAgent->initHardware();
+roombaAgent->startCycle();
 //    uwbMsgListener.initialize();
 //    uwbMsgListener.startReceiving();
 //    uwbMsgListener.startSending();
@@ -181,6 +196,6 @@ roombaAgent.initHardware();
 
 //    roombaController->sevenSegmentDisplay(65);// use display as ON indicator
 
-    return true;
+
 }
 

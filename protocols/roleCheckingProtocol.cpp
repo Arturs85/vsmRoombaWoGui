@@ -32,9 +32,10 @@ void RoleCheckingProtocol::start()
 {
     //state = STARTED;
     //send message to s3 asking for role,
+   waitTicksCounter=0;
     VSMMessage request(behaviour->owner->id,Topics::S3_,MessageContents::ROLE_CHECK_WITH_S3,"roleCh");
-    behaviour->owner->uwbMsgListener.addToTxDeque(request);// null ptr check
-    state = WAITING_REPLY;
+    behaviour->owner->sendMsg(request);// null ptr check, change to send
+    state = ProtocolStates::WAITING_REPLY;
 }
 
 bool RoleCheckingProtocol::initiatorTick()
@@ -60,6 +61,7 @@ bool RoleCheckingProtocol::initiatorTick()
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
             // reply waiting timeot
             if(retrysSoFar<NUMBER_OF_RETRYS){// repeat query
+                cout<<"-----no reply from s3 after "<<retrysSoFar<<" retries \n";
                 retrysSoFar++;
                 start();
             }else{
@@ -86,7 +88,7 @@ bool RoleCheckingProtocol::responderTick()
        //see if there is some role to delegate to requesting agent, send reply adressed directly to requester
 
        VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)VSMSubsystems::NONE));
-       behaviour->owner->uwbMsgListener.addToTxDeque(request);// null ptr check
+       behaviour->owner->sendMsg(request);// null ptr check
 
    }
 

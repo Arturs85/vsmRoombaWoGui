@@ -29,9 +29,11 @@ void distributeMessages();
 bool isRunning = true;
 void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
-
-private:
 void startCycle();//
+
+static int getSystemTimeMs();
+private:
+int lastTime=0;
 void behavioursStep();
 void addBehaviour(BaseCommunicationBehaviour *bcb);
 void removeBehaviour(std::string name);

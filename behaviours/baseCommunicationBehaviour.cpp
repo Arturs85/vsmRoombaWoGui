@@ -29,6 +29,12 @@ void BaseCommunicationBehaviour::subscribeToTopic(Topics topic)
     owner->subscribersMap.at((int)topic).push_back(this);
 }
 
+void BaseCommunicationBehaviour::subscribeToDirectMsgs()
+{
+    owner->subscribersMap.at(owner->id).push_back(this);
+
+}
+
 void BaseCommunicationBehaviour::unSubscribeToTopic(Topics topic)
 {
     vector<BaseCommunicationBehaviour*> subs = owner->subscribersMap.at((int)topic);

@@ -36,7 +36,7 @@
 
 /* Default communication configuration. We use here EVK1000's default mode (mode 3). */
 static dwt_config_t config = {
-    2,               /* Channel number. */
+    5,               /* Channel number. */
     DWT_PRF_64M,     /* Pulse repetition frequency. */
     DWT_PLEN_2048,//1024,   /* Preamble length. Used in TX only. */
     DWT_PAC64,       /* Preamble acquisition chunk size. Used in RX only. */

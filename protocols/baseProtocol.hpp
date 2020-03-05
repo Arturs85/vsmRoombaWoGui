@@ -2,8 +2,8 @@
 #define BASEPROTOCOL_HPP
 #include "baseCommunicationBehaviour.hpp"
 
-enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
-enum RoleInProtocol{INITIATOR, RESPONDER};
+enum class ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
+enum class RoleInProtocol{INITIATOR, RESPONDER};
 
 
 class BaseProtocol{
