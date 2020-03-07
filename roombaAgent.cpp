@@ -6,6 +6,7 @@
 #include "roleCheckingBehaviour.hpp"
 #include "baseCommunicationBehaviour.hpp"
 #include <sys/time.h>
+#include <typeinfo>
 #define USLEEP_TIME_US 10000
 
 string RoombaAgent::getRoleListForMsg()
@@ -36,10 +37,12 @@ RoombaAgent::RoombaAgent()
     getId();
     //roleList.push_back(VSMSubsystems::S1);//for test
     //roleList.push_back(VSMSubsystems::S3);//for test
-    addBehaviour(new RoleCheckingBehaviour(this));
     getRoleListForMsg();
     vector<BaseCommunicationBehaviour*> init;
     subscribersMap.resize(static_cast<int>(Topics::SIZE_OF_THIS_ENUM),init);// initialize map with empty lists
+cout<<" size of subscribers map: "<<subscribersMap.size()<<"\n";
+   
+
 }
 
 void RoombaAgent::getId()
@@ -90,15 +93,18 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
 
 void RoombaAgent::startCycle()
 {
+	 addBehaviour(new RoleCheckingBehaviour(this));
     while(isRunning){
 
 //check if it is time for next step
-        int time = getSystemTimeMs();
-        if(lastTime-time>TICK_PERIOD_MS){
+        double time = getSystemTimeSec();
+        double diff =time-lastTime;
+        if(diff>TICK_PERIOD_SEC){
             // run behaviours sequentially
-
+			cout<<"dt: "<<(diff)<<"\n";
             behavioursStep();
-lastTime = getSystemTimeMs();
+			lastTime = getSystemTimeSec();
+			cout<<"ra timeNow "<<time<<"exec time: "<<(lastTime-time)<<"\n";
 
         }else{
             //sleep to allow contextSwitch
@@ -118,16 +124,19 @@ void RoombaAgent::behavioursStep()
 
 void RoombaAgent::addBehaviour(BaseCommunicationBehaviour *bcb)//add new behaviour and remove conflicting existing ones
 {
-    vector<std::string> conf = conflictingBehaviours.at(typeid(bcb).name());
-    for (string s: conf ) {
-        BaseCommunicationBehaviour* b =findBehaviourByName(s);
+//    vector<std::string> conf = conflictingBehaviours.at(typeid(bcb).name());
+
+  //  for (string s: conf ) {
+   //     BaseCommunicationBehaviour* b =findBehaviourByName(s);
         // call behaviours remove
-        b->remove();
-        //delete b;
-    }
+  //      b->remove();
+    //    //delete b;
+   // }
     behavioursList.push_back(bcb);
     string behName =typeid(bcb).name();
     if(behName.compare("S3Behaviour")) isS3 = true; //todo - hardcoded name
+cout<<"added behaviour: "<<behName<<"\n";
+
 }
 
 void RoombaAgent::removeBehaviour(string name)
@@ -163,12 +172,13 @@ void RoombaAgent::sendMsg(VSMMessage msg)
         receiver = msg.receiverNumber;
     else
         receiver = (int)msg.receiver;
-
+ 
     vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
-
+ 
         for (int i =0; i<subs.size();i++) {
         subs.at(i)->msgDeque.push_back(msg);
     }
+
 
         // send message to others
         uwbMsgListener.addToTxDeque(msg);//change to  pass by reference?
@@ -187,11 +197,11 @@ BaseCommunicationBehaviour *RoombaAgent::findBehaviourByName(string name)
     return 0;
 }
 
- int RoombaAgent::getSystemTimeMs(void){
+ double RoombaAgent::getSystemTimeSec(void){
     struct timeval start_time;
-    int milli_time;
+    double milli_time;
     gettimeofday(&start_time, NULL);
 
-    milli_time = ((start_time.tv_usec) / 1000 + start_time.tv_sec*1000);
+    milli_time = ((start_time.tv_usec) / 1000000.0 + start_time.tv_sec);
     return milli_time;
 }

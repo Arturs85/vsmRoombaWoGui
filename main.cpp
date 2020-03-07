@@ -31,6 +31,7 @@ int main(int ac,char**av){
     MyApp myapp;
     myapp.main(0,0);
 }
+RoombaAgent* MyApp::roombaAgent = new RoombaAgent();
 
 
 
@@ -176,7 +177,6 @@ int MyApp::main(int argc, char** av)
 
 void* MyApp::OnInit(void* arg)
 {
-roombaAgent = new RoombaAgent();
 roombaAgent->initHardware();
 roombaAgent->startCycle();
 //    uwbMsgListener.initialize();

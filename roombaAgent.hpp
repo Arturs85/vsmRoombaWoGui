@@ -31,9 +31,9 @@ void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
 void startCycle();//
 
-static int getSystemTimeMs();
+static double getSystemTimeSec();
 private:
-int lastTime=0;
+double lastTime=0;
 void behavioursStep();
 void addBehaviour(BaseCommunicationBehaviour *bcb);
 void removeBehaviour(std::string name);

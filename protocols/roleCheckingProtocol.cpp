@@ -1,8 +1,9 @@
 #include "roleCheckingProtocol.hpp"
 #include "vSMMessage.hpp"
 #include "roombaAgent.hpp"// for editing
+#include <unistd.h>
 
-#define REPLY_WAITING_TICKS 5000/TICK_PERIOD_MS
+#define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
 #define NUMBER_OF_RETRYS 3
 
 RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
@@ -14,6 +15,7 @@ RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCo
 
 bool RoleCheckingProtocol::tick()
 {
+    cout<<"rcp tick \n";
     switch (roleInProtocol) {
     case RoleInProtocol::INITIATOR:
         return   initiatorTick();
@@ -33,8 +35,11 @@ void RoleCheckingProtocol::start()
     //state = STARTED;
     //send message to s3 asking for role,
    waitTicksCounter=0;
+   
     VSMMessage request(behaviour->owner->id,Topics::S3_,MessageContents::ROLE_CHECK_WITH_S3,"roleCh");
+
     behaviour->owner->sendMsg(request);// null ptr check, change to send
+    
     state = ProtocolStates::WAITING_REPLY;
 }
 

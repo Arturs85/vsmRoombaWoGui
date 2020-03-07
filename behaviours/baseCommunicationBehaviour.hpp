@@ -5,7 +5,7 @@
 #include "uwbmsglistener.hpp"
 //#include "roombaAgent.hpp"
 
-#define TICK_PERIOD_MS 1000
+#define TICK_PERIOD_SEC 1.0
 
 class RoombaAgent;
 
