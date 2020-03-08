@@ -59,12 +59,14 @@ bool RoleCheckingProtocol::initiatorTick()
         VSMMessage* res = behaviour->receive(MessageContents::S3REPLY_TO_ROLE_CHECK);
         if(res!= 0){ //reply has been received, start behaviour acording to the message
             VSMSubsystems roleToTake = static_cast<VSMSubsystems>(stoi(res->content));
+            cout<<"rcp init received take role: "<<(int)roleToTake<<" \n";
             if(roleToTake!=VSMSubsystems::NONE){
                 // todo add role
 
             }
             wasSuccessful = true;
             ended= true;
+        delete res;
         }
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
@@ -98,7 +100,7 @@ bool RoleCheckingProtocol::responderTick()
         cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
         VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)VSMSubsystems::NONE));
         behaviour->owner->sendMsg(request);// null ptr check
-
+delete res;
     }
 
     return false;

@@ -6,7 +6,7 @@ BaseCommunicationBehaviour::BaseCommunicationBehaviour(RoombaAgent* roombaAgent)
     owner = roombaAgent;
 }
 
-VSMMessage *BaseCommunicationBehaviour::receive(MessageContents messageContents)// neeeded?
+VSMMessage* BaseCommunicationBehaviour::receive(MessageContents messageContents)// neeeded?
 {//find msg with required content
   if(msgDeque.empty())return 0;
 
@@ -14,7 +14,9 @@ VSMMessage *BaseCommunicationBehaviour::receive(MessageContents messageContents)
 
      while (it != msgDeque.end()){
      if((*it).contentDescription==messageContents){
-     return &(*it);
+     VSMMessage* res = new VSMMessage(&(*it));
+     msgDeque.erase(it);
+     return res;
      }
 
          it++;

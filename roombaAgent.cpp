@@ -133,7 +133,7 @@ void RoombaAgent::addBehaviour(BaseCommunicationBehaviour *bcb)//add new behavio
     //    //delete b;
    // }
     behavioursList.push_back(bcb);
-    string behName =typeid(bcb).name();
+    string behName =typeid(*bcb).name();
     if(behName.compare("S3Behaviour")) isS3 = true; //todo - hardcoded name
 cout<<"added behaviour: "<<behName<<"\n";
 
