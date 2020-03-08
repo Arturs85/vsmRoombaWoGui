@@ -30,12 +30,12 @@ bool isRunning = true;
 void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
 void startCycle();//
+void addBehaviour(BaseCommunicationBehaviour *bcb);
 
 static double getSystemTimeSec();
 private:
 double lastTime=0;
 void behavioursStep();
-void addBehaviour(BaseCommunicationBehaviour *bcb);
 void removeBehaviour(std::string name);
 
 BaseCommunicationBehaviour* findBehaviourByName(string name);

@@ -101,10 +101,10 @@ void RoombaAgent::startCycle()
         double diff =time-lastTime;
         if(diff>TICK_PERIOD_SEC){
             // run behaviours sequentially
-			cout<<"dt: "<<(diff)<<"\n";
+            //cout<<"dt: "<<(diff)<<"\n";
             behavioursStep();
 			lastTime = getSystemTimeSec();
-			cout<<"ra timeNow "<<time<<"exec time: "<<(lastTime-time)<<"\n";
+            //cout<<"ra timeNow "<<time<<"exec time: "<<(lastTime-time)<<"\n";
 
         }else{
             //sleep to allow contextSwitch
