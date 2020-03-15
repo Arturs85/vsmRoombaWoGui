@@ -10,7 +10,8 @@ RoleCheckingBehaviour::RoleCheckingBehaviour(RoombaAgent *owner):BaseCommunicati
 
 void RoleCheckingBehaviour::behaviourStep()
 {
-roleCheckingProtocol->tick();
+bool hasEnded =roleCheckingProtocol->tick();
+
 }
 
 void RoleCheckingBehaviour::askS3ForRoles()

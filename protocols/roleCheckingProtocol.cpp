@@ -6,6 +6,7 @@
 
 #define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
 #define NUMBER_OF_RETRYS 3
+#define REQUEST_INTERVAL_TICKS 10/TICK_PERIOD_SEC //ten seconds
 
 RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
@@ -45,6 +46,8 @@ void RoleCheckingProtocol::start()
     behaviour->owner->sendMsg(request);// null ptr check, change to send
     
     state = ProtocolStates::WAITING_REPLY;
+    intervalCounter=REQUEST_INTERVAL_TICKS;//descending counter
+    retrysSoFar=0;
 }
 
 bool RoleCheckingProtocol::initiatorTick()
@@ -77,19 +80,24 @@ bool RoleCheckingProtocol::initiatorTick()
                 start();
             }else{// no response from s3, take this role
                 state=ProtocolStates::FINISHED;
-                behaviour->owner->addBehaviour(new S3Behaviour(behaviour->owner));
+                behaviour->owner->addBehaviour(new S3Behaviour(behaviour->owner));// role checking behavior now needs to bee removed (by addBehaviour())
                 wasSuccessful = false;
                 ended= true;
             }
         }
     }
         break;
+case ProtocolStates::FINISHED:{
+    // count till next ping.i.e.  role check
+        intervalCounter--;
 
-
+        if(intervalCounter<=0)
+            start();
+    }
     default:
         break;
     }
-    return ended;
+    return ended;// not ment to execute
 }
 
 bool RoleCheckingProtocol::responderTick()
@@ -98,8 +106,18 @@ bool RoleCheckingProtocol::responderTick()
     if(res!=0){
         //see if there is some role to delegate to requesting agent, send reply adressed directly to requester
         cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
-        VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)VSMSubsystems::NONE));
+
+        //get unfilled role
+        VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
+        if(unfilled!=VSMSubsystems::NONE){
+            //mark it as filled
+            ((S3Behaviour*)behaviour)->markAsFilled(unfilled,res->senderNumber);
+
+        }
+        // send reply to initiator agent
+        VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)unfilled));
         behaviour->owner->sendMsg(request);// null ptr check
+
 delete res;
     }
 
