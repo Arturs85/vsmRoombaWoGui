@@ -18,13 +18,14 @@ VSMSubsystems S3Behaviour::getUnfilledRole()
 void S3Behaviour::markAsFilled(VSMSubsystems role, int agentId)
 {
     //mark owner of role
-    behaviourCarieers.insert_or_assign(role,agentId);
-    //    auto search = behaviourCarieers.find(role);
+    auto search = behaviourCarieers.find(role);
 
-    //    if (search != behaviourCarieers.end()) {
+    if (search != behaviourCarieers.end()) {
+        behaviourCarieers.at(role)=agentId;
+    } else {
+        behaviourCarieers.emplace(role,agentId);
 
-    //    } else {
-    //       }
+    }
 
 
     // remove role from unfilledRoles list
