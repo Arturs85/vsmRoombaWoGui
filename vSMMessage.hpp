@@ -28,7 +28,7 @@ public:
     std::string content;
 
 
-    VSMMessage():contentDescription(MessageContents::NONE),content(""),sender(VSMSubsystems::NONE),receiver(Topics::BROADCAST){}
+    VSMMessage():contentDescription(MessageContents::NONE),content(""),sender(VSMSubsystems::NONE),receiver(Topics::NONE){}
     VSMMessage(VSMSubsystems sender, Topics receiver,    MessageContents contentDescription,std::string content):contentDescription(contentDescription),content(content),sender(sender),receiver(receiver){}
     VSMMessage(int sender, Topics receiver,    MessageContents contentDescription,std::string content):contentDescription(contentDescription),content(content),senderNumber(sender),receiver(receiver){}
     VSMMessage(VSMSubsystems sender, int receiver,    MessageContents contentDescription,std::string content):contentDescription(contentDescription),content(content),sender(sender),receiverNumber(receiver){}
@@ -60,7 +60,7 @@ public:
             if(this->receiver==Topics::NONE)
             receiver=receiverNumber;
             else
-            receiver =(int)this->sender;
+            receiver =(int)this->receiver;
 
 
         return to_string(sender)+","+to_string(receiver)+","+to_string((int)contentDescription)+","+content;

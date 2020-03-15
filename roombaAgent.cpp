@@ -77,6 +77,7 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
 {
     VSMMessage* msg = uwbMsgListener.getFirstRxMessageFromDeque();
     int receiver=0;
+    if(msg == 0) return;
     if(msg->receiver==Topics::NONE)// see wether adressing is topic or direct
         receiver = msg->receiverNumber;
     else
@@ -102,6 +103,7 @@ void RoombaAgent::startCycle()
         if(diff>TICK_PERIOD_SEC){
             // run behaviours sequentially
             //cout<<"dt: "<<(diff)<<"\n";
+           distributeMessages();
             behavioursStep();
 			lastTime = getSystemTimeSec();
             //cout<<"ra timeNow "<<time<<"exec time: "<<(lastTime-time)<<"\n";
@@ -173,6 +175,7 @@ void RoombaAgent::sendMsg(VSMMessage msg)
     else
         receiver = (int)msg.receiver;
  
+ cout<<"send to receiver: " <<receiver<<"\n";
     vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
  
         for (int i =0; i<subs.size();i++) {
