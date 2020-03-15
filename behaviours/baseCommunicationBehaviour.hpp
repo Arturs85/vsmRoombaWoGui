@@ -16,7 +16,7 @@ public:
     BaseCommunicationBehaviour(RoombaAgent *roombaAgent);
 RoombaAgent* owner;
      std::deque<VSMMessage> msgDeque;
-
+VSMSubsystems type= VSMSubsystems::NONE;
 VSMMessage* receive(MessageContents messageContents);
 void subscribeToTopic(Topics topic);
 void subscribeToDirectMsgs();

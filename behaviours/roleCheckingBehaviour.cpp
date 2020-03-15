@@ -3,6 +3,7 @@
 
 RoleCheckingBehaviour::RoleCheckingBehaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
 {
+    type= VSMSubsystems::ROLE_CHECKING;
     roleCheckingProtocol = new RoleCheckingProtocol(RoleInProtocol::INITIATOR,this);
     roleCheckingProtocol->start();
    

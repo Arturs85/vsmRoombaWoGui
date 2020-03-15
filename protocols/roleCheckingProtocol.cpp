@@ -47,7 +47,7 @@ void RoleCheckingProtocol::start()
     
     state = ProtocolStates::WAITING_REPLY;
     intervalCounter=REQUEST_INTERVAL_TICKS;//descending counter
-    retrysSoFar=0;
+    //retrysSoFar=0;
 }
 
 bool RoleCheckingProtocol::initiatorTick()
@@ -67,6 +67,8 @@ bool RoleCheckingProtocol::initiatorTick()
                 // todo add role
 
             }
+            state= ProtocolStates::FINISHED;
+            retrysSoFar =0;
             wasSuccessful = true;
             ended= true;
         delete res;
@@ -80,7 +82,7 @@ bool RoleCheckingProtocol::initiatorTick()
                 start();
             }else{// no response from s3, take this role
                 state=ProtocolStates::FINISHED;
-                behaviour->owner->addBehaviour(new S3Behaviour(behaviour->owner));// role checking behavior now needs to bee removed (by addBehaviour())
+                behaviour->owner->addBehaviour(VSMSubsystems::S3);// role checking behavior now needs to bee removed (by addBehaviour())
                 wasSuccessful = false;
                 ended= true;
             }

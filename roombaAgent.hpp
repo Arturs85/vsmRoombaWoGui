@@ -16,7 +16,7 @@ UartTest uartTest;
 vector<VSMSubsystems> roleList;
 vector<BaseCommunicationBehaviour*> behavioursList;
 vector<vector<BaseCommunicationBehaviour*>> subscribersMap; // index of vector- topic ordinal, vector of Behaviors- subscribers whom to deliver msg
-std::map<std::string,vector<std::string > > conflictingBehaviours;
+std::map<VSMSubsystems,vector<VSMSubsystems > > conflictingBehaviours;
 bool isS3=false;
 
 char id=0;
@@ -30,7 +30,7 @@ bool isRunning = true;
 void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
 void startCycle();//
-void addBehaviour(BaseCommunicationBehaviour *bcb);
+void addBehaviour(VSMSubsystems behaviour);
 
 static double getSystemTimeSec();
 private:
@@ -38,7 +38,7 @@ double lastTime=0;
 void behavioursStep();
 void removeBehaviour(std::string name);
 
-BaseCommunicationBehaviour* findBehaviourByName(string name);
+BaseCommunicationBehaviour* findBehaviourByName(VSMSubsystems name);
 };
 
 #endif //ROOMBAAGENT_HPP

@@ -7,6 +7,8 @@ S3Behaviour::S3Behaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
 {
     roleCheckingProtocol = new RoleCheckingProtocol(RoleInProtocol::RESPONDER,this);
     roleCheckingProtocol->start();
+    unfilledRoles = requiredRoles;// copy contents of vector
+    type=VSMSubsystems::S3;
 }
 
 VSMSubsystems S3Behaviour::getUnfilledRole()
