@@ -32,7 +32,9 @@ SET_SOURCE_FILES_PROPERTIES(
 
 list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "roombaAgent.cpp" "localMap.cpp" "logfilesaver.cpp" "main.cpp" "uwbmsglistener.cpp"
     "behaviours/s3Behaviour.cpp" "behaviours/baseCommunicationBehaviour.cpp" "behaviours/roleCheckingBehaviour.cpp" "protocols/baseProtocol.cpp" "protocols/roleCheckingProtocol.cpp"
-    "vSMMessage.cpp")
+    "vSMMessage.cpp" "protocols/controlValueProtocol.cpp" "behaviours/beaconOneBehaviour.cpp" "protocols/twoPointFormationProtocol.cpp" "roombaMovementManager.cpp"
+    "behaviours/beaconTwoBehaviour.cpp" "behaviours/beaconMasterBehaviour.cpp" "behaviours/s2BeaconsBehaviour.cpp" "behaviours/s2BaseBehaviour"
+    "protocols/operationsManagementProtocol.cpp" "protocols/beaconManagementProtocol.cpp")
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${OBJS})
 
 set (CMAKE_CXX_FLAGS "-D_DEFAULT_SOURCE=1")

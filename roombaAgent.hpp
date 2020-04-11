@@ -7,6 +7,7 @@
 #include "baseCommunicationBehaviour.hpp"
 #include <map>
 //class BaseCommunicationBehaviour;
+class RoombaMovementManager;
 class RoombaAgent{
 
 public:
@@ -31,7 +32,7 @@ void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
 void startCycle();//
 void addBehaviour(VSMSubsystems behaviour);
-
+RoombaMovementManager* movementManager;
 static double getSystemTimeSec();
 private:
 double lastTime=0;
