@@ -16,7 +16,9 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
         behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
 }
 
-
+void BeaconManagementProtocol::start(){
+	
+	}
 
 bool BeaconManagementProtocol::tick()// todo modify from source copy
 {

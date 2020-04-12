@@ -34,6 +34,10 @@ void OperationsManagementProtocol::start()
     }
 }
 
+bool OperationsManagementProtocol::tick(){
+	return false; //todo implement
+	}
+
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
 {
     switch (state) {

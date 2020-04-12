@@ -10,7 +10,10 @@ pthread_mutex_t RoombaMovementManager::mutexGUIData = PTHREAD_MUTEX_INITIALIZER;
 bool RoombaMovementManager::isRunning=true;
 bool RoombaMovementManager::isDriving=false;
 int RoombaMovementManager::distanceRemaining =0;
+int RoombaMovementManager::angleRemaining =0;
+int RoombaMovementManager::direction =0;
 
+MovementStates RoombaMovementManager::state= MovementStates::IDLE; 
 
 RoombaMovementManager::RoombaMovementManager(RoombaController *roombaController)
 {
