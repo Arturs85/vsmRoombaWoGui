@@ -35,6 +35,10 @@ void RoombaAgent::initHardware(){
     uartTest.startReceiveing();//starts receiving and sending threads
     roombaController = new RoombaController(&uartTest);
     roombaController->startFull();
+    movementManager = new RoombaMovementManager(roombaController);
+
+    //std::cout<<"ra initHardware complete\n";
+
 }
 
 RoombaAgent::RoombaAgent()
@@ -47,7 +51,6 @@ RoombaAgent::RoombaAgent()
     vector<BaseCommunicationBehaviour*> init;
     subscribersMap.resize(static_cast<int>(Topics::SIZE_OF_THIS_ENUM),init);// initialize map with empty lists
     cout<<" size of subscribers map: "<<subscribersMap.size()<<"\n";
-movementManager = new RoombaMovementManager(roombaController);
 
 }
 
