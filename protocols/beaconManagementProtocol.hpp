@@ -1,6 +1,7 @@
 #ifndef BEACONMANAGEMENTPROTOCOL_HPP
 #define BEACONMANAGEMENTPROTOCOL_HPP
 #include "baseProtocol.hpp"
+#include <set>
 //enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
 
 class BeaconManagementProtocol: public BaseProtocol {
@@ -13,10 +14,14 @@ virtual void start();
 virtual bool tick();
 
 private:
+std::set<int> availableBeaconsSet;
+bool bOneIsFilled =false;
+bool bTwoIsFilled =false;
+bool bMasterIsFilled =false;
+bool managerTick();
+bool beaconTick();
 
-bool senderTick();
-bool receiverTick();
-
+void querryBeacons();//ask own type s1 for reply, to know how many are available
 
 };
 

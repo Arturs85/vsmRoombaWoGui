@@ -21,11 +21,12 @@ OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleIn
 void OperationsManagementProtocol::start()
 {
     switch (roleInProtocol) {
-    case RoleInProtocol::S3:
+    case RoleInProtocol::S3:{
         //send request to S2Beacons to start first formation and wait for reply
         VSMMessage startRequest(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FIRST_FORMATION_START,"r");
         behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_REPLY;
+    }
         break;
     case RoleInProtocol::S2BEACON:
         state = ProtocolStates::WAITING_START_REQUEST;

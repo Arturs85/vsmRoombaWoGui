@@ -72,15 +72,15 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         long int t = static_cast<long int> (time(NULL));
 
         switch (state) {
-        case MovementStates::DRIVING:
+        case MovementStates::DRIVING:{
             int16_t dist = roombaController->readDistance();// is right units used - mm ?
             distanceRemaining -= dist;
             if(distanceRemaining<0){
                 state = MovementStates::FINISHED;
                 roombaController->stopMoving();
-            }
+            }}
             break;
-        case MovementStates::TURNING:
+        case MovementStates::TURNING:{
             int16_t angle = roombaController->readAngle();
             angleRemaining -= angle;// for knowing when to stop
             direction+= angle;// for tracking direction
@@ -88,7 +88,7 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
             if(angleRemaining<0){
                 roombaController->stopMoving();
                 state = MovementStates::FINISHED;
-            }
+            }}
             break;
         case MovementStates::FINISHED:
             break;
@@ -121,5 +121,5 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
 
     //localMap->Refresh();
     usleep(250000);
-}
+
 }

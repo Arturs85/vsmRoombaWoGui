@@ -65,7 +65,7 @@ bool RoleCheckingProtocol::initiatorTick()
             cout<<"rcp init received take role: "<<(int)roleToTake<<" \n";
             if(roleToTake!=VSMSubsystems::NONE){
                 // todo add role
-
+behaviour->owner->addBehaviour(roleToTake);
             }
             state= ProtocolStates::FINISHED;
             retrysSoFar =0;

@@ -8,6 +8,10 @@
 #include <sys/time.h>
 #include <typeinfo>
 #include "roombaMovementManager.hpp"
+#include "beaconOneBehaviour.hpp"
+#include "beaconTwoBehaviour.hpp"
+#include "s2BeaconsBehaviour.hpp"
+
 #define USLEEP_TIME_US 10000
 
 string RoombaAgent::getRoleListForMsg()
@@ -144,10 +148,20 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     switch (behaviour) {
     case VSMSubsystems::S3 :{
         bcb = new S3Behaviour(this);
-    }
+    }break;
     case VSMSubsystems::ROLE_CHECKING:{
         bcb = new RoleCheckingBehaviour(this);
-    }
+    }break;
+    case VSMSubsystems::BEACON_ONE:{
+        bcb = new BeaconOneBehaviour(this);
+    }break;
+    case VSMSubsystems::BEACON_TWO:{
+        bcb = new BeaconTwoBehaviour(this);
+    }break;
+    case VSMSubsystems::S2_BEACONS:{
+        bcb = new S2BeaconsBehaviour(this);
+    }break;
+
     default:{
         cout<<"not implemented \n";
         return;

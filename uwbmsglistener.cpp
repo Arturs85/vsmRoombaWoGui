@@ -385,7 +385,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFL_MASK_1023;
-            cout<<"received frame with length "<<frame_len<<"\n";
+           // cout<<"received frame with length "<<frame_len<<"\n";
             
             if (frame_len <= RX_BUFFER_LEN)
             {
@@ -395,12 +395,12 @@ void *UwbMsgListener::receivingLoop(void *arg)
             /* Check that the frame is a poll sent by "DS TWR initiator" example.
              * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
             rx_buffer[ALL_MSG_SN_IDX] = 0;
-cout<<"rx: ";
-            for (int var = 0; var < ALL_MSG_COMMON_LEN; ++var) {
-                cout<<rx_buffer[var]+0<<" ";
+//cout<<"rx: ";
+//            for (int var = 0; var < ALL_MSG_COMMON_LEN; ++var) {
+//                cout<<rx_buffer[var]+0<<" ";
 
-            }
-            cout<<"\n ";
+//            }
+//            cout<<"\n ";
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
@@ -416,7 +416,7 @@ cout<<"rx: ";
                 string rxWHeader=string(rxData,length);
                 string rxString= string(rxWHeader,ALL_MSG_COMMON_LEN,length-2-ALL_MSG_COMMON_LEN);
                 VSMMessage m;
-                cout<<"rx: "<<rxString<<"\n";
+             //   cout<<"rx: "<<rxString<<"\n";
 
                 int res =VSMMessage::stringToVsmMessage(rxString,&m);
                 if(res){
@@ -424,7 +424,7 @@ cout<<"rx: ";
                     rxDeque.push_back(m); // mutex to be added for access to rxdeque
                     pthread_mutex_unlock(&rxDequeLock);
 
-                    cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
+                 //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
                     cout <<"rx valid msg--> sender: "<<(int)m.sender<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<"\n";
                 }
 
