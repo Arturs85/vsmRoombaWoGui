@@ -147,6 +147,7 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
         for (VSMSubsystems beh: conf ) {
             BaseCommunicationBehaviour* b =findBehaviourByName(beh);
             //  call behaviours remove
+            if(b!=0)
             b->remove();
             //delete b;
         }    }
