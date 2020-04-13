@@ -11,6 +11,7 @@
 #include "beaconOneBehaviour.hpp"
 #include "beaconTwoBehaviour.hpp"
 #include "s2BeaconsBehaviour.hpp"
+#include "beaconListenerBehaviour.hpp"
 
 #define USLEEP_TIME_US 10000
 
@@ -36,7 +37,7 @@ void RoombaAgent::initHardware(){
     roombaController = new RoombaController(&uartTest);
     roombaController->startFull();
     movementManager = new RoombaMovementManager(roombaController);
-
+setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
     //std::cout<<"ra initHardware complete\n";
 
 }
@@ -44,6 +45,9 @@ void RoombaAgent::initHardware(){
 RoombaAgent::RoombaAgent()
 {
     conflictingBehaviours.emplace(VSMSubsystems::S3,std::vector<VSMSubsystems>({VSMSubsystems::ROLE_CHECKING}));// where to initialize this?
+    conflictingBehaviours.emplace(VSMSubsystems::S1_BEACONS,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
+    conflictingBehaviours.emplace(VSMSubsystems::S1_EXPLORERS,std::vector<VSMSubsystems>({VSMSubsystems::S1_BEACONS}));
+
     getId();
     //roleList.push_back(VSMSubsystems::S1);//for test
     //roleList.push_back(VSMSubsystems::S3);//for test
@@ -164,6 +168,9 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     case VSMSubsystems::S2_BEACONS:{
         bcb = new S2BeaconsBehaviour(this);
     }break;
+    case VSMSubsystems::S1_BEACONS:{
+        bcb = new BeaconListenerBehaviour(this);
+    }break;
 
     default:{
         cout<<"not implemented \n";
@@ -247,4 +254,10 @@ double RoombaAgent::getSystemTimeSec(void){
 
     milli_time = ((start_time.tv_usec) / 1000000.0 + start_time.tv_sec);
     return milli_time;
+}
+
+void RoombaAgent::setS1Type(VSMSubsystems type)
+{
+    s1Type= type;
+    if(type==VSMSubsystems::S1_BEACONS || type==VSMSubsystems::S1_EXPLORERS )addBehaviour(type);
 }

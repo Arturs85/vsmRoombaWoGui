@@ -19,6 +19,7 @@ vector<BaseCommunicationBehaviour*> behavioursList;
 vector<vector<BaseCommunicationBehaviour*>> subscribersMap; // index of vector- topic ordinal, vector of Behaviors- subscribers whom to deliver msg
 std::map<VSMSubsystems,vector<VSMSubsystems > > conflictingBehaviours;
 bool isS3=false;
+VSMSubsystems s1Type=VSMSubsystems::S1_BEACONS;//default s1type of robot
 
 char id=0;
 std::string getRoleListForMsg();
@@ -34,6 +35,7 @@ void startCycle();//
 void addBehaviour(VSMSubsystems behaviour);
 RoombaMovementManager* movementManager;
 static double getSystemTimeSec();
+void setS1Type(VSMSubsystems type);// use only valid s1 types
 private:
 double lastTime=0;
 void behavioursStep();

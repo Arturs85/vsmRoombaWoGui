@@ -11,7 +11,7 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
 
     this->roleInProtocol = roleInProtocol;
     if(roleInProtocol==RoleInProtocol::S2BEACON)// responder needs to listen for requests in this topic, initiator will receive direct messages
-        behaviour->subscribeToTopic(Topics::CVAL_TO_S2);
+        behaviour->subscribeToTopic(Topics::TO_S2BEACONS);
     else
         behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
 }
