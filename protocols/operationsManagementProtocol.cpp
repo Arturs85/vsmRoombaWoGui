@@ -5,7 +5,8 @@
 #include "s3Behaviour.hpp"
 #include "roombaMovementManager.hpp"
 #include <cmath>
-
+#include "s2BeaconsBehaviour.hpp"
+#include "beaconManagementProtocol.hpp"
 
 OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
@@ -71,6 +72,7 @@ bool OperationsManagementProtocol::s2Tick()
         VSMMessage* res = behaviour->receive(MessageContents::FIRST_FORMATION_START);
         if(res!= 0){
             //owner s2 should send beacon info queries to see if there is enough beacons, choose all three beacons and make first of them to start tpfp
+         ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
             state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
             delete res;
         }}

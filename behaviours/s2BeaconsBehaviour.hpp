@@ -10,9 +10,10 @@ public:
     RoombaAgent* ra;
    // TwoPointFormationProtocol* twoPointFormationProtocol;
     S2BeaconsBehaviour(RoombaAgent* roombaAgent);
+ BeaconManagementProtocol* beaconManagementProtocol;
 private:
     void behaviourStep();
-    BeaconManagementProtocol* beaconManagementProtocol;
+
 
 
 };
