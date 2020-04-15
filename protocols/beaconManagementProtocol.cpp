@@ -97,7 +97,7 @@ bool BeaconManagementProtocol::beaconTick()
             VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,0);// reply to querry, could send some additional info, e.g. bat level
             behaviour->owner->sendMsg(replyToQuerry);
             // state = ProtocolStates::WAITING_REPLY;
-
+std::cout<<"bmp beacon replying to s2 querry\n";
 
         }// try to receive order
         VSMMessage* res2= behaviour->receive(MessageContents::BEACON_ROLE);// use none content description, because there should be only one type of msg in this topic

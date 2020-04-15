@@ -4,6 +4,7 @@
 #include "s2BaseBehaviour.hpp"
 
 class BeaconManagementProtocol;
+class OperationsManagementProtocol;
 
 class S2BeaconsBehaviour: public S2BaseBehavior{// waits for requests from second beacon by TwoPoinFormation protocol
 public:
@@ -11,6 +12,7 @@ public:
    // TwoPointFormationProtocol* twoPointFormationProtocol;
     S2BeaconsBehaviour(RoombaAgent* roombaAgent);
  BeaconManagementProtocol* beaconManagementProtocol;
+OperationsManagementProtocol* operationsManagementProtocol;
 private:
     void behaviourStep();
 

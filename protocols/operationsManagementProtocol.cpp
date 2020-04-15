@@ -40,7 +40,6 @@ void OperationsManagementProtocol::start()
 }
 
 bool OperationsManagementProtocol::tick(){
-	return false; //todo implement
     switch (roleInProtocol) {
     case RoleInProtocol::S3:
         return s3Tick();
