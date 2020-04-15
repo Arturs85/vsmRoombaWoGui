@@ -4,6 +4,7 @@
 #include <map>
 class RoleCheckingProtocol;
 class ControlValueProtocol;
+class OperationsManagementProtocol;
 
 enum class S3States{BEACONS_FORMATION, EXPLORING, BEACONS_REFORMATION};
 class S3Behaviour : public BaseCommunicationBehaviour {
@@ -16,7 +17,8 @@ private:
 S3States state;
     RoleCheckingProtocol* roleCheckingProtocol;
     ControlValueProtocol* controlValueProtocol;
-//std::map< int,int  > knownAgents;//<id,ms since last comm>, this map lets know, present agents and time since they was last heard from
+    OperationsManagementProtocol* operationsManagementProtocol;
+    //std::map< int,int  > knownAgents;//<id,ms since last comm>, this map lets know, present agents and time since they was last heard from
 std::map< VSMSubsystems,int  > behaviourCarieers;//<managementBehaviour, agenId>, this map shows, witch behaviours are filled and by whom
 
 static const std::vector<VSMSubsystems> requiredRoles;//contains roles that are needed to be filled prior to start operations

@@ -8,6 +8,8 @@
 #include "s2BeaconsBehaviour.hpp"
 #include "beaconManagementProtocol.hpp"
 
+#define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
+
 OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
     this->roleInProtocol=roleInProtocol;
@@ -50,6 +52,12 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
             //enter state waiting formation complete
             state = ProtocolStates::WAITING_FORMATION_COMPLETE;
             delete res;
+        break;
+        }
+        waitTicksCounter++;
+        if(waitTicksCounter>=REPLY_WAITING_TICKS){
+            waitTicksCounter=0;
+            start();// start again with request if no confirmation is received within timeout
         }
     }
         break;
@@ -72,8 +80,11 @@ bool OperationsManagementProtocol::s2Tick()
         VSMMessage* res = behaviour->receive(MessageContents::FIRST_FORMATION_START);
         if(res!= 0){
             //owner s2 should send beacon info queries to see if there is enough beacons, choose all three beacons and make first of them to start tpfp
-         ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
-            state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
+       cout<<"S2 beacons received -start first formation \n";
+
+       ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
+       //send confirmation to s3 - todo
+       state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
             delete res;
         }}
         break;
