@@ -92,9 +92,9 @@ bool BeaconManagementProtocol::beaconTick()
 {
     switch (state) {
     case ProtocolStates::IDLE:{
-        VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
+        VSMMessage* res= behaviour->receive(MessageContents::QUERRY_INFO);// use none content description, because there should be only one type of msg in this topic
         if(res!=0){// reply to querry
-            VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,0);// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,"rq");// reply to querry, could send some additional info, e.g. bat level
             behaviour->owner->sendMsg(replyToQuerry);
             // state = ProtocolStates::WAITING_REPLY;
 std::cout<<"bmp beacon replying to s2 querry\n";
@@ -115,7 +115,7 @@ std::cout<<"bmp beacon replying to s2 querry\n";
 
 void BeaconManagementProtocol::querryBeacons()
 {
-    VSMMessage queryBeaconS1(VSMSubsystems::S2_BEACONS,Topics::S2_TO_BEACONS,MessageContents::QUERRY_INFO,0);
+    VSMMessage queryBeaconS1(VSMSubsystems::S2_BEACONS,Topics::S2_TO_BEACONS,MessageContents::QUERRY_INFO,"q");
     behaviour->owner->sendMsg(queryBeaconS1);
     state = ProtocolStates::WAITING_REPLY;
 }
