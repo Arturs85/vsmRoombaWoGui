@@ -26,9 +26,11 @@ void OperationsManagementProtocol::start()
     switch (roleInProtocol) {
     case RoleInProtocol::S3:{
         //send request to S2Beacons to start first formation and wait for reply
+
         VSMMessage startRequest(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FIRST_FORMATION_START,"r");
         behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_REPLY;
+    cout<<"omp s3 sent start formation to s2b\n";
     }
         break;
     case RoleInProtocol::S2BEACON:
@@ -39,7 +41,17 @@ void OperationsManagementProtocol::start()
 
 bool OperationsManagementProtocol::tick(){
 	return false; //todo implement
-	}
+    switch (roleInProtocol) {
+    case RoleInProtocol::S3:
+        return s3Tick();
+        break;
+    case RoleInProtocol::S2BEACON:
+        return s2Tick();
+        break;
+    default:
+        break;
+    }
+}
 
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
 {
