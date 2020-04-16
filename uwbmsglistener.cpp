@@ -637,7 +637,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
             /* Display computed twrDistance on LCD. */
             printf("DIST: %3.2f m\n", twrDistance);
-            VSMMessage replymsg={VSMSubsystems::S1,Topics::BROADCAST,MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
+            VSMMessage replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
         //usleep(SLEEP_BETWEEN_SENDING_US);
 
             addToTxDeque(replymsg);

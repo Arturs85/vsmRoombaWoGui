@@ -15,6 +15,7 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
     }
     else{
         behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
+        behaviour->subscribeToDirectMsgs();
         state = ProtocolStates::IDLE;
     }
 }

@@ -90,6 +90,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         VSMMessage* res = behaviour->receive(MessageContents::DISTANCE_MEASUREMENT);
         if(res!= 0){
             latestMeasurement = std::stoi(res->content);
+            std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
             state = nextStateOnPositeiveResult; // todo add timeout and next state for negative result(no result within a timeout)
         }
     }
