@@ -49,6 +49,7 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
         if(res!=0){
             // add senders id to beacons list
             availableBeaconsSet.insert(res->senderNumber);
+            cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
             if(availableBeaconsSet.size()>=2){
                 //send roles to beacons
                std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
@@ -101,7 +102,7 @@ std::cout<<"bmp beacon replying to s2 querry\n";
 
         }// try to receive order
         VSMMessage* res2= behaviour->receive(MessageContents::BEACON_ROLE);// use none content description, because there should be only one type of msg in this topic
-        if(res!=0){
+        if(res2 !=0){
             VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
             std::cout<<"bmp beacon received role";
             // todo inform agent to start (add) coresp. behaviour and start protocol

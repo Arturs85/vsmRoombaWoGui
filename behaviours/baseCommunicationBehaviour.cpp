@@ -24,6 +24,7 @@ VSMMessage* BaseCommunicationBehaviour::receive(MessageContents messageContents)
 
 
       // msgDeque.pop_front();
+return 0;
 }
 
 void BaseCommunicationBehaviour::subscribeToTopic(Topics topic)
