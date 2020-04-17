@@ -55,6 +55,8 @@ static uint8 rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x2
 static uint8 tx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
 static uint8 rx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'F', 'I', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint8 tx_poll_mod_msg[] = {0x41, 0x88, 0x41, 0xCA, 0xDE, 'V', 'I', 'A', 'B', 0x21, 0, 0};
+static uint8 tx_poll_mod_msg2[] = {0x42, 0x89, 0x41, 0xCA, 0xDE, 'O', 'L', 'A', 'B', 0x21, 0, 0};
+
 //from initiaator.c
 static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
 static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
@@ -332,6 +334,7 @@ idFromHostname = hostId;
      * For initialisation, DW1000 clocks must be temporarily set to crystal speed. After initialisation SPI rate can be increased for optimum
      * performance. */
     reset_DW1000(); /* Target specific drive of RSTn line into DW1000 low for a period. */
+    dwt_softreset();//test
     spi_set_rate_low();
     if (dwt_initialise(DWT_LOADUCODE) == DWT_ERROR)
     {
@@ -471,12 +474,12 @@ void *UwbMsgListener::sendingLoop(void *arg)
             dwt_writetxfctrl(msg.dataLength+ALL_MSG_COMMON_LEN+2, 0, 0); /* Zero offset in TX buffer, no ranging. */
             txDeque.pop_back();// delete message after sending it(after writing it to tx buffer)
             dwt_starttx(DWT_START_TX_IMMEDIATE );
-
             pthread_mutex_unlock(&dwmDeviceLock); //release device for receiving
 
         }
         pthread_mutex_unlock(&txBufferLock); //release blocking access to tx buffer
         //initiate ranging if there is any requests
+        usleep(1000);// testing
 
         pthread_mutex_lock(&rangingInitBufferLock); //take and block access to ranging initation Deque buffer
         if(!rangingInitDeque.empty()){
@@ -505,7 +508,7 @@ void UwbMsgListener::addToTxDeque(std::string msgText){
     RawTxMessage msg;
 
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
-    memcpy(msg.macHeader,tx_poll_mod_msg,ALL_MSG_COMMON_LEN);
+    memcpy(msg.macHeader,tx_poll_mod_msg2,ALL_MSG_COMMON_LEN);
 
     snprintf(msg.data,30," --message nr %d",frame_seq_nb++);
     
