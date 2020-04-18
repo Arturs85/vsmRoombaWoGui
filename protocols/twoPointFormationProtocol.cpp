@@ -194,8 +194,14 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         return true;
         break;
     case ProtocolStates::TIMEOUT:{
-        std::cout<<"tpfp 1 timeout\n";
-        wasSuccessful = false;
+        measureRetryCounter++;
+        std::cout<<"tpfp 1 timeout "<<measureRetryCounter<<"\n";
+       if(measureRetryCounter<=measureRetries){
+        startDistanceMeasurement(stillBeaconId,nextStateOnPositeiveResult,nextStateOnNegativeResult);
+        break;
+       }
+       std::cout<<"tpfp failed to measure dist, stopping";
+       wasSuccessful = false;
         return true;
     }   break;
     }
