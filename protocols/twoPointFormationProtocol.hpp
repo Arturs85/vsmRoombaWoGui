@@ -17,9 +17,13 @@ static double calcThirdSide(double a, double b, double angleRad);
 static double calcAngle(double a,double b,double c);
 
 static constexpr int measureRetries = 3;
+static constexpr int measureResWaitTicks = 2;
+
 
 private:
 int measureRetryCounter=0;
+int measureWaitCounter=0;
+
 int measuredDist[4];
 int latestMeasurement=0;
 double relativeAngleH1;

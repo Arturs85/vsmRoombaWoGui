@@ -87,11 +87,15 @@ bool TwoPointFormationProtocol::movingBeaconTick()
     }
         break;
     case ProtocolStates::WAITING_DIST_MEASURE_RESULT:{
+        measureWaitCounter++;
         VSMMessage* res = behaviour->receive(MessageContents::DISTANCE_MEASUREMENT);
         if(res!= 0){
             latestMeasurement = std::stoi(res->content);
             std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
-            state = nextStateOnPositeiveResult; // todo add timeout and next state for negative result(no result within a timeout)
+            state = nextStateOnPositeiveResult; //
+        }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
+            state = ProtocolStates::TIMEOUT;//
+        measureWaitCounter=0;
         }
     }
         break;
