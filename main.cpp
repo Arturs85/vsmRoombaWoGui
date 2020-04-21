@@ -13,6 +13,7 @@
 #include "localMap.hpp"
 #include "roombaAgent.hpp"
 #include <pthread.h>
+#include <signal.h>
 
 class MyApp
 {
@@ -22,7 +23,7 @@ public:
 
 static RoombaAgent* roombaAgent;
     LocalMap* localMap;
-
+static intHandler(int dummy); 
 public:
     int main(int ac,char**av);
 
@@ -33,10 +34,18 @@ int main(int ac,char**av){
 }
 RoombaAgent* MyApp::roombaAgent = new RoombaAgent();
 
+void MyApp::intHandler(int dummy) {
+    if(roombaAgent!=0){
+		if(roombaAgent->roombaController!=0){
+			roombaAgent->roombaController->shutDown();
+			}
+		}
+}
 
 
 int MyApp::main(int argc, char** av)
 {
+	 signal(SIGINT, intHandler);
   RoombaAgent roombaAgent=*this->roombaAgent;
     pthread_t threadId;
 

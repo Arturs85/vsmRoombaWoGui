@@ -102,7 +102,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
     case ProtocolStates::FIRST_MOVE:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
             startDistanceMeasurement(stillBeaconId,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED,ProtocolStates::TIMEOUT);
-
+std::cout<<">> tpfp started second measurement\n";
         }
     case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:// now we have two measurements and traveled distance
         measuredDist[1]=latestMeasurement;

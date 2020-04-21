@@ -77,7 +77,11 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         switch (state) {
         case MovementStates::DRIVING:{
             int16_t dist = roombaController->readDistance();// is right units used - mm ?
-            distanceRemaining -= dist;
+            //distanceRemaining -= dist;
+              distanceRemaining += (dist*10);
+            
+                       // std::cout<<"rmm distRemain: "<<distanceRemaining<<"\n";
+
             if(distanceRemaining<0){
                 state = MovementStates::FINISHED;
                 roombaController->stopMoving();
