@@ -103,7 +103,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
             startDistanceMeasurement(stillBeaconId,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED,ProtocolStates::TIMEOUT);
 std::cout<<">> tpfp started second measurement\n";
-        }
+        }break;
     case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:// now we have two measurements and traveled distance
         measuredDist[1]=latestMeasurement;
         relativeAngleH1 = calculateRelativeAngle(measuredDist[0], measuredDist[1], TRIANGLE_SIDE_MM);
@@ -220,20 +220,20 @@ void TwoPointFormationProtocol::enterState(ProtocolStates stateToEnter)
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM);  // drive forward distace
         state = ProtocolStates::FIRST_MOVE;
-        cout<<("entering first move");
+        cout<<("entering first move\n");
         break;
 
     case ProtocolStates::SECOND_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM/2);  // drive forward distace
         state = ProtocolStates::SECOND_MOVE;
-        cout<<("entering second move");
+        cout<<("entering second move\n");
         break;
 
     case ProtocolStates::FINAL_POSITION_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
         state = ProtocolStates::FINAL_POSITION_MOVE;
-        cout<<("entering final move");
+        cout<<("entering final move\n");
         break;
     }
 }

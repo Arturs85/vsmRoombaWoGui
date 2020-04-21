@@ -23,7 +23,7 @@ public:
 
 static RoombaAgent* roombaAgent;
     LocalMap* localMap;
-static intHandler(int dummy); 
+static void intHandler(int dummy); 
 public:
     int main(int ac,char**av);
 
@@ -38,8 +38,10 @@ void MyApp::intHandler(int dummy) {
     if(roombaAgent!=0){
 		if(roombaAgent->roombaController!=0){
 			roombaAgent->roombaController->shutDown();
-			}
-		}
+		     usleep(1000000);
+		}    
+	}	
+    exit(0);
 }
 
 
