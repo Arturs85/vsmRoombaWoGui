@@ -36,6 +36,11 @@ void RoombaAgent::initHardware(){
     uartTest.startReceiveing();//starts receiving and sending threads
     roombaController = new RoombaController(&uartTest);
     roombaController->startFull();
+    
+			uint16_t ca = roombaController->readBattCapacity();
+            uint16_t ch = roombaController->readBattCharge();
+            std::cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
+            
     movementManager = new RoombaMovementManager(roombaController);
 setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
     //std::cout<<"ra initHardware complete\n";

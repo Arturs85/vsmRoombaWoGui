@@ -19,6 +19,8 @@ RoombaMovementManager::RoombaMovementManager(RoombaController *roombaController)
 {
     RoombaMovementManager::roombaController = roombaController;
     //    RoombaMovementManager::localMap= localMap;
+    roombaController->readAngle();
+    roombaController->readDistance();// to reset roomba counters
     startThread();
 }
 
@@ -78,7 +80,7 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         case MovementStates::DRIVING:{
             int16_t dist = roombaController->readDistance();// is right units used - mm ?
             //distanceRemaining -= dist;
-              distanceRemaining += (dist*10);
+              distanceRemaining += (dist*7.7);//roomba koefic to get mm from roomba value
             
                        // std::cout<<"rmm distRemain: "<<distanceRemaining<<"\n";
 
@@ -88,8 +90,9 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
             }}
             break;
         case MovementStates::TURNING:{
-            int16_t angle = roombaController->readAngle();
+            int16_t angle = 3*roombaController->readAngle();
             angleRemaining -= angle;// for knowing when to stop
+ std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
             direction+= angle;// for tracking direction
 
             if(angleRemaining<0){

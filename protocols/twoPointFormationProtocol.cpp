@@ -90,7 +90,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         measureWaitCounter++;
         VSMMessage* res = behaviour->receive(MessageContents::DISTANCE_MEASUREMENT);
         if(res!= 0){
-            latestMeasurement = std::stoi(res->content);
+            latestMeasurement = 10*std::stoi(res->content);//multiplying by ten to switch to mm
             std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
             state = nextStateOnPositeiveResult; //
         }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
@@ -108,8 +108,11 @@ std::cout<<">> tpfp started second measurement\n";
         measuredDist[1]=latestMeasurement;
         relativeAngleH1 = calculateRelativeAngle(measuredDist[0], measuredDist[1], TRIANGLE_SIDE_MM);
         relativeAngleH2 = -calculateRelativeAngle(measuredDist[0], measuredDist[1], TRIANGLE_SIDE_MM);
+        
+        std::cout<<"relAngleH1 "<<relativeAngleH1<<"  relAngleH2 "<<relativeAngleH2<<"\n";
+        
         dirBeforeTurn = behaviour->owner->movementManager->direction;
-        behaviour->owner->movementManager->turnLeft(relativeAngleH1);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turnLeft(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::TURN_DEGREES;
         break;
@@ -133,8 +136,8 @@ std::cout<<">> tpfp started second measurement\n";
         double predictedDistH2 = calcThirdSide(measuredDist[1], TRIANGLE_SIDE_MM / 2, relativeAngleH2);
 
         std::cout<<" Actual measure :" << measuredDist[2]<<"\n";
-        //System.out.println(" Predicted measureH1 :" + predictedDistH1);
-        //System.out.println(" Predicted measureH2 :" + predictedDistH2);
+        std::cout<<" Predicted measureH1 :" << predictedDistH1<<"\n";
+        std::cout<<" Predicted measureH2 :" << predictedDistH2<<"\n";
 
         double errH1 = abs(predictedDistH1 - measuredDist[2]);
         double errH2 = abs(predictedDistH2 - measuredDist[2]);
@@ -151,7 +154,7 @@ std::cout<<">> tpfp started second measurement\n";
         if (sin(da) < 0)//why this is needed?
             angleAfterMovement = -angleAfterMovement;
 
-        //System.out.println("angle to another after move: " + Math.toDegrees(angleAfterMovement));
+        std::cout<<"angle to another after move: " << (angleAfterMovement*180/PI)<<"\n";
         //System.out.println("absolute angle2 : " + Math.toDegrees(owner.publicPartOfAgent.direction));
 
         angleToOtherRobot = angleAfterMovement;
@@ -165,7 +168,7 @@ std::cout<<">> tpfp started second measurement\n";
         }
         // System.out.println("turn by: "+Math.toDegrees(turnBy));
 
-        behaviour->owner->movementManager->turnLeft(relativeAngleH1);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turnLeft(turnBy*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::FINAL_POSITION_TURN;
 
@@ -264,9 +267,10 @@ TwoPointFormationProtocol::TwoPointFormationProtocol(RoleInProtocol roleInProtoc
 double TwoPointFormationProtocol::calculateRelativeAngle(double mes1, double mes2, double odoDist)
 {
     if ((mes2 + odoDist) < mes1) return 0;
-    if ((mes1 + odoDist) < mes2) return PI;
-
+    if ((mes1 + odoDist) < mes2) return PI;// todo revisit
     double angle = acos((odoDist * odoDist + mes2 * mes2 - mes1 * mes1) / (2 * odoDist * mes2));
+ std::cout<<"calcRelAngle called "<<mes1<<" "<<mes2<<" "<<odoDist<<" angle: "<<angle<<"\n";
+
     return PI - angle;
 }
 double TwoPointFormationProtocol::calcThirdSide(double a,double b,double angleRad){
@@ -274,7 +278,9 @@ double TwoPointFormationProtocol::calcThirdSide(double a,double b,double angleRa
 }
 
 double TwoPointFormationProtocol::calcAngle(double a, double b, double c)
-{
+{ std::cout<<"calcAngle called "<<a<<" "<<b<<" "<<c<<"\n";
+ if ((a + b) < c) return PI;
+    if (abs(a-b) > c) return 0;
     //cos theorem
     return acos((a*a+b*b-c*c)/(2*a*b));
 
