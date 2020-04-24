@@ -181,7 +181,13 @@ drive(50,32767);
 void RoombaController::turnLeft()
 {
     cout<<"left called \n";
-drive(50,1);
+    drive(50,1);
+}
+
+void RoombaController::turnRight()
+{
+    cout<<"turn right called \n";
+    drive(50,-1);
 }
 
 void RoombaController::stopMoving()

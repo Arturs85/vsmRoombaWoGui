@@ -9,7 +9,7 @@
 #include "roombaController.hpp"
 
 
-enum class MovementStates{IDLE,FINISHED,DRIVING,TURNING};
+enum class MovementStates{IDLE,FINISHED,DRIVING,TURNING_LEFT,TURNING_RIGHT};
 using namespace std;
 
 class RoombaMovementManager
@@ -21,6 +21,7 @@ public:
 
     static bool driveDistance(int distMm);
     static bool turnLeft(int degrees);
+    static bool turnRight(int degrees);
     static int distanceRemaining;
     static int angleRemaining;
 static int direction;//tracks direction relative to starting point

@@ -47,6 +47,8 @@ void shutDown();
 
 static void driveForward();
 static void turnLeft();
+static void turnRight();
+
 static void stopMoving();
 
 private:

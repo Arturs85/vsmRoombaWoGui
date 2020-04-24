@@ -30,7 +30,7 @@ RoombaMovementManager::~RoombaMovementManager()
 
 bool RoombaMovementManager::driveDistance(int distMm)
 {
-    if(state==MovementStates::DRIVING||state==MovementStates::TURNING) return false;// dont let start next movement until previous is finished
+    if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
 
     roombaController->readDistance();// this clears roomba internal counter
     distanceRemaining = distMm;
@@ -40,12 +40,23 @@ bool RoombaMovementManager::driveDistance(int distMm)
 
 bool RoombaMovementManager::turnLeft(int degrees)
 {
-    if(state==MovementStates::DRIVING||state==MovementStates::TURNING) return false;// dont let start next movement until previous is finished
+    if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
 
     roombaController->readAngle();// this clears roomba internal counter
     angleRemaining = degrees;
-    state = MovementStates::TURNING;
+    state = MovementStates::TURNING_LEFT;
     roombaController->turnLeft();//
+}
+
+bool RoombaMovementManager::turnRight(int degrees)
+{
+    if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
+
+    roombaController->readAngle();// this clears roomba internal counter
+    angleRemaining = degrees;
+    state = MovementStates::TURNING_LEFT;
+    roombaController->turnRight();//
+
 }
 
 void RoombaMovementManager::startThread()
@@ -89,9 +100,20 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
                 roombaController->stopMoving();
             }}
             break;
-        case MovementStates::TURNING:{
+        case MovementStates::TURNING_LEFT:{
             int16_t angle = 3*roombaController->readAngle();
             angleRemaining -= angle;// for knowing when to stop
+ std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
+            direction+= angle;// for tracking direction
+
+            if(angleRemaining<0){
+                roombaController->stopMoving();
+                state = MovementStates::FINISHED;
+            }}
+            break;
+        case MovementStates::TURNING_RIGHT:{
+            int16_t angle = 3*roombaController->readAngle();
+            angleRemaining += angle;// for knowing when to stop
  std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
             direction+= angle;// for tracking direction
 

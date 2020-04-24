@@ -31,13 +31,13 @@ void TwoPointFormationProtocol::start()
 {
     switch (roleInProtocol) {
     case RoleInProtocol::STANDING_BEACON:// send query for confirmation of protocol start to still beacon
-       state = ProtocolStates::WAITING_START_REQUEST;
+        state = ProtocolStates::WAITING_START_REQUEST;
         break;
     case RoleInProtocol::MOVING_BEACON:{
         VSMMessage startRequest(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_STILL,MessageContents::TPF_START,"r");
-       behaviour->owner->sendMsg(startRequest);
+        behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_REPLY;
-}
+    }
     default:
         break;
     }
@@ -95,14 +95,14 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             state = nextStateOnPositeiveResult; //
         }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
             state = ProtocolStates::TIMEOUT;//
-        measureWaitCounter=0;
+            measureWaitCounter=0;
         }
     }
         break;
     case ProtocolStates::FIRST_MOVE:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
             startDistanceMeasurement(stillBeaconId,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED,ProtocolStates::TIMEOUT);
-std::cout<<">> tpfp started second measurement\n";
+            std::cout<<">> tpfp started second measurement\n";
         }break;
     case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:// now we have two measurements and traveled distance
         measuredDist[1]=latestMeasurement;
@@ -112,7 +112,7 @@ std::cout<<">> tpfp started second measurement\n";
         std::cout<<"relAngleH1 "<<relativeAngleH1<<"  relAngleH2 "<<relativeAngleH2<<"\n";
         
         dirBeforeTurn = behaviour->owner->movementManager->direction;
-        behaviour->owner->movementManager->turnLeft(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turnRight(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::TURN_DEGREES;
         break;
@@ -168,7 +168,7 @@ std::cout<<">> tpfp started second measurement\n";
         }
         // System.out.println("turn by: "+Math.toDegrees(turnBy));
 
-        behaviour->owner->movementManager->turnLeft(turnBy*180/PI);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turnRight(turnBy*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::FINAL_POSITION_TURN;
 
@@ -203,12 +203,12 @@ std::cout<<">> tpfp started second measurement\n";
     case ProtocolStates::TIMEOUT:{
         measureRetryCounter++;
         std::cout<<"tpfp 1 timeout "<<measureRetryCounter<<"\n";
-       if(measureRetryCounter<=measureRetries){
-        startDistanceMeasurement(stillBeaconId,nextStateOnPositeiveResult,nextStateOnNegativeResult);
-        break;
-       }
-       std::cout<<"tpfp failed to measure dist, stopping";
-       wasSuccessful = false;
+        if(measureRetryCounter<=measureRetries){
+            startDistanceMeasurement(stillBeaconId,nextStateOnPositeiveResult,nextStateOnNegativeResult);
+            break;
+        }
+        std::cout<<"tpfp failed to measure dist, stopping";
+        wasSuccessful = false;
         return true;
     }   break;
     }
@@ -269,7 +269,7 @@ double TwoPointFormationProtocol::calculateRelativeAngle(double mes1, double mes
     if ((mes2 + odoDist) < mes1) return 0;
     if ((mes1 + odoDist) < mes2) return PI;// todo revisit
     double angle = acos((odoDist * odoDist + mes2 * mes2 - mes1 * mes1) / (2 * odoDist * mes2));
- std::cout<<"calcRelAngle called "<<mes1<<" "<<mes2<<" "<<odoDist<<" angle: "<<angle<<"\n";
+    std::cout<<"calcRelAngle called "<<mes1<<" "<<mes2<<" "<<odoDist<<" angle: "<<angle<<"\n";
 
     return PI - angle;
 }
@@ -279,7 +279,7 @@ double TwoPointFormationProtocol::calcThirdSide(double a,double b,double angleRa
 
 double TwoPointFormationProtocol::calcAngle(double a, double b, double c)
 { std::cout<<"calcAngle called "<<a<<" "<<b<<" "<<c<<"\n";
- if ((a + b) < c) return PI;
+    if ((a + b) < c) return PI;
     if (abs(a-b) > c) return 0;
     //cos theorem
     return acos((a*a+b*b-c*c)/(2*a*b));
