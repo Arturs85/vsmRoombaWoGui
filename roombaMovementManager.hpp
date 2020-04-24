@@ -22,6 +22,8 @@ public:
     static bool driveDistance(int distMm);
     static bool turnLeft(int degrees);
     static bool turnRight(int degrees);
+    static bool turn(int degrees);//turn by amount of degrees, direction determined by sign
+
     static int distanceRemaining;
     static int angleRemaining;
 static int direction;//tracks direction relative to starting point

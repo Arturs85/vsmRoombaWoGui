@@ -112,7 +112,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         std::cout<<"relAngleH1 "<<relativeAngleH1<<"  relAngleH2 "<<relativeAngleH2<<"\n";
         
         dirBeforeTurn = behaviour->owner->movementManager->direction;
-        behaviour->owner->movementManager->turnRight(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turn(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::TURN_DEGREES;
         break;
@@ -168,7 +168,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         }
         // System.out.println("turn by: "+Math.toDegrees(turnBy));
 
-        behaviour->owner->movementManager->turnRight(turnBy*180/PI);//todo turn right is in sim, implement in movement manager
+        behaviour->owner->movementManager->turn(turnBy*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::FINAL_POSITION_TURN;
 

@@ -54,9 +54,17 @@ bool RoombaMovementManager::turnRight(int degrees)
 
     roombaController->readAngle();// this clears roomba internal counter
     angleRemaining = degrees;
-    state = MovementStates::TURNING_LEFT;
+    state = MovementStates::TURNING_RIGHT;
     roombaController->turnRight();//
 
+}
+
+bool RoombaMovementManager::turn(int degrees)
+{
+    if(degrees<0)
+        turnRight(-degrees);
+    else
+        turnLeft(degrees);
 }
 
 void RoombaMovementManager::startThread()
