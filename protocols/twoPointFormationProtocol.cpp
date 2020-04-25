@@ -151,7 +151,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
 
         double angleAfterMovement = PI - calcAngle(measuredDist[2],TRIANGLE_SIDE_MM/2,measuredDist[1]);
 
-        if (sin(da) < 0)//why this is needed?
+        if (sin(da) > 0)//why this is needed?
             angleAfterMovement = -angleAfterMovement;
 
         std::cout<<"angle to another after move: " << (angleAfterMovement*180/PI)<<"\n";
