@@ -27,7 +27,9 @@ public:
     static int distanceRemaining;
     static int angleRemaining;
 static int direction;//tracks direction relative to starting point
-    static MovementStates state;
+static int odometry;//tracks travel from starting point
+
+static MovementStates state;
 private:
     static bool isDriving;
     static RoombaController* roombaController;

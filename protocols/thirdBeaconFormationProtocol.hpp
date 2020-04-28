@@ -20,6 +20,7 @@ static constexpr int measureRetries = 3;
 static constexpr int measureResWaitTicks = 2;
 
 
+static double calcAngleAfterTurnAndMove(double prevRelatAngle, double turnAngle, double travel, double measAfter, double measBefore);
 private:
 int measureRetryCounter=0;
 int measureWaitCounter=0;
@@ -28,11 +29,15 @@ int measuredDistToFirst[4];
 int measuredDistToSecond[4];
 
 int latestMeasurement=0;
+int latestMeasuredBeaconId=0;
 
 double relativeAngleH1First;
 double relativeAngleH2First;
 double relativeAngleH1Second;
 double relativeAngleH2Second;
+double finalDistance;
+double finalAngle;
+double odoBeforeTravel =0;
 
 double dirBeforeTurn;
    double angleToFirstRobot;

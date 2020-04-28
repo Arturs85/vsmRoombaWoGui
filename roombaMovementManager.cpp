@@ -12,6 +12,7 @@ bool RoombaMovementManager::isDriving=false;
 int RoombaMovementManager::distanceRemaining =0;
 int RoombaMovementManager::angleRemaining =0;
 int RoombaMovementManager::direction =0;
+int RoombaMovementManager::odometry =0;
 
 MovementStates RoombaMovementManager::state= MovementStates::IDLE; 
 
@@ -99,9 +100,9 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         case MovementStates::DRIVING:{
             int16_t dist = roombaController->readDistance();// is right units used - mm ?
             //distanceRemaining -= dist;
-              distanceRemaining += (dist*7.7);//roomba koefic to get mm from roomba value
-            
-                       // std::cout<<"rmm distRemain: "<<distanceRemaining<<"\n";
+            distanceRemaining += (dist*7.7);//roomba koefic to get mm from roomba value
+            odometry+=abs(dist*7.7);// to track total odometry
+            // std::cout<<"rmm distRemain: "<<distanceRemaining<<"\n";
 
             if(distanceRemaining<0){
                 state = MovementStates::FINISHED;
@@ -111,7 +112,7 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         case MovementStates::TURNING_LEFT:{
             int16_t angle = 3*roombaController->readAngle();
             angleRemaining -= angle;// for knowing when to stop
- std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
+            std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
             direction+= angle;// for tracking direction
 
             if(angleRemaining<0){
@@ -122,7 +123,7 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         case MovementStates::TURNING_RIGHT:{
             int16_t angle = 3*roombaController->readAngle();
             angleRemaining += angle;// for knowing when to stop
- std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
+            std::cout<<"===--->> rmm angRemain: "<<angleRemaining<<"\n";
             direction+= angle;// for tracking direction
 
             if(angleRemaining<0){
