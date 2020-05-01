@@ -1,6 +1,7 @@
 #include "roombaMovementManager.hpp"
 #include <iostream>
 #include <ctime>
+#include <cmath>        // std::abs
 
 RoombaController* RoombaMovementManager::roombaController=0;
 //LocalMap* RoombaMovementManager::localMap=0;
@@ -101,7 +102,7 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
             int16_t dist = roombaController->readDistance();// is right units used - mm ?
             //distanceRemaining -= dist;
             distanceRemaining += (dist*7.7);//roomba koefic to get mm from roomba value
-            odometry+=abs(dist*7.7);// to track total odometry
+            odometry+=std::abs(dist*7.7);// to track total odometry
             // std::cout<<"rmm distRemain: "<<distanceRemaining<<"\n";
 
             if(distanceRemaining<0){
