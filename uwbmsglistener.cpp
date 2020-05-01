@@ -407,10 +407,11 @@ void *UwbMsgListener::receivingLoop(void *arg)
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
+               if(rx_buffer[RESPONDER_ID_IDX]==idFromHostname){
                 cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
                
                 respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX]);
-            }
+            }}
 
             else
             {

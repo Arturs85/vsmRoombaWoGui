@@ -7,9 +7,11 @@ class ThirdBeaconFormationProtocol;
 
 
 class BeaconMasterBehaviour: public BaseCommunicationBehaviour{// waits for requests from second beacon by TwoPoinFormation protocol
+public:
     BeaconOneStates beaconState;
     RoombaAgent* ra;
     ThirdBeaconFormationProtocol* thirdBeaconFormationProtocol;
+
     BeaconMasterBehaviour(RoombaAgent* roombaAgent);
     void behaviourStep();
 

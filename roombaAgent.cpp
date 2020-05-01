@@ -12,7 +12,7 @@
 #include "beaconTwoBehaviour.hpp"
 #include "s2BeaconsBehaviour.hpp"
 #include "beaconListenerBehaviour.hpp"
-
+#include "beaconMasterBehaviour.hpp"
 #define USLEEP_TIME_US 10000
 
 string RoombaAgent::getRoleListForMsg()
@@ -176,6 +176,9 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     }break;
     case VSMSubsystems::S1_BEACONS:{
         bcb = new BeaconListenerBehaviour(this);
+    }break;
+    case VSMSubsystems::BEACON_MASTER:{
+        bcb = new BeaconMasterBehaviour(this);
     }break;
 
     default:{

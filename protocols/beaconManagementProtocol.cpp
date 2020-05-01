@@ -108,7 +108,7 @@ std::cout<<"bmp beacon replying to s2 querry\n";
         VSMMessage* res2= behaviour->receive(MessageContents::BEACON_ROLE);// use none content description, because there should be only one type of msg in this topic
         if(res2 !=0){
             VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
-            std::cout<<"bmp beacon received role";
+            std::cout<<"bmp beacon received role\n";
             // todo inform agent to start (add) coresp. behaviour and start protocol
        behaviour->owner->addBehaviour(role);
         }
