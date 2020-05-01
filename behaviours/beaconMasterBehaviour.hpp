@@ -3,11 +3,13 @@
 #include "roombaAgent.hpp"
 #include "beaconOneBehaviour.hpp"
 
+class ThirdBeaconFormationProtocol;
+
 
 class BeaconMasterBehaviour: public BaseCommunicationBehaviour{// waits for requests from second beacon by TwoPoinFormation protocol
     BeaconOneStates beaconState;
     RoombaAgent* ra;
-   // TwoPointFormationProtocol* twoPointFormationProtocol;
+    ThirdBeaconFormationProtocol* thirdBeaconFormationProtocol;
     BeaconMasterBehaviour(RoombaAgent* roombaAgent);
     void behaviourStep();
 

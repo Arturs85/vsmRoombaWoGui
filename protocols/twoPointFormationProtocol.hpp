@@ -11,6 +11,7 @@ TwoPointFormationProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehavi
 int stillBeaconId=0;
 virtual void start();
 virtual bool tick();
+virtual ~TwoPointFormationProtocol();
 
 static double calculateRelativeAngle(double mes1, double mes2, double odoDist);
 static double calcThirdSide(double a, double b, double angleRad);
@@ -18,11 +19,15 @@ static double calcAngle(double a,double b,double c);
 
 static constexpr int measureRetries = 3;
 static constexpr int measureResWaitTicks = 2;
+static constexpr int finalAcknowledgeWaitTicks = 2;
+static constexpr int finalAcknowledgeRetries = 3;
 
 
 private:
 int measureRetryCounter=0;
 int measureWaitCounter=0;
+int acknowledgeRetryCounter=0;
+int acknowledgeWaitCounter=0;
 
 int measuredDist[4];
 int latestMeasurement=0;

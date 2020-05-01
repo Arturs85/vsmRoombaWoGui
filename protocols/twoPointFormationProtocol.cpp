@@ -27,6 +27,11 @@ bool TwoPointFormationProtocol::tick()
     return false;
 }
 
+TwoPointFormationProtocol::~TwoPointFormationProtocol()
+{
+
+}
+
 void TwoPointFormationProtocol::start()
 {
     switch (roleInProtocol) {
@@ -192,14 +197,36 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             startDistanceMeasurement(stillBeaconId,ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED,ProtocolStates::TIMEOUT);
         }
         break;
-    case ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED:
+    case ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED:{
         cout<<"final check measurement: "<<latestMeasurement<<"\n";
-        //todo - how to end protocol?
-        //sendReadyToMaster();
-        //enterState(FormationBehaviourStates.WAITING_BEAC_MASTER_REQUEST);
+        if(acknowledgeRetryCounter>=finalAcknowledgeRetries)
+        {
+            wasSuccessful = false;
+            return false;
+            break;
+        }
+        VSMMessage tpfpFinished(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"a");
+
+        behaviour->owner->sendMsg(tpfpFinished);
+        state = ProtocolStates::WAITING_ACKNOWLEDGE;
+      }
+        break;
+    case ProtocolStates::WAITING_ACKNOWLEDGE:{
+        if(acknowledgeWaitCounter++ >finalAcknowledgeWaitTicks){// resend finished message to third beacon
+            state= ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED;
+        }
+        VSMMessage* res = behaviour->receive(MessageContents::ACKNOWLEDGE);
+        if(res!= 0){
+        state = ProtocolStates::ACKNOWLEDGE_RECEIVED;
+        }}
+        break;
+    case ProtocolStates::ACKNOWLEDGE_RECEIVED:
+{
         wasSuccessful = true;// indicates that owner behaviour of this protocol can proceed with next protocol
         return true;
+}
         break;
+
     case ProtocolStates::TIMEOUT:{
         measureRetryCounter++;
         std::cout<<"tpfp 1 timeout "<<measureRetryCounter<<"\n";

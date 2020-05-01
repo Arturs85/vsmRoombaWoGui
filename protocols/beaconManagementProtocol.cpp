@@ -51,14 +51,17 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             // add senders id to beacons list
             availableBeaconsSet.insert(res->senderNumber);
             cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
-            if(availableBeaconsSet.size()>=2){
+            if(availableBeaconsSet.size()>=3){
                 //send roles to beacons
                std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
                 VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_ONE));// reply to querry, could send some additional info, e.g. bat level
                 VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_TWO));// reply to querry, could send some additional info, e.g. bat level
+                    VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_MASTER));// reply to querry, could send some additional info, e.g. bat level
 
                 behaviour->owner->sendMsg(roleRequest);
                 behaviour->owner->sendMsg(roleRequest2);
+                behaviour->owner->sendMsg(roleRequest3);
+
                 state = ProtocolStates::WAITING_CONFIRM_ROLE;
             }
         }

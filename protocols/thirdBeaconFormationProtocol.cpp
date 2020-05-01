@@ -31,11 +31,14 @@ bool ThirdBeaconFormationProtocol::tick()
 void ThirdBeaconFormationProtocol::start()
 {
     switch (roleInProtocol) {
-    case RoleInProtocol::STANDING_BEACON:// send query for confirmation of protocol start to still beacon
+    case RoleInProtocol::STANDING_BEACON:{// send query for confirmation of protocol start to still beacon
+//        VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"r");// tell 3rd beacon that still beacon is ready
+//        behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_START_REQUEST;
+    }
         break;
     case RoleInProtocol::MOVING_BEACON:{
-        VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_OUT,MessageContents::TPF_START,"r");
+        VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_OUT,MessageContents::THIRD_BFP_START,"r");
         behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_REPLY;
     }
@@ -49,11 +52,11 @@ bool ThirdBeaconFormationProtocol::standingBeaconTick()
 {
     //wait for request from movingBeacon to start, then stay in still mode
     switch (state) {
-    case ProtocolStates::WAITING_START_REQUEST:{
-        VSMMessage* res = behaviour->receive(MessageContents::TPF_START);
+    case ProtocolStates::WAITING_START_REQUEST:{ // add timeout to resend tpfp done if no acknowledgement received from 3rd beacon
+        VSMMessage* res = behaviour->receive(MessageContents::THIRD_BFP_START);
         if(res!= 0){
             state= ProtocolStates::STARTED;
-            VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
+            VSMMessage reply(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::AGREE,"a");
 
             behaviour->owner->sendMsg(reply);
 
@@ -74,7 +77,17 @@ bool ThirdBeaconFormationProtocol::standingBeaconTick()
 bool ThirdBeaconFormationProtocol::movingBeaconTick()
 {
     switch (state) {
-    case ProtocolStates::WAITING_REPLY:{
+    case ProtocolStates::IDLE:
+    {
+        VSMMessage* res = behaviour->receive(MessageContents::TPFP_DONE);
+        if(res!= 0){
+            VSMMessage acknowledge(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::ACKNOWLEDGE,"r");
+            behaviour->owner->sendMsg(acknowledge);// this msg will allow tpfp moving beacon to end its protocol
+        start();
+        }
+    }
+        break;
+    case ProtocolStates::WAITING_REPLY:{// wait messages from
         VSMMessage* res = behaviour->receive(MessageContents::AGREE);
         if(res!= 0){
             stillBeaconResponders.insert(res->senderNumber);// read other beacon id from its reply, id will be needed in dist measurement
@@ -89,11 +102,14 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         break;
 
     case ProtocolStates::FIRST_MEASUREMENT_RECEIVED_FROM_1:
+        std::cout<<"3rdbfp first measurement received from 1";
         measuredDistToFirst[0]= latestMeasurement;//
         startDistanceMeasurement(stillBeacon2Id,ProtocolStates::FIRST_MEASUREMENT_RECEIVED_FROM_2,ProtocolStates::TIMEOUT);// return to this same state after measurement is received or timeout state if not
 
         break;
     case ProtocolStates::FIRST_MEASUREMENT_RECEIVED_FROM_2:
+        std::cout<<"3rdbfp first measurement received from 2";
+
         measuredDistToSecond[0]= latestMeasurement;//
         enterState(ProtocolStates::FIRST_MOVE);
         break;
@@ -261,12 +277,12 @@ odoBeforeTravel = behaviour->owner->movementManager->odometry;
     }
     case ProtocolStates::TIMEOUT:{
         measureRetryCounter++;
-        std::cout<<"tpfp 1 timeout "<<measureRetryCounter<<"\n";
+        std::cout<<"3rdbfp 1 timeout "<<measureRetryCounter<<"\n";
         if(measureRetryCounter<=measureRetries){
             startDistanceMeasurement(latestMeasuredBeaconId,nextStateOnPositeiveResult,nextStateOnNegativeResult);
             break;
         }
-        std::cout<<"tpfp failed to measure dist, stopping";
+        std::cout<<"3rdbfp failed to measure dist, stopping";
         wasSuccessful = false;
         return true;
     }   break;
@@ -315,9 +331,9 @@ ThirdBeaconFormationProtocol::ThirdBeaconFormationProtocol(RoleInProtocol roleIn
 {
     this->roleInProtocol=roleInProtocol;
     if(roleInProtocol==RoleInProtocol::STANDING_BEACON)// responder needs to listen for requests in this topic, initiator will receive direct messages
-        behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_STILL);
+        behaviour->subscribeToTopic(Topics::THIRD_BEACON_OUT);
     else{
-        behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_MOVING);
+        behaviour->subscribeToTopic(Topics::THIRD_BEACON_IN);
     }
     behaviour->subscribeToDirectMsgs();
 }
