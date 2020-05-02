@@ -18,12 +18,16 @@ virtual bool tick();
 std::set<int> stillBeaconResponders;
 static constexpr int measureRetries = 3;
 static constexpr int measureResWaitTicks = 2;
+static constexpr int queryRetries = 3;
+static constexpr int replyResWaitTicks = 2;
 
 
 static double calcAngleAfterTurnAndMove(double prevRelatAngle, double turnAngle, double travel, double measAfter, double measBefore);
 private:
 int measureRetryCounter=0;
 int measureWaitCounter=0;
+int queryRetryCounter=0;
+int replyWaitCounter=0;
 
 int measuredDistToFirst[4];
 int measuredDistToSecond[4];

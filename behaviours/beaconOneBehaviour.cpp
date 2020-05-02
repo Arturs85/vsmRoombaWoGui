@@ -20,6 +20,7 @@ void BeaconOneBehaviour::behaviourStep()
                 beaconState = BeaconOneStates::PFP;
                 delete twoPointFormationProtocol;
                 thirdBeaconFormationProtocol = new ThirdBeaconFormationProtocol(RoleInProtocol::STANDING_BEACON,this);
+                std::cout<<"beacon one changing to 3rd bfp (pfp)\n";
                 // delete twoPointFormationProtocol;
                 // continue with next protocol
             }

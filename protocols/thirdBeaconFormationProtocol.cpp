@@ -32,15 +32,18 @@ void ThirdBeaconFormationProtocol::start()
 {
     switch (roleInProtocol) {
     case RoleInProtocol::STANDING_BEACON:{// send query for confirmation of protocol start to still beacon
-//        VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"r");// tell 3rd beacon that still beacon is ready
-//        behaviour->owner->sendMsg(startRequest);
+        //        VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"r");// tell 3rd beacon that still beacon is ready
+        //        behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_START_REQUEST;
     }
         break;
     case RoleInProtocol::MOVING_BEACON:{
+
+
         VSMMessage startRequest(behaviour->owner->id,Topics::THIRD_BEACON_OUT,MessageContents::THIRD_BFP_START,"r");
         behaviour->owner->sendMsg(startRequest);
         state = ProtocolStates::WAITING_REPLY;
+
     }
     default:
         break;
@@ -83,7 +86,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         if(res!= 0){
             VSMMessage acknowledge(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::ACKNOWLEDGE,"r");
             behaviour->owner->sendMsg(acknowledge);// this msg will allow tpfp moving beacon to end its protocol
-        start();
+            start();
         }
     }
         break;
@@ -97,7 +100,16 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
                 startDistanceMeasurement(stillBeacon1Id,ProtocolStates::FIRST_MEASUREMENT_RECEIVED_FROM_1,ProtocolStates::TIMEOUT);// return to this same state after measurement is received or timeout state if not
 
             }
+            replyWaitCounter=0;
         }
+        if(replyWaitCounter++>replyResWaitTicks){
+            if(queryRetryCounter++ > queryRetries){
+                wasSuccessful = false;
+                return true;
+            }
+            start();// resend invitations
+        }
+
     }
         break;
 
@@ -239,7 +251,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
 
             behaviour->owner->movementManager->driveDistance(finalDistance);  // drive forward distace
-odoBeforeTravel = behaviour->owner->movementManager->odometry;
+            odoBeforeTravel = behaviour->owner->movementManager->odometry;
             enterState(ProtocolStates::FINAL_POSITION_MOVE);
         }
 
@@ -251,8 +263,8 @@ odoBeforeTravel = behaviour->owner->movementManager->odometry;
         }
         break;
     case ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED:
-      measuredDistToFirst[3]= latestMeasurement;
-      startDistanceMeasurement(stillBeacon2Id,ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED_FROM_2,ProtocolStates::TIMEOUT);
+        measuredDistToFirst[3]= latestMeasurement;
+        startDistanceMeasurement(stillBeacon2Id,ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED_FROM_2,ProtocolStates::TIMEOUT);
         break;
     case ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED_FROM_2:
     {
@@ -264,7 +276,7 @@ odoBeforeTravel = behaviour->owner->movementManager->odometry;
 
         // calculate positions of other beacons after final move
         double deltaAngle = behaviour->owner->movementManager->direction - dirBeforeTurn;
-       double travel = behaviour->owner->movementManager->odometry-odoBeforeTravel;
+        double travel = behaviour->owner->movementManager->odometry-odoBeforeTravel;
         angleToFirstRobot = calcAngleAfterTurnAndMove(angleToFirstRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToFirst[2]);
 
         angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToSecond[2]);
@@ -334,17 +346,18 @@ ThirdBeaconFormationProtocol::ThirdBeaconFormationProtocol(RoleInProtocol roleIn
         behaviour->subscribeToTopic(Topics::THIRD_BEACON_OUT);
     else{
         behaviour->subscribeToTopic(Topics::THIRD_BEACON_IN);
+        state = ProtocolStates::IDLE;
     }
     behaviour->subscribeToDirectMsgs();
 }
 
 double ThirdBeaconFormationProtocol::calcAngleAfterTurnAndMove(double prevRelatAngle, double turnAngle, double travel, double measAfter,double measBefore){
-      double angleAfterMovement = PI - TwoPointFormationProtocol::calcAngle(travel,measAfter,measBefore);
+    double angleAfterMovement = PI - TwoPointFormationProtocol::calcAngle(travel,measAfter,measBefore);
 
-      if (sin(prevRelatAngle-turnAngle) < 0)// todo is this right for all cases
-          angleAfterMovement = -angleAfterMovement;
-      return angleAfterMovement;
-  }
+    if (sin(prevRelatAngle-turnAngle) < 0)// todo is this right for all cases
+        angleAfterMovement = -angleAfterMovement;
+    return angleAfterMovement;
+}
 
 
 

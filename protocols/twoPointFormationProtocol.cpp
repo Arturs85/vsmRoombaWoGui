@@ -64,8 +64,15 @@ bool TwoPointFormationProtocol::standingBeaconTick()
         }
         break;
     }
-    case ProtocolStates::STARTED:
+    case ProtocolStates::STARTED:{
         // listen for end of protocol msg ---todo implement ---
+        VSMMessage* res = behaviour->receive(MessageContents::TPFP_DONE);
+        if(res!= 0){
+            wasSuccessful = true;
+            return true;// end this protocol i.e inform behaviour that protocol is ended
+
+        }
+    }
         break;
 
     default:
@@ -199,7 +206,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         break;
     case ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED:{
         cout<<"final check measurement: "<<latestMeasurement<<"\n";
-        if(acknowledgeRetryCounter>=finalAcknowledgeRetries)
+        if(acknowledgeRetryCounter++ >=finalAcknowledgeRetries)
         {
             wasSuccessful = false;
             return false;
@@ -281,8 +288,10 @@ void TwoPointFormationProtocol::startDistanceMeasurement(int id,ProtocolStates n
 TwoPointFormationProtocol::TwoPointFormationProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
     this->roleInProtocol=roleInProtocol;
-    if(roleInProtocol==RoleInProtocol::STANDING_BEACON)// responder needs to listen for requests in this topic, initiator will receive direct messages
+    if(roleInProtocol==RoleInProtocol::STANDING_BEACON){// responder needs to listen for requests in this topic, initiator will receive direct messages
         behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_STILL);
+    behaviour->subscribeToTopic(Topics::THIRD_BEACON_IN);// to receive tpfp done from moving beacon
+    }
     else{
         behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_MOVING);
     }
