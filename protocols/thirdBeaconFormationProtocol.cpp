@@ -188,6 +188,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
 
     case ProtocolStates::SECOND_MOVE_MEASUREMENT_RECEIVED_FROM_2:
     {
+        measuredDistToSecond[2]=latestMeasurement;
+
         double predictedDistH1First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], TRIANGLE_SIDE_MM / 2, relativeAngleH1First);
         double predictedDistH2First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], TRIANGLE_SIDE_MM / 2, relativeAngleH2First);
         double predictedDistH1Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], TRIANGLE_SIDE_MM / 2, relativeAngleH1Second);

@@ -22,7 +22,9 @@ void BeaconTwoBehaviour::behaviourStep()
                 beaconState = BeaconOneStates::PFP;
                 delete twoPointFormationProtocol;
                 thirdBeaconFormationProtocol = new ThirdBeaconFormationProtocol(RoleInProtocol::STANDING_BEACON,this);
-             std::cout<<"beacon two changing to 3rd bfp (pfp)\n";
+                thirdBeaconFormationProtocol->start();// use start only in standing role
+
+                std::cout<<"beacon two changing to 3rd bfp (pfp)\n";
             }
         }
 
