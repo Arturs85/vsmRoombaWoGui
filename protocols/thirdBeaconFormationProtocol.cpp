@@ -200,7 +200,9 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         std::cout<<" Actual measure :" << measuredDistToFirst[2]<<"\n";
         std::cout<<" Predicted measureH1 :" << predictedDistH1First<<"\n";
         std::cout<<" Predicted measureH2 :" << predictedDistH2First<<"\n";
-
+std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
+        std::cout<<" Predicted measureH2 to second :" << predictedDistH2Second<<"\n";
+        
         double errH1 = abs(predictedDistH1First - measuredDistToFirst[2]);
         double errH2 = abs(predictedDistH2First - measuredDistToFirst[2]);
         double errH1Two = abs(predictedDistH1Second - measuredDistToSecond[2]);
@@ -225,7 +227,9 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         if (sin(daTwo) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
             angleAfterMovementSecond = -angleAfterMovementSecond;
 
-        std::cout<<"angle to another after move: " << (angleAfterMovement*180/PI)<<"\n";
+        std::cout<<"angle to another b1 after move: " << (angleAfterMovement*180/PI)<<"\n";
+        std::cout<<"angle to another b2 after move: " << (angleAfterMovementSecond*180/PI)<<"\n";
+        
         //System.out.println("absolute angle2 : " + Math.toDegrees(owner.publicPartOfAgent.direction));
 
         angleToFirstRobot = angleAfterMovement;
@@ -238,6 +242,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         double alfa = apb - PI / 3; //todo check this final angle calculation method
         finalDistance = TwoPointFormationProtocol::calcThirdSide(closestVertexDist, BEACONS_TRIANGLE_SIDE_MM, alfa);
         finalAngle = TwoPointFormationProtocol::calcAngle(finalDistance, closestVertexDist, BEACONS_TRIANGLE_SIDE_MM);
+       std::cout<<"final angle: " << (angleAfterMovement*180/PI)<<"\n";
+        
         // System.out.println("final angle : " + Math.toDegrees(finalAngle));
         dirBeforeTurn = behaviour->owner->movementManager->direction;
 
@@ -251,7 +257,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
 
     case ProtocolStates::FINAL_POSITION_TURN:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
-
+        
             behaviour->owner->movementManager->driveDistance(finalDistance);  // drive forward distace
             odoBeforeTravel = behaviour->owner->movementManager->odometry;
             enterState(ProtocolStates::FINAL_POSITION_MOVE);

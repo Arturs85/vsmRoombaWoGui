@@ -33,6 +33,7 @@ RoombaMovementManager::~RoombaMovementManager()
 bool RoombaMovementManager::driveDistance(int distMm)
 {
     if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
+std::cout<<"rmm drive called: " << distMm<<"\n";
 
     roombaController->readDistance();// this clears roomba internal counter
     distanceRemaining = distMm;

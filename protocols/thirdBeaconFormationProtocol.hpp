@@ -17,7 +17,7 @@ virtual bool tick();
 
 std::set<int> stillBeaconResponders;
 static constexpr int measureRetries = 3;
-static constexpr int measureResWaitTicks = 2;
+static constexpr int measureResWaitTicks = 4;// wait long enough to don't miss reply, because it can than be missreceived as next measurement result
 static constexpr int queryRetries = 3;
 static constexpr int replyResWaitTicks = 2;
 
