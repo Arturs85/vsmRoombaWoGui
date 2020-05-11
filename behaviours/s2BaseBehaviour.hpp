@@ -9,10 +9,13 @@ class S2BaseBehavior : public BaseCommunicationBehaviour{
 public:
 S2BaseBehavior(RoombaAgent *roombaAgent);
 
+protected:
+void behaviourStep();
+
+
 private:
 ControlValueProtocol* controlValueProtocol;
 
-void behaviourStep();
 
 
 

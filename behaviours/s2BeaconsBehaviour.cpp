@@ -14,6 +14,8 @@ operationsManagementProtocol->start();
 
 void S2BeaconsBehaviour::behaviourStep()
 {
+    S2BaseBehavior::behaviourStep();
+
     beaconManagementProtocol->tick();
     operationsManagementProtocol->tick();
 }
