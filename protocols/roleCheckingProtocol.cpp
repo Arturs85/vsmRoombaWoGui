@@ -8,6 +8,7 @@
 #define NUMBER_OF_RETRYS 3
 #define REQUEST_INTERVAL_TICKS 10/TICK_PERIOD_SEC //ten seconds
 
+
 RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
 
@@ -119,6 +120,23 @@ if(res->senderNumber!=behaviour->owner->id){//dont give roles to itsef - s3
         // send reply to initiator agent
         VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)unfilled));
         behaviour->owner->sendMsg(request);// null ptr check
+
+//mark that sender is present- update its time, or add new entry if it is not present on the list
+   std::map< int,double  >* presentRobots =  &((S3Behaviour*)behaviour)->knownAgents;
+
+   auto search = presentRobots->find(res->senderNumber);
+
+   if (search != presentRobots->end()) {
+       presentRobots->at(res->senderNumber)=behaviour->owner->getSystemTimeSec();
+   } else {
+       presentRobots->emplace(res->senderNumber,behaviour->owner->getSystemTimeSec());
+
+   }
+
+
+
+
+
 }
 delete res;
     }

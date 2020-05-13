@@ -2,6 +2,8 @@
 #include "roleCheckingProtocol.hpp"
 #include "controlValueProtocol.hpp"
 #include "operationsManagementProtocol.hpp"
+#include "roombaAgent.hpp"
+
 
 const std::vector<VSMSubsystems> S3Behaviour::requiredRoles ({VSMSubsystems::S2_BEACONS});//,VSMSubsystems::S2_EXPLORERS});
 
@@ -46,6 +48,26 @@ void S3Behaviour::markAsFilled(VSMSubsystems role, int agentId)
         }
         else ++it;
     }
+}
+
+
+
+int S3Behaviour::getActiveRobotsCount()// for initial control value calc
+{
+   int count =0;
+std::map<int, double>::iterator it = knownAgents.begin();
+double timeNow = owner->getSystemTimeSec();
+while (it != knownAgents.end())
+   {
+   // Accessing VALUE from element pointed by it.
+   double timeSeen = it->second;
+if(timeNow-timeSeen<MARK_ABSENT_TIMEOUT)
+count++;
+
+   it++;
+   }
+
+  return count;
 }
 
 void S3Behaviour::behaviourStep()

@@ -3,6 +3,7 @@
 #include "baseCommunicationBehaviour.hpp"
 
 class ControlValueProtocol;
+enum S2Types{BEACONS, EXPLORERS};
 
 class S2BaseBehavior : public BaseCommunicationBehaviour{
 
