@@ -13,6 +13,8 @@
 #include "s2BeaconsBehaviour.hpp"
 #include "beaconListenerBehaviour.hpp"
 #include "beaconMasterBehaviour.hpp"
+#include "explorerListenerBehaviour.hpp"
+
 #define USLEEP_TIME_US 10000
 
 string RoombaAgent::getRoleListForMsg()
@@ -37,12 +39,12 @@ void RoombaAgent::initHardware(){
     roombaController = new RoombaController(&uartTest);
     roombaController->startFull();
     
-			uint16_t ca = roombaController->readBattCapacity();
-            uint16_t ch = roombaController->readBattCharge();
-            std::cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
-            
+    uint16_t ca = roombaController->readBattCapacity();
+    uint16_t ch = roombaController->readBattCharge();
+    std::cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
+
     movementManager = new RoombaMovementManager(roombaController);
-setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
+    setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
     //std::cout<<"ra initHardware complete\n";
 
 }
@@ -153,7 +155,7 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
             BaseCommunicationBehaviour* b =findBehaviourByName(beh);
             //  call behaviours remove
             if(b!=0)
-            b->remove();
+                b->remove();
             //delete b;
         }    }
 
@@ -175,12 +177,16 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
         bcb = new S2BeaconsBehaviour(this);
     }break;
     case VSMSubsystems::S1_BEACONS:{
+        cout<<"changing s1 type to BEACON\n";
         bcb = new BeaconListenerBehaviour(this);
     }break;
     case VSMSubsystems::BEACON_MASTER:{
         bcb = new BeaconMasterBehaviour(this);
     }break;
-
+    case VSMSubsystems::S1_EXPLORERS:{
+        cout<<"changing s1 type to EXPLORER\n";
+        bcb = new ExplorerListenerBehaviour(this);
+    }break;
     default:{
         cout<<"not implemented \n";
         return;
@@ -218,7 +224,7 @@ void RoombaAgent::removeBehaviour(BaseCommunicationBehaviour *bcb)
     roleList.erase(std::remove(roleList.begin(),roleList.end(),bcb->type),roleList.end());// remove from enums list, but is this list needed?
 
     behavioursList.erase(std::remove(behavioursList.begin(), behavioursList.end(), bcb), behavioursList.end());// remove by value
-cout<<"ra removing behaviour: "<<typeid (*bcb).name()<<"\n";
+    cout<<"ra removing behaviour: "<<typeid (*bcb).name()<<"\n";
 }
 
 void RoombaAgent::sendMsg(VSMMessage msg)

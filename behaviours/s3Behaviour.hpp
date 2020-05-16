@@ -23,9 +23,10 @@ public:
     void markAsFilled(VSMSubsystems role, int agentId);
     std::map< int,double  > knownAgents;//<id,abs time when last comm >, this map lets know, present agents and time since they was last heard from
 int getActiveRobotsCount();//return nr of robots that has used rcp protocol recently
-void updateCvals();
-private:
+void updateCvals(int beaconsNeeded);
 vector<int> cvals;
+
+private:
 S3States state;
     RoleCheckingProtocol* roleCheckingProtocol;
     ControlValueProtocol* controlValueProtocol;

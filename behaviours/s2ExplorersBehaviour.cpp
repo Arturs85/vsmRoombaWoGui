@@ -5,7 +5,7 @@
 S2ExplorersBehaviour::S2ExplorersBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(roombaAgent)
 {
     this->ra = roombaAgent;
-
+s2type = S2Types::EXPLORERS;
     //beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::S2BEACON,this);
     operationsManagementProtocol = new OperationsManagementProtocol(RoleInProtocol::S2BEACON,this);
 operationsManagementProtocol->start();

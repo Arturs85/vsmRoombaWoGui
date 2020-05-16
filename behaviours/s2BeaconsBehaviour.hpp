@@ -13,6 +13,8 @@ public:
     S2BeaconsBehaviour(RoombaAgent* roombaAgent);
  BeaconManagementProtocol* beaconManagementProtocol;
 OperationsManagementProtocol* operationsManagementProtocol;
+int getS1IdForGiveaway();
+
 private:
     void behaviourStep();
 

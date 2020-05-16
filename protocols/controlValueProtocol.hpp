@@ -15,7 +15,7 @@ virtual bool tick();
 void sendCvals(vector<int> cVals);
 
 private:
-
+int tickCount=0;
 bool senderTick();
 bool receiverTick();
 

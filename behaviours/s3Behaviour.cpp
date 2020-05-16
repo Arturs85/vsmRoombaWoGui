@@ -16,6 +16,8 @@ S3Behaviour::S3Behaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
     operationsManagementProtocol->start();
     unfilledRoles = requiredRoles;// copy contents of vector
     type=VSMSubsystems::S3;
+     cvals=vector<int>((int)S2Types::SIZE_OF_THIS_ENUM,0);//initialize cvals according to the size of defined s2 role count
+
 }
 
 VSMSubsystems S3Behaviour::getUnfilledRole()
@@ -54,27 +56,34 @@ void S3Behaviour::markAsFilled(VSMSubsystems role, int agentId)
 
 int S3Behaviour::getActiveRobotsCount()// for initial control value calc
 {
-   int count =0;
-std::map<int, double>::iterator it = knownAgents.begin();
-double timeNow = owner->getSystemTimeSec();
-while (it != knownAgents.end())
-   {
-   // Accessing VALUE from element pointed by it.
-   double timeSeen = it->second;
-if(timeNow-timeSeen<MARK_ABSENT_TIMEOUT)
-count++;
+    int count =0;
+    std::map<int, double>::iterator it = knownAgents.begin();
+    double timeNow = owner->getSystemTimeSec();
+    while (it != knownAgents.end())
+    {
+        // Accessing VALUE from element pointed by it.
+        double timeSeen = it->second;
+        if(timeNow-timeSeen<MARK_ABSENT_TIMEOUT)
+            count++;
 
-   it++;
-   }
+        it++;
+    }
 
-  return count;
+    return count;
+}
+
+void S3Behaviour::updateCvals(int beaconsNeeded)
+{
+int robotsAlvail = getActiveRobotsCount();
+cvals.at(S2Types::BEACONS)=beaconsNeeded;
+cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;
 }
 
 void S3Behaviour::behaviourStep()
 {
     roleCheckingProtocol->tick();
     controlValueProtocol->tick();
-operationsManagementProtocol->tick();
+    operationsManagementProtocol->tick();
     switch (state) {
 
     }

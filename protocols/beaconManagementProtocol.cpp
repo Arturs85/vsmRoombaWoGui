@@ -4,14 +4,15 @@
 #include <unistd.h>
 #include "s3Behaviour.hpp"
 #include "beaconOneBehaviour.hpp"
+#include "s2BeaconsBehaviour.hpp"
+#include "baseS1ManagementProtocol.hpp"
 
-
-BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
+BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseS1ManagementProtocol(roleInProtocol,ownerBeh)
 {
 
     this->roleInProtocol = roleInProtocol;
     if(roleInProtocol==RoleInProtocol::S2BEACON)// responder needs to listen for requests in this topic, initiator will receive direct messages
-      {  behaviour->subscribeToTopic(Topics::TO_S2BEACONS);
+    {  behaviour->subscribeToTopic(Topics::TO_S2BEACONS);
     }
     else{
         behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
@@ -22,8 +23,8 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
 
 void BeaconManagementProtocol::start(){
     if(roleInProtocol==RoleInProtocol::S2BEACON)
-    querryBeacons();
-	}
+        querryBeacons();
+}
 
 bool BeaconManagementProtocol::tick()// todo modify from source copy
 {
@@ -42,28 +43,44 @@ bool BeaconManagementProtocol::tick()// todo modify from source copy
     return false;
 }
 
-bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
+int BeaconManagementProtocol::getUnusedBeaconId()
 {
+    //todo
+}
+
+//void BeaconManagementProtocol::sendChangeType(int robotId, VSMSubsystems s1NewType)// to call from outside of class
+//{
+//    VSMMessage roleRequest(behaviour->owner->id,robotId,MessageContents::BEACON_ROLE,std::to_string((int)s1NewType));
+//    behaviour->owner->sendMsg(roleRequest);
+
+//}
+
+bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
+{// receive messages independing of state
+    VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
+    if(res!=0){
+        // add senders id to beacons list
+        availableBeaconsSet.insert(res->senderNumber);
+        cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
+        ((S2BeaconsBehaviour*)behaviour)->lastS1Count=availableBeaconsSet.size();//set this value in behaviour for other protocols to use it
+    }
+
     switch (state) {
     case ProtocolStates::WAITING_REPLY:{
-        VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
-        if(res!=0){
-            // add senders id to beacons list
-            availableBeaconsSet.insert(res->senderNumber);
-            cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
-            if(availableBeaconsSet.size()>=3){
-                //send roles to beacons
-               std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
-                VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_ONE));// reply to querry, could send some additional info, e.g. bat level
-                VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_TWO));// reply to querry, could send some additional info, e.g. bat level
-                    VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_MASTER));// reply to querry, could send some additional info, e.g. bat level
 
-                behaviour->owner->sendMsg(roleRequest);
-                behaviour->owner->sendMsg(roleRequest2);
-                behaviour->owner->sendMsg(roleRequest3);
+        if(availableBeaconsSet.size()>=3){
+            //send roles to beacons
+            std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
+            VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_ONE));// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_TWO));// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_MASTER));// reply to querry, could send some additional info, e.g. bat level
 
-                state = ProtocolStates::WAITING_CONFIRM_ROLE;
-            }
+            behaviour->owner->sendMsg(roleRequest);
+            behaviour->owner->sendMsg(roleRequest2);
+            behaviour->owner->sendMsg(roleRequest3);
+
+            state = ProtocolStates::WAITING_CONFIRM_ROLE;
+
         }
     }
 
@@ -83,8 +100,8 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
                 bMasterIsFilled = true;
                 break;
             }
-        if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled) state = ProtocolStates::WAITING_FORMATION_COMPLETE;
-        std::cout<<"bmp all beacon roles filled \n";
+            if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled) state = ProtocolStates::WAITING_FORMATION_COMPLETE;
+            std::cout<<"bmp all beacon roles filled \n";
         }
     }
     case ProtocolStates::WAITING_FORMATION_COMPLETE:
@@ -102,17 +119,17 @@ bool BeaconManagementProtocol::beaconTick()
             VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,"rq");// reply to querry, could send some additional info, e.g. bat level
             behaviour->owner->sendMsg(replyToQuerry);
             // state = ProtocolStates::WAITING_REPLY;
-std::cout<<"bmp beacon replying to s2 querry\n";
+            std::cout<<"bmp beacon replying to s2 querry\n";
 
         }// try to receive order
         VSMMessage* res2= behaviour->receive(MessageContents::BEACON_ROLE);// use none content description, because there should be only one type of msg in this topic
         if(res2 !=0){
             VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
-            std::cout<<"bmp beacon received role\n";
+            std::cout<<"bmp beacon received role"<<res2->content <<"\n";
             // todo inform agent to start (add) coresp. behaviour and start protocol
-       behaviour->owner->addBehaviour(role);
+            behaviour->owner->addBehaviour(role);
         }
-
+     
     }
         break;
     }

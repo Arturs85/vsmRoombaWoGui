@@ -15,7 +15,7 @@ private:
 
 bool s3Tick();
 bool s2Tick();
-void enterState(ProtocolStates stateToEnter);// for moving beacon
+void enterState(ProtocolStates stateToEnter);
 
 };
 

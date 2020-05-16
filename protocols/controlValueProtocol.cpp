@@ -3,7 +3,7 @@
 #include "roombaAgent.hpp"// for editing
 #include <unistd.h>
 #include "s3Behaviour.hpp"
-
+#include "s2BaseBehaviour.hpp"
 
 
 ControlValueProtocol::ControlValueProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
@@ -50,7 +50,12 @@ void ControlValueProtocol::sendCvals(vector<int> cVals)
 
 bool ControlValueProtocol::senderTick()// for s3, aka initiator or sender ---todo implement
 {
-//listen for increase requests
+tickCount++;
+if(tickCount%10==0){// send cVals to s2 every 10 seconds, if tick is one second
+sendCvals(((S3Behaviour*)behaviour)->cvals);
+}
+
+    //listen for increase requests
 
     return false;
 }
@@ -61,6 +66,7 @@ bool ControlValueProtocol::receiverTick()//for s2, aka responder or receiver
     VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
         cVals = BaseProtocol::stringTointVector(res->content);
+   ((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
     }
     return 0;
 }

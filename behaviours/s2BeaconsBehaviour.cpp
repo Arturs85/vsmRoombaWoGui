@@ -5,8 +5,9 @@
 S2BeaconsBehaviour::S2BeaconsBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(roombaAgent)
 {
     this->ra = roombaAgent;
+    s2type = S2Types::BEACONS;
 
-    beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::S2BEACON,this);
+    s1ManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::S2BEACON,this);
     operationsManagementProtocol = new OperationsManagementProtocol(RoleInProtocol::S2BEACON,this);
 operationsManagementProtocol->start();
 }
@@ -16,6 +17,16 @@ void S2BeaconsBehaviour::behaviourStep()
 {
     S2BaseBehavior::behaviourStep();
 
-    beaconManagementProtocol->tick();
+    s1ManagementProtocol->tick();
     operationsManagementProtocol->tick();
+}
+
+int S2BeaconsBehaviour::getS1IdForGiveaway()
+{
+
+    //check bmp to see if there is posssible beacon to give away
+
+   return s1ManagementProtocol->getUnusedBeaconId();
+    //if(beaconManagementProtocol->)
+return 0;
 }

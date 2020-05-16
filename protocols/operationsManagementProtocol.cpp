@@ -9,6 +9,8 @@
 #include "beaconManagementProtocol.hpp"
 
 #define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
+#define BEACONS_COUNT_NORMAL 3
+#define BEACONS_COUNT_REFORMATION 6
 
 OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
@@ -29,8 +31,8 @@ void OperationsManagementProtocol::start()
 
         VSMMessage startRequest(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FIRST_FORMATION_START,"r");
         behaviour->owner->sendMsg(startRequest);
-        state = ProtocolStates::WAITING_REPLY;
-    cout<<"omp s3 sent start formation to s2b\n";
+        enterState(ProtocolStates::WAITING_REPLY);
+        cout<<"omp s3 sent start formation to s2b\n";
     }
         break;
     case RoleInProtocol::S2BEACON:
@@ -61,9 +63,9 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
         VSMMessage* res = behaviour->receive(MessageContents::AGREE);
         if(res!= 0){
             //enter state waiting formation complete
-            state = ProtocolStates::WAITING_FORMATION_COMPLETE;
+            enterState(ProtocolStates::WAITING_FORMATION_COMPLETE);
             delete res;
-        break;
+            break;
         }
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
@@ -87,20 +89,39 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
 bool OperationsManagementProtocol::s2Tick()
 {
     switch (state) {
-   case ProtocolStates::WAITING_START_REQUEST:{
+    case ProtocolStates::WAITING_START_REQUEST:{
         VSMMessage* res = behaviour->receive(MessageContents::FIRST_FORMATION_START);
         if(res!= 0){
             //owner s2 should send beacon info queries to see if there is enough beacons, choose all three beacons and make first of them to start tpfp
-       cout<<"S2 beacons received -start first formation \n";
+            cout<<"S2 beacons received -start first formation \n";
 
-       ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
-       //send confirmation to s3 - todo
-       state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
+            ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
+            //send confirmation to s3 - todo
+            state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
             delete res;
         }}
         break;
-   case ProtocolStates::WAITING_FORMATION_COMPLETE:
+    case ProtocolStates::WAITING_FORMATION_COMPLETE:
         break;
     }
     return false;
+}
+
+void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for s3
+{
+    switch (state) {
+    case ProtocolStates::WAITING_REPLY:
+    {
+        state = ProtocolStates::WAITING_REPLY;
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+
+    }
+        break;
+
+    case ProtocolStates::WAITING_FORMATION_COMPLETE:{
+        state = ProtocolStates::WAITING_FORMATION_COMPLETE;
+    ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+    }
+        break;
+    }
 }
