@@ -36,3 +36,10 @@ void BeaconTwoBehaviour::behaviourStep()
         break;
     }
 }
+
+void BeaconTwoBehaviour::remove()
+{
+    BaseCommunicationBehaviour::remove();
+    ra->uwbMsgListener.idFromBeaconType=0;//erease id so uwb listener does not respond to triang measurements
+
+}

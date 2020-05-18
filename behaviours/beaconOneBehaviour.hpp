@@ -16,6 +16,7 @@ class BeaconOneBehaviour: public BaseCommunicationBehaviour{// waits for request
 
     BeaconOneBehaviour(RoombaAgent* roombaAgent);
     void behaviourStep();
+    virtual void remove();
 
 
 };

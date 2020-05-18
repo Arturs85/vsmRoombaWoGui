@@ -22,7 +22,7 @@ using namespace std;
 
 
 typedef unsigned long long uint64;
-
+class RoombaAgent;
 class UwbMsgListener
 {
 
@@ -42,13 +42,17 @@ public:
     static bool isSending;
     static bool isReceivingThreadRunning;
     static uint8_t idFromHostname;
+    static uint8_t idFromBeaconType;
+
     //size_t rawTxMessageNominalSize = 150;// header+127=?
     static std::deque<RawTxMessage> txDeque;
     static std::deque<VSMMessage> rxDeque;
     static std::deque<int> rangingInitDeque;
+    static RoombaAgent* owner;
 
-
+    UwbMsgListener(RoombaAgent* owner);
     UwbMsgListener();
+
     ~UwbMsgListener();
     static void initialize(char hostId);
     static void* receivingLoop(void* arg);
@@ -64,7 +68,7 @@ public:
     static void addToTxDeque(VSMMessage msg);
 
     static void addToRangingInitDeque(int rangingTarget);
-    static void respondToRangingRequest(uint8_t initiatorId=0);
+    static void respondToRangingRequest(uint8_t initiatorId,uint8_t ownId);
     static void initiateRanging(int targetId=0);
     static VSMMessage *getFirstRxMessageFromDeque();//and remove it from deque
 

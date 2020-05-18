@@ -25,7 +25,8 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <termios.h>
-
+#include "baseProtocol.hpp"
+#include "roombaAgent.hpp"
 
 
 /* Example application name and version to display on LCD screen. */
@@ -186,6 +187,11 @@ int UwbMsgListener::kbhit()
 UwbMsgListener::UwbMsgListener()
 {
 }
+UwbMsgListener::UwbMsgListener(RoombaAgent *owner)
+{
+    UwbMsgListener::owner=owner;
+}
+
 UwbMsgListener::~UwbMsgListener()
 {
 }
@@ -285,25 +291,25 @@ void UwbMsgListener::readDeviceData(){
 void UwbMsgListener::initialize(char hostId)
 {
 
-idFromHostname = hostId;
-//    char hostname[HOST_NAME_MAX];
-//    int res =gethostname(hostname, HOST_NAME_MAX);
-//    if(!res){
-//        printf ("device hostname: %s\n",hostname);
-//        std::string subStr = string(hostname).substr (4,5);     // id position in hostname
-//        int r=0;
-//        try{
-//            r = stoi(subStr);
-//        }
-//        catch(std::invalid_argument& e){
-//            std::cout<< "cant convert to int\n";
-//        }
-//        idFromHostname = (uint8_t)r;
-//    }
-//    else
-//        printf ("unable to get device hostname\n");
+    idFromHostname = hostId;
+    //    char hostname[HOST_NAME_MAX];
+    //    int res =gethostname(hostname, HOST_NAME_MAX);
+    //    if(!res){
+    //        printf ("device hostname: %s\n",hostname);
+    //        std::string subStr = string(hostname).substr (4,5);     // id position in hostname
+    //        int r=0;
+    //        try{
+    //            r = stoi(subStr);
+    //        }
+    //        catch(std::invalid_argument& e){
+    //            std::cout<< "cant convert to int\n";
+    //        }
+    //        idFromHostname = (uint8_t)r;
+    //    }
+    //    else
+    //        printf ("unable to get device hostname\n");
 
-//    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
+    //    cout<<" Id from hostname: "<<idFromHostname+0<<"\n";
 
     VSMMessage vsmmsg={VSMSubsystems::S1,Topics::BROADCAST,MessageContents::NONE,"123"};
     string s =vsmmsg.toString();
@@ -358,6 +364,7 @@ idFromHostname = hostId;
 
 bool UwbMsgListener::isReceivingThreadRunning =1;
 uint8_t UwbMsgListener::idFromHostname=0;
+uint8_t UwbMsgListener::idFromBeaconType=0;
 
 void *UwbMsgListener::receivingLoop(void *arg)
 {
@@ -388,7 +395,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFL_MASK_1023;
-           // cout<<"received frame with length "<<frame_len<<"\n";
+            // cout<<"received frame with length "<<frame_len<<"\n";
             
             if (frame_len <= RX_BUFFER_LEN)
             {
@@ -398,20 +405,20 @@ void *UwbMsgListener::receivingLoop(void *arg)
             /* Check that the frame is a poll sent by "DS TWR initiator" example.
              * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
             rx_buffer[ALL_MSG_SN_IDX] = 0;
-//cout<<"rx: ";
-//            for (int var = 0; var < ALL_MSG_COMMON_LEN; ++var) {
-//                cout<<rx_buffer[var]+0<<" ";
+            //cout<<"rx: ";
+            //            for (int var = 0; var < ALL_MSG_COMMON_LEN; ++var) {
+            //                cout<<rx_buffer[var]+0<<" ";
 
-//            }
-//            cout<<"\n ";
+            //            }
+            //            cout<<"\n ";
 
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
-               if(rx_buffer[RESPONDER_ID_IDX]==idFromHostname){
-                cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
-               
-                respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX]);
-            }}
+                if(rx_buffer[RESPONDER_ID_IDX]==idFromHostname||(rx_buffer[RESPONDER_ID_IDX]==idFromHostname&&idFromHostname!=0)){
+                    cout<<"poll from "<<rx_buffer[INITIATOR_ID_IDX]+0<<"\n";
+
+                    respondToRangingRequest(rx_buffer[INITIATOR_ID_IDX],rx_buffer[RESPONDER_ID_IDX]);//pass own id, because it can be behaviours id also
+                }}
 
             else
             {
@@ -420,7 +427,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                 string rxWHeader=string(rxData,length);
                 string rxString= string(rxWHeader,ALL_MSG_COMMON_LEN,length-2-ALL_MSG_COMMON_LEN);
                 VSMMessage m;
-             //   cout<<"rx: "<<rxString<<"\n";
+                //   cout<<"rx: "<<rxString<<"\n";
 
                 int res =VSMMessage::stringToVsmMessage(rxString,&m);
                 if(res){
@@ -428,7 +435,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                     rxDeque.push_back(m); // mutex to be added for access to rxdeque
                     pthread_mutex_unlock(&rxDequeLock);
 
-                 //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
+                    //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
                     cout <<"rx valid msg--> sender: "<<(int)m.sender<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<"\n";
                 }
 
@@ -540,7 +547,7 @@ void UwbMsgListener::addToRangingInitDeque(int rangingTarget)
 
 }
 
-void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
+void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
 {
     uint32 resp_tx_time;
     int ret;
@@ -559,7 +566,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
     /* Write and send the response message. See NOTE 10 below.*/
     tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
-    tx_resp_msg[RESPONDER_ID_IDX]=idFromHostname;//set responder (this) hostname
+    tx_resp_msg[RESPONDER_ID_IDX]=ownId;//set responder (this) hostname
     tx_resp_msg[INITIATOR_ID_IDX]=initiatorId;//set initiator hostname
 
     dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buffer. */
@@ -602,7 +609,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
             cout<<"initiator id "<<initiatorId+0<<"\n";
 
             if(rx_buffer[RESPONDER_ID_IDX]!= 0){//======temp---- id targeted measurement
-                if(rx_buffer[RESPONDER_ID_IDX]!=idFromHostname||rx_buffer[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
+                if(rx_buffer[RESPONDER_ID_IDX]!=ownId||rx_buffer[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
                 {
                     /* Reset RX to properly reinitialise LDE operation. */
                     dwt_rxreset();
@@ -641,11 +648,20 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId)
 
             /* Display computed twrDistance on LCD. */
             printf("DIST: %3.2f m\n", twrDistance);
-            VSMMessage replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
-        //usleep(SLEEP_BETWEEN_SENDING_US);
+
+            VSMMessage replymsg;
+            replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
+
+            if(idFromHostname!=ownId)// this is beacon x behavoir targeted measurement, send results to beacons master also
+            {
+                vector<int> data{(int)(twrDistance*100),rx_buffer[INITIATOR_ID_IDX]};
+                VSMMessage   replymsg2={ownId,Topics::BEACON_MASTER_IN,MessageContents::DISTANCE_MEASUREMENT_AND_ID,BaseProtocol::intVectorToString(data)};// todo- update receiver and sender with id
+               owner->sendMsg(replymsg2);// use owner send, because it will intercept own messages
+            }
+            //usleep(SLEEP_BETWEEN_SENDING_US);
 
             addToTxDeque(replymsg);
-       }
+        }
     }
     else
     {
@@ -669,10 +685,10 @@ void UwbMsgListener::initiateRanging(int targetId )
     /* Write frame data to DW1000 and prepare transmission. See NOTE 8 below. */
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
     int msgLengthToCompare = ALL_MSG_COMMON_LEN;
-   // if(targetId != 0){// id targeted measurement
-        //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
-        tx_poll_msg[INITIATOR_ID_IDX]=idFromHostname;// own id
-        tx_poll_msg[RESPONDER_ID_IDX]=targetId;
+    // if(targetId != 0){// id targeted measurement
+    //  msgLengthToCompare =ALL_MSG_COMMON_LEN-2;//reserve last symbol for target id
+    tx_poll_msg[INITIATOR_ID_IDX]=idFromHostname;// own id
+    tx_poll_msg[RESPONDER_ID_IDX]=targetId;
 
     //}
     dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0); /* Zero offset in TX buffer. */
@@ -720,8 +736,8 @@ void UwbMsgListener::initiateRanging(int targetId )
                 }
             }
             else{
-				targetId = rx_buffer[RESPONDER_ID_IDX];//if initial target was 0 (broadcast), then for final msg use id from response
-				}
+                targetId = rx_buffer[RESPONDER_ID_IDX];//if initial target was 0 (broadcast), then for final msg use id from response
+            }
             uint32 final_tx_time;
             int ret;
             printf("response received\n");
@@ -784,7 +800,7 @@ void UwbMsgListener::initiateRanging(int targetId )
     }
 
     /* Execute a delay between ranging exchanges. */
-   // deca_sleep(RNG_DELAY_MS);
+    // deca_sleep(RNG_DELAY_MS);
 }
 
 //returns 0 if there is no messages

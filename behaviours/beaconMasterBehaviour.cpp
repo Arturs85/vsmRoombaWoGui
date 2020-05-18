@@ -11,7 +11,6 @@ BeaconMasterBehaviour::BeaconMasterBehaviour(RoombaAgent *roombaAgent):BaseCommu
     this->ra = roombaAgent;
     beaconState = BeaconOneStates::PFP;
     thirdBeaconFormationProtocol = new ThirdBeaconFormationProtocol(RoleInProtocol::MOVING_BEACON,this);
-
   //  twoPointFormationProtocol->start();
 }
 
@@ -29,4 +28,10 @@ void BeaconMasterBehaviour::behaviourStep()
 
       break;
   }
+}
+
+void BeaconMasterBehaviour::remove()
+{
+    BaseCommunicationBehaviour::remove();
+    ra->uwbMsgListener.idFromBeaconType=0;//erease id so uwb listener does not respond to triang measurements
 }

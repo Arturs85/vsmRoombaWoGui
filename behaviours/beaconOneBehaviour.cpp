@@ -33,4 +33,14 @@ void BeaconOneBehaviour::behaviourStep()
     }
         break;
     }
+
 }
+
+void BeaconOneBehaviour::remove()
+{
+    BaseCommunicationBehaviour::remove();
+    ra->uwbMsgListener.idFromBeaconType=0;//erease id so uwb listener does not respond to triang measurements
+
+}
+
+

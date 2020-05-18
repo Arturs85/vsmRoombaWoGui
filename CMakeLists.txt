@@ -36,7 +36,7 @@ list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp"
     "behaviours/beaconTwoBehaviour.cpp" "behaviours/beaconMasterBehaviour.cpp" "behaviours/s2BeaconsBehaviour.cpp" "behaviours/s2BaseBehaviour"
     "protocols/operationsManagementProtocol.cpp" "protocols/beaconManagementProtocol.cpp" "behaviours/beaconListenerBehaviour.cpp" "protocols/thirdBeaconFormationProtocol.cpp"
     "behaviours/s2ExplorersBehaviour.cpp" "protocols/s1ExchangeProtocol.cpp" "behaviours/s1Behaviour.cpp" "behaviours/explorerListenerBehaviour.cpp"
-    "protocols/baseS1ManagementProtocol.cpp" )
+    "protocols/baseS1ManagementProtocol.cpp" "protocols/localisationProtocol.cpp")
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${OBJS})
 
 set (CMAKE_CXX_FLAGS "-D_DEFAULT_SOURCE=1")

@@ -62,7 +62,7 @@ RoombaAgent::RoombaAgent()
     vector<BaseCommunicationBehaviour*> init;
     subscribersMap.resize(static_cast<int>(Topics::SIZE_OF_THIS_ENUM),init);// initialize map with empty lists
     cout<<" size of subscribers map: "<<subscribersMap.size()<<"\n";
-
+UwbMsgListener::owner=this;
 }
 
 void RoombaAgent::getId()
@@ -169,9 +169,13 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     }break;
     case VSMSubsystems::BEACON_ONE:{
         bcb = new BeaconOneBehaviour(this);
+        uwbMsgListener.idFromBeaconType=(uint8_t)Topics::BEACON_ONE_IN;
+
     }break;
     case VSMSubsystems::BEACON_TWO:{
         bcb = new BeaconTwoBehaviour(this);
+        uwbMsgListener.idFromBeaconType=(uint8_t)Topics::BEACON_TWO_IN;
+
     }break;
     case VSMSubsystems::S2_BEACONS:{
         bcb = new S2BeaconsBehaviour(this);
@@ -182,6 +186,8 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     }break;
     case VSMSubsystems::BEACON_MASTER:{
         bcb = new BeaconMasterBehaviour(this);
+        uwbMsgListener.idFromBeaconType=(uint8_t)Topics::BEACON_MASTER_IN;
+
     }break;
     case VSMSubsystems::S1_EXPLORERS:{
         cout<<"changing s1 type to EXPLORER\n";

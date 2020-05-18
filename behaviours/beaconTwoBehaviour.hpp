@@ -15,6 +15,7 @@ public:
 
     BeaconTwoBehaviour(RoombaAgent* roombaAgent);
     void behaviourStep();
+    virtual void remove();
 
 
 };

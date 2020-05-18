@@ -14,6 +14,7 @@ public:
 
     BeaconMasterBehaviour(RoombaAgent* roombaAgent);
     void behaviourStep();
+    virtual void remove();
 
 
 };
