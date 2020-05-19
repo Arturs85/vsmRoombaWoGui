@@ -22,6 +22,8 @@ static float checkPointsWithThirdBeacon(int a, int b, int r, float* points);// r
 vector<int> result;// will contain cordinates if protocol result is sucessful
 float findTwoClosestValues(vector<float> l);
 float calcAngleToExplorer(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr);
+void localise();
+
 private:
 
 int measureRetryCounter=0;
@@ -33,7 +35,6 @@ Topics currentBeacon;
 bool beaconMsterTick();
 bool beaconTick();
 bool clientTick();
-void localise();
 void startDistanceMeasurement(Topics beaconId,ProtocolStates nextStatePosResult,ProtocolStates nextStateNegResult);
 std::map<int,MeasurementResults > measurementResults;
 bool insertResult(Topics sender, MeasurementResults *mr, int result);

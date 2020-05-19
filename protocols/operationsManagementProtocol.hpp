@@ -14,7 +14,9 @@ virtual bool tick();
 private:
 
 bool s3Tick();
-bool s2Tick();
+bool s2BeaconsTick();
+bool s2ExplorersTick();
+
 void enterState(ProtocolStates stateToEnter);
 
 };

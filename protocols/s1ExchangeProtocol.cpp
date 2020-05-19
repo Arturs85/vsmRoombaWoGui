@@ -22,15 +22,19 @@ bool S1ExchangeProtocol::tick()
 {
     VSMMessage* res = behaviour->receive(MessageContents::REQUEST_S1);
     if(res!= 0){// check if there is robot to give and perform it if possible
-        int askersCVal = std::stoi(res->content);//multiplying by ten to switch to mm
+        int askersCVal = std::stoi(res->content);
         if(askersCVal>((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count){
             //give agent, except if this is s2beacons with no more than 3 beacons
         }
         int beaconId =((S2BaseBehavior*)behaviour)->getS1IdForGiveaway();// VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
         if(beaconId!=0){
             //send message to s1 to change type
-      // res->content
-            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->sendChangeType(beaconId,res->content);
+            // res->content
+            VSMSubsystems typeToChangeTo;
+            if(res->sender==VSMSubsystems::S2_EXPLORERS) typeToChangeTo = VSMSubsystems::S1_EXPLORERS;
+            else if(res->sender==VSMSubsystems::S2_BEACONS) typeToChangeTo = VSMSubsystems::S1_BEACONS;
+
+            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->sendChangeType(beaconId,std::to_string((int)typeToChangeTo));
         }
         // behaviour->owner->sendMsg(reply);
 
@@ -38,9 +42,11 @@ bool S1ExchangeProtocol::tick()
     return false;
 }
 
-void S1ExchangeProtocol::askS1()
+void S1ExchangeProtocol::askS1(int cValue)
 {
+    VSMMessage request(behaviour->type,Topics::S1_REQUESTS,MessageContents::REQUEST_S1,std::to_string(cValue));
 
+    behaviour->owner->sendMsg(request);
 }
 
 

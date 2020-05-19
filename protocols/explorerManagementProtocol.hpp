@@ -1,13 +1,13 @@
-#ifndef BEACONMANAGEMENTPROTOCOL_HPP
-#define BEACONMANAGEMENTPROTOCOL_HPP
+#ifndef EXPLORERMANAGEMENTPROTOCOL_HPP
+#define EXPLORERMANAGEMENTPROTOCOL_HPP
 #include "baseS1ManagementProtocol.hpp"
 #include <set>
 //enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
 
-class BeaconManagementProtocol: public BaseS1ManagementProtocol {
+class ExplorerManagementProtocol: public BaseS1ManagementProtocol {
 public:
     //roleInProtocol::Responder is only usable for S3Behaviour, pointer to ownerBehaviour is cast to S3beh
-BeaconManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh);
+ExplorerManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh);
 
 
 virtual void start();
@@ -16,14 +16,13 @@ int getUnusedBeaconId();
 void sendChangeType(int robotId, VSMSubsystems s1NewType );
 private:
 std::set<int> availableBeaconsSet;
-std::set<int> usedBeacons; //use set or vctor?
 bool bOneIsFilled =false;
 bool bTwoIsFilled =false;
 bool bMasterIsFilled =false;
 bool managerTick();
-bool beaconTick();
+bool explorerTick();
 
-void querryBeacons();//ask own type s1 for reply, to know how many are available
+void querryExplorers();//ask own type s1 for reply, to know how many are available
 
 };
 
@@ -31,4 +30,4 @@ void querryBeacons();//ask own type s1 for reply, to know how many are available
 
 
 
-#endif //BEACONMANAGEMENTPROTOCOL_HPP
+#endif //EXPLORERMANAGEMENTPROTOCOL_HPP

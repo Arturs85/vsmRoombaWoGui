@@ -13,10 +13,10 @@ RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCo
 {
 
     this->roleInProtocol = roleInProtocol;
-if(roleInProtocol==RoleInProtocol::RESPONDER)// responder needs to listen for requests in this topic, initiator will receive direct messages
-    behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);
-else
-    behaviour->subscribeToDirectMsgs();
+    if(roleInProtocol==RoleInProtocol::RESPONDER)// responder needs to listen for requests in this topic, initiator will receive direct messages
+        behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);
+    else
+        behaviour->subscribeToDirectMsgs();
 }
 
 bool RoleCheckingProtocol::tick()
@@ -66,13 +66,13 @@ bool RoleCheckingProtocol::initiatorTick()
             cout<<"rcp init received take role: "<<(int)roleToTake<<" \n";
             if(roleToTake!=VSMSubsystems::NONE){
                 // todo add role
-behaviour->owner->addBehaviour(roleToTake);
+                behaviour->owner->addBehaviour(roleToTake);
             }
             state= ProtocolStates::FINISHED;
             retrysSoFar =0;
             wasSuccessful = true;
             ended= true;
-        delete res;
+            delete res;
         }
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
@@ -90,8 +90,8 @@ behaviour->owner->addBehaviour(roleToTake);
         }
     }
         break;
-case ProtocolStates::FINISHED:{
-    // count till next ping.i.e.  role check
+    case ProtocolStates::FINISHED:{
+        // count till next ping.i.e.  role check
         intervalCounter--;
 
         if(intervalCounter<=0)
@@ -109,36 +109,36 @@ bool RoleCheckingProtocol::responderTick()
     if(res!=0){
         //see if there is some role to delegate to requesting agent, send reply adressed directly to requester
         cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
-if(res->senderNumber!=behaviour->owner->id){//dont give roles to itsef - s3
-        //get unfilled role
-        VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
-        if(unfilled!=VSMSubsystems::NONE){
-            //mark it as filled
-            ((S3Behaviour*)behaviour)->markAsFilled(unfilled,res->senderNumber);//  todo mar as filled after received confirm
+        if(res->senderNumber!=behaviour->owner->id){//dont give roles to itsef - s3
+            //get unfilled role
+            VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
+            if(unfilled!=VSMSubsystems::NONE){
+                //mark it as filled
+                ((S3Behaviour*)behaviour)->markAsFilled(unfilled,res->senderNumber);//  todo mar as filled after received confirm
+
+            }
+            // send reply to initiator agent
+            VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)unfilled));
+            behaviour->owner->sendMsg(request);// null ptr check
+
+            //mark that sender is present- update its time, or add new entry if it is not present on the list
+            std::map< int,double  >* presentRobots =  &((S3Behaviour*)behaviour)->knownAgents;
+
+            auto search = presentRobots->find(res->senderNumber);
+
+            if (search != presentRobots->end()) {
+                presentRobots->at(res->senderNumber)=behaviour->owner->getSystemTimeSec();
+            } else {
+                presentRobots->emplace(res->senderNumber,behaviour->owner->getSystemTimeSec());
+
+            }
+
+
+
+
 
         }
-        // send reply to initiator agent
-        VSMMessage request(VSMSubsystems::S3,res->senderNumber,MessageContents::S3REPLY_TO_ROLE_CHECK,to_string((int)unfilled));
-        behaviour->owner->sendMsg(request);// null ptr check
-
-//mark that sender is present- update its time, or add new entry if it is not present on the list
-   std::map< int,double  >* presentRobots =  &((S3Behaviour*)behaviour)->knownAgents;
-
-   auto search = presentRobots->find(res->senderNumber);
-
-   if (search != presentRobots->end()) {
-       presentRobots->at(res->senderNumber)=behaviour->owner->getSystemTimeSec();
-   } else {
-       presentRobots->emplace(res->senderNumber,behaviour->owner->getSystemTimeSec());
-
-   }
-
-
-
-
-
-}
-delete res;
+        delete res;
     }
 
     return false;

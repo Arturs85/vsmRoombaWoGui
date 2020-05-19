@@ -6,7 +6,7 @@ S2BeaconsBehaviour::S2BeaconsBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(
 {
     this->ra = roombaAgent;
     s2type = S2Types::BEACONS;
-
+type = VSMSubsystems::S2_BEACONS;
     s1ManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::S2BEACON,this);
     operationsManagementProtocol = new OperationsManagementProtocol(RoleInProtocol::S2BEACON,this);
 operationsManagementProtocol->start();

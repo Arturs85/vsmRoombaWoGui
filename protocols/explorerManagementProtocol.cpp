@@ -1,4 +1,4 @@
-﻿#include "beaconManagementProtocol.hpp"
+﻿#include "explorerManagementProtocol.hpp"
 #include "vSMMessage.hpp"
 #include "roombaAgent.hpp"// for editing
 #include <unistd.h>
@@ -7,7 +7,7 @@
 #include "s2BeaconsBehaviour.hpp"
 #include "baseS1ManagementProtocol.hpp"
 
-BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseS1ManagementProtocol(roleInProtocol,ownerBeh)
+ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseS1ManagementProtocol(roleInProtocol,ownerBeh)
 {
 
     this->roleInProtocol = roleInProtocol;
@@ -21,42 +21,20 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
     }
 }
 
-void BeaconManagementProtocol::start(){
-    if(roleInProtocol==RoleInProtocol::S2BEACON)
-        querryBeacons();
+void ExplorerManagementProtocol::start(){
+    if(roleInProtocol==RoleInProtocol::S2BEACON){}
+        //querryBeacons();
 }
 
-bool BeaconManagementProtocol::tick()// todo modify from source copy
+bool ExplorerManagementProtocol::tick()// todo modify from source copy
 {
-    //cout<<"cvp tick \n";
-    switch (roleInProtocol) {
-    case RoleInProtocol::S2BEACON:
-        return   managerTick();
-        break;
-    case RoleInProtocol::BEACON:
-        return   beaconTick();
-        break;
 
-    default:
-        break;
-    }
     return false;
 }
 
-int BeaconManagementProtocol::getUnusedBeaconId()
+int ExplorerManagementProtocol::getUnusedBeaconId()
 {
-//check if from all available s1 someone is not used as beacon, i.e. is not b1,b2,and bm
-    std::set<int>::iterator it = availableBeaconsSet.begin();
-    // Iterate till the end of set
-    while (it != availableBeaconsSet.end())
-    {
-      if(usedBeacons.find(*it)!=usedBeacons.end())
-      {
-       return *it;
-      }
-      it++;
-    }
-return 0;
+    //todo
 }
 
 //void BeaconManagementProtocol::sendChangeType(int robotId, VSMSubsystems s1NewType)// to call from outside of class
@@ -66,7 +44,7 @@ return 0;
 
 //}
 
-bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
+bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
     VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
@@ -89,9 +67,6 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             behaviour->owner->sendMsg(roleRequest);
             behaviour->owner->sendMsg(roleRequest2);
             behaviour->owner->sendMsg(roleRequest3);
-usedBeacons.insert(avb.at(0));
-usedBeacons.insert(avb.at(1));
-usedBeacons.insert(avb.at(2));
 
             state = ProtocolStates::WAITING_CONFIRM_ROLE;
 
@@ -118,25 +93,13 @@ usedBeacons.insert(avb.at(2));
             std::cout<<"bmp all beacon roles filled \n";
         }
     }
-    case ProtocolStates::WAITING_FORMATION_COMPLETE:{
-        VSMMessage* res= behaviour->receive(MessageContents::FORMATION_COMPLETED);
-        if(res!=0){
-        std::cout<<"bmp master(s2) received formation complete\n";
-        VSMMessage formDone(behaviour->owner->id,Topics::S3_IN,MessageContents::FORMATION_COMPLETED,"fc");//resend this info to s3
-        behaviour->owner->sendMsg(formDone);
-
-        //wait while explorers are operating
-        state= ProtocolStates::IDLE;
-    }
-}
+    case ProtocolStates::WAITING_FORMATION_COMPLETE:
         break;
 
-    case ProtocolStates::IDLE://todo
-break;
     }
 }
 
-bool BeaconManagementProtocol::beaconTick()
+bool ExplorerManagementProtocol::explorerTick()
 {
     switch (state) {
     case ProtocolStates::IDLE:{
@@ -161,7 +124,7 @@ bool BeaconManagementProtocol::beaconTick()
     }
 }
 
-void BeaconManagementProtocol::querryBeacons()
+void ExplorerManagementProtocol::querryExplorers()
 {
     VSMMessage queryBeaconS1(VSMSubsystems::S2_BEACONS,Topics::S2_TO_BEACONS,MessageContents::QUERRY_INFO,"q");
     behaviour->owner->sendMsg(queryBeaconS1);

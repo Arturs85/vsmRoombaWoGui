@@ -5,7 +5,7 @@
 #include "roombaAgent.hpp"
 
 
-const std::vector<VSMSubsystems> S3Behaviour::requiredRoles ({VSMSubsystems::S2_BEACONS});//,VSMSubsystems::S2_EXPLORERS});
+const std::vector<VSMSubsystems> S3Behaviour::requiredRoles ({VSMSubsystems::S2_BEACONS,VSMSubsystems::S2_EXPLORERS});//,VSMSubsystems::S2_EXPLORERS});
 
 S3Behaviour::S3Behaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
 {

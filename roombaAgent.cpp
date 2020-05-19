@@ -14,6 +14,7 @@
 #include "beaconListenerBehaviour.hpp"
 #include "beaconMasterBehaviour.hpp"
 #include "explorerListenerBehaviour.hpp"
+#include "s2ExplorersBehaviour.hpp"
 
 #define USLEEP_TIME_US 10000
 
@@ -192,6 +193,9 @@ void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and r
     case VSMSubsystems::S1_EXPLORERS:{
         cout<<"changing s1 type to EXPLORER\n";
         bcb = new ExplorerListenerBehaviour(this);
+    }break;
+    case VSMSubsystems::S2_EXPLORERS:{
+        bcb = new S2ExplorersBehaviour(this);
     }break;
     default:{
         cout<<"not implemented \n";

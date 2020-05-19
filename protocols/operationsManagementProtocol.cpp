@@ -19,7 +19,11 @@ OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleIn
         behaviour->subscribeToTopic(Topics::S3_IN);
     else if (roleInProtocol==RoleInProtocol::S2BEACON) {
         behaviour->subscribeToTopic(Topics::S2BEACONS_IN);
-    }
+ }
+        else if (roleInProtocol==RoleInProtocol::S2EXPLORERS) {
+            behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
+}
+
     behaviour->subscribeToDirectMsgs();
 }
 
@@ -38,7 +42,12 @@ void OperationsManagementProtocol::start()
     case RoleInProtocol::S2BEACON:
         state = ProtocolStates::WAITING_START_REQUEST;
         break;
+    case RoleInProtocol::S2EXPLORERS:
+        state = ProtocolStates::WAITING_START_REQUEST;// does not matter for test
+        break;
+
     }
+
 }
 
 bool OperationsManagementProtocol::tick(){
@@ -47,8 +56,12 @@ bool OperationsManagementProtocol::tick(){
         return s3Tick();
         break;
     case RoleInProtocol::S2BEACON:
-        return s2Tick();
+        return s2BeaconsTick();
         break;
+    case RoleInProtocol::S2EXPLORERS:
+        return s2ExplorersTick();
+        break;
+
     default:
         break;
     }
@@ -78,15 +91,24 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
         VSMMessage* res = behaviour->receive(MessageContents::FORMATION_COMPLETED);
         if(res!= 0){
             //enter next state - todo
+            std::cout<<"omp master(s3) received formation complete\n";
+            enterState(ProtocolStates::BEACONS_DEPLOYED);
             delete res;
         }
     }
         break;
+
+    case ProtocolStates::BEACONS_DEPLOYED:{
+
+    }  break;
+
     }
     return false;
 }
 
-bool OperationsManagementProtocol::s2Tick()
+
+
+bool OperationsManagementProtocol::s2BeaconsTick()
 {
     switch (state) {
     case ProtocolStates::WAITING_START_REQUEST:{
@@ -107,6 +129,15 @@ bool OperationsManagementProtocol::s2Tick()
     return false;
 }
 
+bool OperationsManagementProtocol::s2ExplorersTick()
+{
+//receive start exploring command and propogate it to s1 as they joins explorers
+    VSMMessage* res = behaviour->receive(MessageContents::START_EXPLORING);
+    if(res!= 0){
+
+    }
+}
+
 void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for s3
 {
     switch (state) {
@@ -121,6 +152,15 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
     case ProtocolStates::WAITING_FORMATION_COMPLETE:{
         state = ProtocolStates::WAITING_FORMATION_COMPLETE;
     ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+    }
+        break;
+
+    case ProtocolStates::BEACONS_DEPLOYED:{
+        state = ProtocolStates::BEACONS_DEPLOYED;
+    ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+    //send explorers s2 to start exploring
+        VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");
+        behaviour->owner->sendMsg(startRequest);
     }
         break;
     }

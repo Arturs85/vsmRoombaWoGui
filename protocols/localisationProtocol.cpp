@@ -17,6 +17,17 @@ LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCo
 
     this->roleInProtocol = roleInProtocol;
 
+    switch (roleInProtocol) {
+    case RoleInProtocol::BEACON_MASTER:
+        ownerBeh->subscribeToTopic(Topics::BEACON_MASTER_IN);
+        break;
+    case RoleInProtocol::CLIENT:
+
+        break;
+    default:
+        break;
+    }
+
 }
 
 
@@ -169,7 +180,13 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
             double angleToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->angleToSecondRobot;
             int distToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToFirst[3];
             int distToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToSecond[3];
-
+            float angleToExplorer = calcAngleToExplorer(distToB1,distToB2,angleToB1,angleToB2,&mr);
+            int x = mr.BeaconMasterDist*std::cos(angleToExplorer);
+            int y = mr.BeaconMasterDist*std::cos(angleToExplorer);
+            vector<int> resVect{x,y};
+            std::string resString = BaseProtocol::intVectorToString(resVect);
+            VSMMessage resultXY(behaviour->owner->id,id,MessageContents::CORDINATES_XY,resString);
+            behaviour->owner->sendMsg(resultXY);
 
             auto it = measurementResults.find(id);
             measurementResults.erase(it);
@@ -179,7 +196,16 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
 
 bool LocalisationProtocol::beaconTick()//listens measurements and sends them to master (automaticly via uwblistener)
 {
-
+    switch (roleInProtocol) {
+    case RoleInProtocol::BEACON_MASTER:
+        return beaconMsterTick();
+        break;
+    case RoleInProtocol::CLIENT:
+        return clientTick();
+        break;
+    default:
+        break;
+    }
 }
 
 bool LocalisationProtocol::clientTick()//  wait for final result timeout
@@ -198,14 +224,15 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
     case ProtocolStates::B1_MEAS_RECEIVED:{// wait for result from beacon master
         VSMMessage* res = behaviour->receive(MessageContents::CORDINATES_XY);
         if(res!=0){
-            std::cout<<"localisation done\n";
+
             result = BaseProtocol::stringTointVector(res->content);
+           std::cout<<"localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
             wasSuccessful = true;
             return true;
         }
         finalResultWaitCounter++;
         if(finalResultWaitCounter>finalResultWaitTicks){
-            std::cout<<"localisation client failed to receive cords, stopping";
+            std::cout<<"localisation client failed to receive cords, stopping\n";
             wasSuccessful = false;
             return true;
         }

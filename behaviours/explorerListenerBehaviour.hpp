@@ -2,20 +2,24 @@
 #define EXPLORERLISTENERBEHAVIOUR_HPP
 #include "roombaAgent.hpp"
 
-class BeaconManagementProtocol;
+//class BeaconManagementProtocol;
 
+enum class ExplorerStates{IDLE,EXPLORING,MEASURING_XY};
 
-class ExplorerListenerBehaviour: public BaseCommunicationBehaviour{// waits for requests from second beacon by TwoPoinFormation protocol
+class LocalisationProtocol;
+
+class ExplorerListenerBehaviour: public BaseCommunicationBehaviour{// listen s2 commands and explore space, localising time after time
  public:
 
     RoombaAgent* ra;
-   
-
+  LocalisationProtocol* localisationProtocol;
+void localise();
     ExplorerListenerBehaviour(RoombaAgent *roombaAgent);
+    void startExploring();//to call after comand from s2 is received
 private:
     void behaviourStep();
-
-BeaconManagementProtocol* beaconManagementProtocol;
+ExplorerStates explorerState = ExplorerStates::IDLE;
+//BeaconManagementProtocol* beaconManagementProtocol;
 
 };
 
