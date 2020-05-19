@@ -23,14 +23,17 @@ static constexpr int replyResWaitTicks = 2;
 
 
 static double calcAngleAfterTurnAndMove(double prevRelatAngle, double turnAngle, double travel, double measAfter, double measBefore);
+double angleToFirstRobot;
+double angleToSecondRobot;
+int measuredDistToFirst[4];
+int measuredDistToSecond[4];
+
 private:
 int measureRetryCounter=0;
 int measureWaitCounter=0;
 int queryRetryCounter=0;
 int replyWaitCounter=0;
 
-int measuredDistToFirst[4];
-int measuredDistToSecond[4];
 
 int latestMeasurement=0;
 int latestMeasuredBeaconId=0;
@@ -44,8 +47,7 @@ double finalAngle;
 double odoBeforeTravel =0;
 
 double dirBeforeTurn;
-   double angleToFirstRobot;
-   double angleToSecondRobot;
+
 
 ProtocolStates nextStateOnPositeiveResult;
 ProtocolStates nextStateOnNegativeResult;

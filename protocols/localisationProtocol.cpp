@@ -5,8 +5,11 @@
 #include "s3Behaviour.hpp"
 #include "beaconOneBehaviour.hpp"
 #include "s2BeaconsBehaviour.hpp"
+#include "beaconMasterBehaviour.hpp"
+#include "thirdBeaconFormationProtocol.hpp"
+#include "twoPointFormationProtocol.hpp"
 #include <cmath>
-
+#include <limits>
 
 
 LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
@@ -99,6 +102,51 @@ float LocalisationProtocol::checkPointsWithThirdBeacon(int a, int b, int r, floa
     return diffH1;
 }
 
+
+
+/**
+   *
+   * @param l
+   * @return average of two values in the list @param l that are closest
+   */
+
+float LocalisationProtocol::findTwoClosestValues(vector<float> l)
+{
+
+    float cand1=0,cand2=0;
+    float minErrSoFar = std::numeric_limits<float>::max();
+    for (int i = 0; i < l.size(); i++) {
+        for (int j = i+1; j < l.size(); j++) {
+            float err = std::abs(l.at(i)-l.at(j));
+            if(err<minErrSoFar){
+                cand1= l.at(i);
+                cand2 = l.at(j);
+                minErrSoFar=err;
+            }
+        }
+    }
+    cout<<" err From two triangles, degrees = "<<(minErrSoFar)<<"\n";
+    return (cand1+cand2)/2;
+}
+
+float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angleToB1,float angleToB2,MeasurementResults *mr)
+{
+    // TreeMap<AID, Double> distances)
+    double distFromMB= mr->BeaconMasterDist;// this implies that BeaconsMaster must bee one of beacons
+
+    double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1,mr->b1Dist);
+    double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2,mr->b2Dist);
+    vector<float> possibleAngles;
+    possibleAngles.push_back(angleToB1+beta);
+    possibleAngles.push_back(angleToB1-beta);
+    possibleAngles.push_back(angleToB2+gamma);
+    possibleAngles.push_back(angleToB2-gamma);
+    return findTwoClosestValues(possibleAngles);
+}
+
+
+
+
 bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits timeout to receive measurements from beacons, then calculates xy and sends it to client
 {
     VSMMessage* res = behaviour->receive(MessageContents::DISTANCE_MEASUREMENT_AND_ID);
@@ -110,12 +158,17 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
         if (it != measurementResults.end()){//there is entry, add measurement and check wether all measurements are present
 
         }else{//create neew entry
-            measurementResults.insert( std::pair<int,MeasurementResults>(id,{0,0,0}) );)
+            measurementResults.insert( std::pair<int,MeasurementResults>(id,{0,0,0}) );
 
         }
         MeasurementResults mr = measurementResults.at(id);
         bool isFilled =insertResult((Topics)res->senderNumber,&mr,dist);// todo check if sender number realy contains topic number
         if(isFilled){//calculate xy and send to client and erease entry
+
+            double angleToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->angleToFirstRobot;
+            double angleToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->angleToSecondRobot;
+            int distToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToFirst[3];
+            int distToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToSecond[3];
 
 
             auto it = measurementResults.find(id);
