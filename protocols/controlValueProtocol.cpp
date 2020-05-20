@@ -10,7 +10,7 @@ ControlValueProtocol::ControlValueProtocol(RoleInProtocol roleInProtocol, BaseCo
 {
 
     this->roleInProtocol = roleInProtocol;
-if(roleInProtocol==RoleInProtocol::RESPONDER)// responder needs to listen for requests in this topic, initiator will receive direct messages
+if(roleInProtocol==RoleInProtocol::RECEIVER)// responder needs to listen for requests in this topic, initiator will receive direct messages
     behaviour->subscribeToTopic(Topics::CVAL_TO_S2);
 else
     behaviour->subscribeToTopic(Topics::CVAL_INC_REQUEST);
@@ -44,7 +44,7 @@ void ControlValueProtocol::sendCvals(vector<int> cVals)
     std::string cValsString = BaseProtocol::intVectorToString(cVals);
     //send message
     // send reply to initiator agent
-    VSMMessage cValsMsg(VSMSubsystems::S3,Topics::CVAL_TO_S2,MessageContents::NONE,cValsString);
+    VSMMessage cValsMsg(VSMSubsystems::S3,Topics::CVAL_TO_S2,MessageContents::CVALUES,cValsString);
     behaviour->owner->sendMsg(cValsMsg);// null ptr check?
 }
 
@@ -63,10 +63,11 @@ sendCvals(((S3Behaviour*)behaviour)->cvals);
 bool ControlValueProtocol::receiverTick()//for s2, aka responder or receiver
 {
 // check for new cValues
-    VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
+    VSMMessage* res= behaviour->receive(MessageContents::CVALUES);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
-        //cVals = BaseProtocol::stringTointVector(res->content); //todo bad call
-   //((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
+        std::cout<<"cvp received cvals string: "<< res->content<<"\n";
+        cVals = BaseProtocol::stringTointVector(res->content); //todo bad call
+   ((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
     }
     return 0;
 }

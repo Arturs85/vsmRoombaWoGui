@@ -74,7 +74,7 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
 {// receive messages independing of state
       // cout<<"bmp manager tick ,state  "<< (int)state<<"\n";
 
-    VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
+    VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
         // add senders id to beacons list
         availableBeaconsSet.insert(res->senderNumber);
@@ -152,7 +152,7 @@ bool BeaconManagementProtocol::beaconTick()
     case ProtocolStates::IDLE:{
         VSMMessage* res= behaviour->receive(MessageContents::QUERRY_INFO);// use none content description, because there should be only one type of msg in this topic
         if(res!=0){// reply to querry
-            VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,"rq");// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::BEACONS_RQ,"rq");// reply to querry, could send some additional info, e.g. bat level
            behaviour->owner->sendMsg(replyToQuerry);
             // state = ProtocolStates::WAITING_REPLY;
             std::cout<<"bmp beacon replying to s2 querry\n";

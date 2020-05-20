@@ -70,7 +70,7 @@ bool OperationsManagementProtocol::tick(){
 
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
 {
-             cout<<"omp s3 tick state "<<(int)state <<"\n";
+           //  cout<<"omp s3 tick state "<<(int)state <<"\n";
 
     switch (state) {
     case ProtocolStates::WAITING_REPLY:
@@ -83,7 +83,7 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
             delete res;
             break;
         }
-             std::cout<<"s3 omp waitingTicksCounter"<<waitTicksCounter<<"\n";
+            // std::cout<<"s3 omp waitingTicksCounter"<<waitTicksCounter<<"\n";
  
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
