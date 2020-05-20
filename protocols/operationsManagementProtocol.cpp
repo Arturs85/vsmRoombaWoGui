@@ -51,6 +51,7 @@ void OperationsManagementProtocol::start()
 }
 
 bool OperationsManagementProtocol::tick(){
+
     switch (roleInProtocol) {
     case RoleInProtocol::S3:
         return s3Tick();
@@ -69,6 +70,8 @@ bool OperationsManagementProtocol::tick(){
 
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
 {
+             cout<<"omp s3 tick state "<<(int)state <<"\n";
+
     switch (state) {
     case ProtocolStates::WAITING_REPLY:
     {
@@ -80,6 +83,8 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
             delete res;
             break;
         }
+             std::cout<<"s3 omp waitingTicksCounter"<<waitTicksCounter<<"\n";
+ 
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
             waitTicksCounter=0;
@@ -116,8 +121,7 @@ bool OperationsManagementProtocol::s2BeaconsTick()
         if(res!= 0){
             //owner s2 should send beacon info queries to see if there is enough beacons, choose all three beacons and make first of them to start tpfp
             cout<<"S2 beacons received -start first formation \n";
-
-            ((S2BeaconsBehaviour*)behaviour)->beaconManagementProtocol->start();
+           ((BeaconManagementProtocol*) (((S2BeaconsBehaviour*)behaviour)->s1ManagementProtocol))->start();
             //send confirmation to s3 - todo
             state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
             delete res;
@@ -140,9 +144,11 @@ bool OperationsManagementProtocol::s2ExplorersTick()
 
 void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for s3
 {
-    switch (state) {
+    switch (stateToEnter) {
     case ProtocolStates::WAITING_REPLY:
     {
+                std::cout<<"s3 omp entering state WAITING REPLY\n";
+
         state = ProtocolStates::WAITING_REPLY;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
 
@@ -150,12 +156,15 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
         break;
 
     case ProtocolStates::WAITING_FORMATION_COMPLETE:{
+        std::cout<<"s3 omp entering state WAITING FORMATION COMPLETE\n";
         state = ProtocolStates::WAITING_FORMATION_COMPLETE;
     ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
     }
         break;
 
     case ProtocolStates::BEACONS_DEPLOYED:{
+                std::cout<<"s3 omp entering state BEACONS DEPLOYED\n";
+
         state = ProtocolStates::BEACONS_DEPLOYED;
     ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
     //send explorers s2 to start exploring

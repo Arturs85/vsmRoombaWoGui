@@ -33,3 +33,7 @@ void BaseS1ManagementProtocol::sendChangeType(int robotId,std::string vSMSubsyst
 
 }
 
+void BaseS1ManagementProtocol::start()
+{
+    
+}

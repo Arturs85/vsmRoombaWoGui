@@ -147,6 +147,7 @@ pthread_mutex_t UwbMsgListener::rxDequeLock = PTHREAD_MUTEX_INITIALIZER;
 std::deque<RawTxMessage> UwbMsgListener::txDeque;
 std::deque<VSMMessage> UwbMsgListener::rxDeque;
 std::deque<int> UwbMsgListener::rangingInitDeque;
+RoombaAgent* UwbMsgListener::owner;
 
 //struct termios orig_termios;
 

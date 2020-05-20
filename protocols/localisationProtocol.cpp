@@ -30,6 +30,11 @@ LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCo
 
 }
 
+void LocalisationProtocol::start()
+{
+    
+}
+
 
 
 bool LocalisationProtocol::tick()// todo modify from source copy
