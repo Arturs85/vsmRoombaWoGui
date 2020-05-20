@@ -12,6 +12,7 @@ class S2BaseBehavior : public BaseCommunicationBehaviour{
 
 public:
 S2BaseBehavior(RoombaAgent *roombaAgent);
+~S2BaseBehavior();
 int lastControlValue=0;
 int lastS1Count =0;
 S2Types s2type;

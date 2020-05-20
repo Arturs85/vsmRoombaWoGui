@@ -5,7 +5,17 @@
 S2BaseBehavior::S2BaseBehavior(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
     controlValueProtocol = new ControlValueProtocol(RoleInProtocol::RECEIVER,this);
-s1ExchangeProtocol = new S1ExchangeProtocol(this);
+    s1ExchangeProtocol = new S1ExchangeProtocol(this);
+}
+
+S2BaseBehavior::~S2BaseBehavior()
+{
+
+}
+
+int S2BaseBehavior::getS1IdForGiveaway()
+{
+
 }
 
 void S2BaseBehavior::behaviourStep()
