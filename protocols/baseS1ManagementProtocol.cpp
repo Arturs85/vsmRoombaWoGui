@@ -13,6 +13,11 @@ BaseS1ManagementProtocol::BaseS1ManagementProtocol(RoleInProtocol roleInProtocol
 
 }
 
+void BaseS1ManagementProtocol::start()
+{
+
+}
+
 
 
 bool BaseS1ManagementProtocol::tick()// todo modify from source copy

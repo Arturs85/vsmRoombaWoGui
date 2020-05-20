@@ -32,7 +32,7 @@ LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCo
 
 void LocalisationProtocol::start()
 {
-    
+
 }
 
 
