@@ -12,4 +12,6 @@ beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::BEACON,t
 void BeaconListenerBehaviour::behaviourStep()
 {
  beaconManagementProtocol->tick();
+             //cout<<"bmp beacons tick returned \n";
+
 }

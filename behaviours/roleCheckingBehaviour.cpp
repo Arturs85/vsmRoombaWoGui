@@ -12,7 +12,7 @@ RoleCheckingBehaviour::RoleCheckingBehaviour(RoombaAgent *owner):BaseCommunicati
 void RoleCheckingBehaviour::behaviourStep()
 {
 bool hasEnded =roleCheckingProtocol->tick();
-
+//std::cout<<"rcp tick returned\n";
 }
 
 void RoleCheckingBehaviour::askS3ForRoles()

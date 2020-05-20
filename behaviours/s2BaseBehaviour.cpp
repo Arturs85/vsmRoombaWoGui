@@ -21,5 +21,9 @@ int S2BaseBehavior::getS1IdForGiveaway()
 void S2BaseBehavior::behaviourStep()
 {
     controlValueProtocol->tick();
+   // 	cout<<"cvp s2 inherited step returned \n";
+
     s1ExchangeProtocol->tick();
+        //	cout<<"s1e s2 inherited step returned \n";
+
 }

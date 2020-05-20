@@ -65,8 +65,8 @@ bool ControlValueProtocol::receiverTick()//for s2, aka responder or receiver
 // check for new cValues
     VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
-        cVals = BaseProtocol::stringTointVector(res->content);
-   ((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
+        //cVals = BaseProtocol::stringTointVector(res->content); //todo bad call
+   //((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
     }
     return 0;
 }

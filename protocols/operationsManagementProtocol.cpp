@@ -122,6 +122,8 @@ bool OperationsManagementProtocol::s2BeaconsTick()
             //owner s2 should send beacon info queries to see if there is enough beacons, choose all three beacons and make first of them to start tpfp
             cout<<"S2 beacons received -start first formation \n";
            ((BeaconManagementProtocol*) (((S2BeaconsBehaviour*)behaviour)->s1ManagementProtocol))->start();
+                      cout<<"omp S2 beacons start returned \n";
+
             //send confirmation to s3 - todo
             state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
             delete res;
