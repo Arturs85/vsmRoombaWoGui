@@ -23,12 +23,3 @@ void S2BaseBehavior::behaviourStep()
     controlValueProtocol->tick();
     s1ExchangeProtocol->tick();
 }
-S2BaseBehavior::~S2BaseBehavior()
-{
-    
-}
-
-int S2BaseBehavior::getS1IdForGiveaway()
-{
-    
-}

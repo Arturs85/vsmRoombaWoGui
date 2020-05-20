@@ -37,8 +37,3 @@ void BaseS1ManagementProtocol::sendChangeType(int robotId,std::string vSMSubsyst
     behaviour->owner->sendMsg(roleRequest);
 
 }
-
-void BaseS1ManagementProtocol::start()
-{
-    
-}

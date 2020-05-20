@@ -28,6 +28,7 @@ void BeaconManagementProtocol::start(){
 
 bool BeaconManagementProtocol::tick()// todo modify from source copy
 {
+   //BaseS1ManagementProtocol::tick();
     //cout<<"cvp tick \n";
     switch (roleInProtocol) {
     case RoleInProtocol::S2BEACON:
