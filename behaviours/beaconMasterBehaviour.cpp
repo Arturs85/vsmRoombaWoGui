@@ -21,7 +21,8 @@ void BeaconMasterBehaviour::behaviourStep()
   case BeaconOneStates::PFP:  // if protocol has ended check result and proceed with next protocol if result is ok
     if(thirdBeaconFormationProtocol->tick()){
    // if(twoPointFormationProtocol->wasSuccessful){
-       // delete twoPointFormationProtocol;
+
+        // delete twoPointFormationProtocol;
         // continue with next protocol
     //}
     }

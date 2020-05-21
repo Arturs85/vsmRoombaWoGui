@@ -290,7 +290,10 @@ std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
         angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToSecond[2]);
         //todo - how to end protocol?
 
-
+        //just send to s2 that formation is done, for now dont wait for answer
+        VSMMessage formDone(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FORMATION_COMPLETED,"fc1");
+        behaviour->owner->sendMsg(formDone);
+state = ProtocolStates::IDLE;//temporary- to do nothing, actually we should not to call this protocol tick() anymore at all
         wasSuccessful = true;// indicates that owner behaviour of this protocol can proceed with next protocol
         return true;
         break;
