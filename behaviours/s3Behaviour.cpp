@@ -13,6 +13,7 @@ S3Behaviour::S3Behaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
     type=VSMSubsystems::S3;
      cvals=vector<int>((int)S2Types::SIZE_OF_THIS_ENUM,0);//initialize cvals according to the size of defined s2 role count
 std::cout<<"s3 -sizeOf cvals at constructor  "<<cvals.size()<<"\n";
+knownAgents.emplace(owner->id,owner->getSystemTimeSec());//mark itself as available robot for cvalue calculation
 
     roleCheckingProtocol = new RoleCheckingProtocol(RoleInProtocol::RESPONDER,this);
     roleCheckingProtocol->start();
@@ -57,6 +58,8 @@ void S3Behaviour::markAsFilled(VSMSubsystems role, int agentId)
 
 int S3Behaviour::getActiveRobotsCount()// for initial control value calc
 {
+                   knownAgents.at(owner->id)= owner->getSystemTimeSec();//update self availability
+
     int count =0;
     std::map<int, double>::iterator it = knownAgents.begin();
     double timeNow = owner->getSystemTimeSec();
@@ -76,8 +79,8 @@ int S3Behaviour::getActiveRobotsCount()// for initial control value calc
 void S3Behaviour::updateCvals(int beaconsNeeded)
 {
 int robotsAlvail = getActiveRobotsCount();
-std::cout<<"s3 -robots avail "<<robotsAlvail<<"\n";
-std::cout<<"s3 -sizeOf cvals  "<<cvals.size()<<"\n";
+//std::cout<<"s3 -robots avail "<<robotsAlvail<<"\n";
+//std::cout<<"s3 -sizeOf cvals  "<<cvals.size()<<"\n";
 
 cvals.at(S2Types::BEACONS)=beaconsNeeded;
 cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;

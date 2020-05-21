@@ -36,7 +36,7 @@ void OperationsManagementProtocol::start()
         VSMMessage startRequest(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FIRST_FORMATION_START,"r");
         behaviour->owner->sendMsg(startRequest);
         enterState(ProtocolStates::WAITING_REPLY);
-        cout<<"omp s3 sent start formation to s2b\n";
+      //  cout<<"omp s3 sent start formation to s2b\n";
     }
         break;
     case RoleInProtocol::S2BEACON:
