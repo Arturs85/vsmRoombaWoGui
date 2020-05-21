@@ -10,9 +10,9 @@ vector<int> BaseProtocol::stringTointVector(string s){
     std::stringstream ss(s);
     int i;
 
-    while(!ss.eof()){
+    while(ss>>i){
 
-        if(ss>>i)
+        //if(ss>>i)
             res.push_back(i);
 
     }
