@@ -86,7 +86,7 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
         // periodically ask for s1
         ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
 
-        // send start request to all new unused explorers (on by one each tick for now)
+        // send start request to all new unused explorers (one by one each tick for now)
         std::set<int> unusedRobots = getUnusedRobotsSet();
 
         if(unusedRobots.size()>=1){

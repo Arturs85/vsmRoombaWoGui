@@ -301,7 +301,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         //todo - how to end protocol?
 
         //just send to s2 that formation is done, for now dont wait for answer
-        VSMMessage formDone(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FORMATION_COMPLETED,"fc1");
+        VSMMessage formDone(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::FORMATION_COMPLETED,"fc1");
         behaviour->owner->sendMsg(formDone);
         VSMMessage formDone2(behaviour->owner->id,Topics::THIRD_BEACON_OUT,MessageContents::FORMATION_COMPLETED,"fcb");
         behaviour->owner->sendMsg(formDone2);
