@@ -18,7 +18,7 @@ BeaconManagementProtocol::BeaconManagementProtocol(RoleInProtocol roleInProtocol
         behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
         behaviour->subscribeToDirectMsgs();
     }
-        state = ProtocolStates::IDLE;
+    state = ProtocolStates::IDLE;
 }
 
 void BeaconManagementProtocol::start(){
@@ -28,8 +28,8 @@ void BeaconManagementProtocol::start(){
 
 bool BeaconManagementProtocol::tick()// todo modify from source copy
 {
-   //BaseS1ManagementProtocol::tick();
-   // cout<<"bmp tick \n";
+    //BaseS1ManagementProtocol::tick();
+    // cout<<"bmp tick \n";
     switch (roleInProtocol) {
     case RoleInProtocol::S2BEACON:
         return   managerTick();
@@ -37,7 +37,7 @@ bool BeaconManagementProtocol::tick()// todo modify from source copy
         break;
     case RoleInProtocol::BEACON:
         return   beaconTick();
-                 // cout<<"bmp beacon tick returned \n";
+        // cout<<"bmp beacon tick returned \n";
 
         break;
 
@@ -49,18 +49,18 @@ bool BeaconManagementProtocol::tick()// todo modify from source copy
 
 int BeaconManagementProtocol::getUnusedBeaconId()
 {
-//check if from all available s1 someone is not used as beacon, i.e. is not b1,b2,and bm
-    std::set<int>::iterator it = availableBeaconsSet.begin();
+    //check if from all available s1 someone is not used as beacon, i.e. is not b1,b2,and bm
+    std::set<int>::iterator it = availableRobotsSet.begin();
     // Iterate till the end of set
-    while (it != availableBeaconsSet.end())
+    while (it != availableRobotsSet.end())
     {
-      if(usedBeacons.find(*it)!=usedBeacons.end())
-      {
-       return *it;
-      }
-      it++;
+        if(usedRobots.find(*it)!=usedRobots.end())
+        {
+            return *it;
+        }
+        it++;
     }
-return 0;
+    return 0;
 }
 
 //void BeaconManagementProtocol::sendChangeType(int robotId, VSMSubsystems s1NewType)// to call from outside of class
@@ -72,22 +72,22 @@ return 0;
 
 bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
-      // cout<<"bmp manager tick ,state  "<< (int)state<<"\n";
+    // cout<<"bmp manager tick ,state  "<< (int)state<<"\n";
 
     VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
         // add senders id to beacons list
-        availableBeaconsSet.insert(res->senderNumber);
-        cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
-        ((S2BeaconsBehaviour*)behaviour)->lastS1Count=availableBeaconsSet.size();//set this value in behaviour for other protocols to use it
+        availableRobotsSet.insert(res->senderNumber);
+        cout<<"bmp manager- availablebeaconssize: "<<availableRobotsSet.size()<<"\n";
+        ((S2BeaconsBehaviour*)behaviour)->lastS1Count=availableRobotsSet.size();//set this value in behaviour for other protocols to use it
     }
 
     switch (state) {
     case ProtocolStates::WAITING_REPLY:{
 
-        if(availableBeaconsSet.size()>=3){
+        if(availableRobotsSet.size()>=3){
             //send roles to beacons
-            std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
+            std::vector<int> avb(availableRobotsSet.begin(), availableRobotsSet.end()); //convert set to vector to acces elements
             VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_ONE));// reply to querry, could send some additional info, e.g. bat level
             VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_TWO));// reply to querry, could send some additional info, e.g. bat level
             VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_MASTER));// reply to querry, could send some additional info, e.g. bat level
@@ -95,9 +95,9 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             behaviour->owner->sendMsg(roleRequest);
             behaviour->owner->sendMsg(roleRequest2);
             behaviour->owner->sendMsg(roleRequest3);
-usedBeacons.insert(avb.at(0));
-usedBeacons.insert(avb.at(1));
-usedBeacons.insert(avb.at(2));
+            usedRobots.insert(avb.at(0));
+            usedRobots.insert(avb.at(1));
+            usedRobots.insert(avb.at(2));
 
             state = ProtocolStates::WAITING_CONFIRM_ROLE;
 
@@ -123,37 +123,37 @@ usedBeacons.insert(avb.at(2));
             if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled) state = ProtocolStates::WAITING_FORMATION_COMPLETE;
             std::cout<<"bmp all beacon roles filled \n";
         }
-    }
+    } break;
     case ProtocolStates::WAITING_FORMATION_COMPLETE:{
         VSMMessage* res= behaviour->receive(MessageContents::FORMATION_COMPLETED);
         if(res!=0){
-        std::cout<<"bmp master(s2) received formation complete\n";
-        VSMMessage formDone(behaviour->owner->id,Topics::S3_IN,MessageContents::FORMATION_COMPLETED,"fc");//resend this info to s3
-        behaviour->owner->sendMsg(formDone);
+            std::cout<<"bmp master(s2) received formation complete\n";
+            VSMMessage formDone(behaviour->owner->id,Topics::S3_IN,MessageContents::FORMATION_COMPLETED,"fc");//resend this info to s3
+            behaviour->owner->sendMsg(formDone);
 
-        //wait while explorers are operating
-        state= ProtocolStates::IDLE;
+            //wait while explorers are operating
+            state= ProtocolStates::IDLE;
+        }
     }
-}
         break;
 
     case ProtocolStates::IDLE://todo
-break;
-    
+        break;
+
     }
-return false;
+    return false;
 }
 
 bool BeaconManagementProtocol::beaconTick()
 {
-         //  cout<<"bmp beacon tick ,state  "<< (int)state<<"\n";
+    //  cout<<"bmp beacon tick ,state  "<< (int)state<<"\n";
 
     switch (state) {
     case ProtocolStates::IDLE:{
         VSMMessage* res= behaviour->receive(MessageContents::QUERRY_INFO);// use none content description, because there should be only one type of msg in this topic
         if(res!=0){// reply to querry
             VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::BEACONS_RQ,"rq");// reply to querry, could send some additional info, e.g. bat level
-           behaviour->owner->sendMsg(replyToQuerry);
+            behaviour->owner->sendMsg(replyToQuerry);
             // state = ProtocolStates::WAITING_REPLY;
             std::cout<<"bmp beacon replying to s2 querry\n";
 
@@ -165,16 +165,16 @@ bool BeaconManagementProtocol::beaconTick()
             // todo inform agent to start (add) coresp. behaviour and start protocol
             behaviour->owner->addBehaviour(role);
         }
-     
+
     }
         break;
     }
-return false;
+    return false;
 }
 
 void BeaconManagementProtocol::querryBeacons()
 {
-	   std::cout<<"querry beacons called\n";
+    std::cout<<"querry beacons called\n";
 
     VSMMessage queryBeaconS1(VSMSubsystems::S2_BEACONS,Topics::S2_TO_BEACONS,MessageContents::QUERRY_INFO,"q");
     behaviour->owner->sendMsg(queryBeaconS1);

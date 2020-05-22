@@ -14,8 +14,9 @@ virtual void start();
 virtual bool tick();
 int getUnusedBeaconId();
 void sendChangeType(int robotId, VSMSubsystems s1NewType );
+void sendStopExploring();
 private:
-std::set<int> availableBeaconsSet;
+//std::set<int> availableExplorersSet;// move to Superclass?
 bool bOneIsFilled =false;
 bool bTwoIsFilled =false;
 bool bMasterIsFilled =false;

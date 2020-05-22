@@ -1,5 +1,6 @@
 #include "explorerListenerBehaviour.hpp"
 #include "localisationProtocol.hpp"
+#include "explorerManagementProtocol.hpp"
 
 // add this behaviour when unit becomes of explore type, so it can listen to commands from s2
 
@@ -7,20 +8,28 @@
 ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
     this->ra = roombaAgent;
-    //beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::BEACON,this);
+    explorerManagementProtocol  = new ExplorerManagementProtocol(RoleInProtocol::EXPLORER,this);
     localisationProtocol=new LocalisationProtocol(RoleInProtocol::CLIENT,this);
 }
 
 void ExplorerListenerBehaviour::startExploring()
 {
+    std::cout<<"elb explorer starting explore\n";
     explorerState=ExplorerStates::EXPLORING;
     localise();//for testing
+}
+
+void ExplorerListenerBehaviour::stopExploring()
+{
+    explorerState=ExplorerStates::IDLE;//todo improve
+    std::cout<<"elb explorer stopping explore\n";
+
 }
 
 
 void ExplorerListenerBehaviour::behaviourStep()
 {
-    // beaconManagementProtocol->tick();
+    explorerManagementProtocol->tick();
     //manage driving
     switch (explorerState) {
     case ExplorerStates::IDLE:

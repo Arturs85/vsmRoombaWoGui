@@ -42,8 +42,9 @@ bool S1ExchangeProtocol::tick()
     return false;
 }
 
-void S1ExchangeProtocol::askS1(int cValue)
+void S1ExchangeProtocol::askS1()
 {
+    int cValue = ((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count;
     VSMMessage request(behaviour->type,Topics::S1_REQUESTS,MessageContents::REQUEST_S1,std::to_string(cValue));
 
     behaviour->owner->sendMsg(request);

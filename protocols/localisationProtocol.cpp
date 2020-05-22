@@ -37,10 +37,18 @@ void LocalisationProtocol::start()
 
 
 
-bool LocalisationProtocol::tick()// todo modify from source copy
+bool LocalisationProtocol::tick()//beacon listens measurements and sends them to master (automaticly via uwblistener), no need for tjhis protocol for them
 {
-
-    return false;
+    switch (roleInProtocol) {
+    case RoleInProtocol::BEACON_MASTER:
+        return beaconMsterTick();
+        break;
+    case RoleInProtocol::CLIENT:
+        return clientTick();
+        break;
+    default:
+        break;
+    }
 }
 /**
  * a - xcord of beacon
@@ -199,19 +207,7 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
     }
 }
 
-bool LocalisationProtocol::beaconTick()//listens measurements and sends them to master (automaticly via uwblistener)
-{
-    switch (roleInProtocol) {
-    case RoleInProtocol::BEACON_MASTER:
-        return beaconMsterTick();
-        break;
-    case RoleInProtocol::CLIENT:
-        return clientTick();
-        break;
-    default:
-        break;
-    }
-}
+
 
 bool LocalisationProtocol::clientTick()//  wait for final result timeout
 {

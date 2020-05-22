@@ -4,18 +4,20 @@
 #include <unistd.h>
 #include "s3Behaviour.hpp"
 #include "beaconOneBehaviour.hpp"
-#include "s2BeaconsBehaviour.hpp"
+#include "s2ExplorersBehaviour.hpp"
 #include "baseS1ManagementProtocol.hpp"
+#include "s1ExchangeProtocol.hpp"
+#include "explorerListenerBehaviour.hpp"
 
 ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseS1ManagementProtocol(roleInProtocol,ownerBeh)
 {
 
     this->roleInProtocol = roleInProtocol;
-    if(roleInProtocol==RoleInProtocol::S2BEACON)// responder needs to listen for requests in this topic, initiator will receive direct messages
-    {  behaviour->subscribeToTopic(Topics::TO_S2BEACONS);
+    if(roleInProtocol==RoleInProtocol::S2EXPLORERS)// responder needs to listen for requests in this topic, initiator will receive direct messages
+    {  behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
     }
     else{
-        behaviour->subscribeToTopic(Topics::S2_TO_BEACONS);
+        behaviour->subscribeToTopic(Topics::S2_TO_EXPLORERS);
         behaviour->subscribeToDirectMsgs();
         state = ProtocolStates::IDLE;
     }
@@ -23,11 +25,22 @@ ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProt
 
 void ExplorerManagementProtocol::start(){
     if(roleInProtocol==RoleInProtocol::S2BEACON){}
-        //querryBeacons();
+    //querryBeacons();
 }
 
 bool ExplorerManagementProtocol::tick()// todo modify from source copy
 {
+    switch (roleInProtocol) {
+    case RoleInProtocol::S2EXPLORERS:
+       return managerTick();
+        break;
+    case RoleInProtocol::EXPLORER:
+       return explorerTick();
+        break;
+
+    default:
+        break;
+    }
 
     return false;
 }
@@ -35,6 +48,18 @@ bool ExplorerManagementProtocol::tick()// todo modify from source copy
 int ExplorerManagementProtocol::getUnusedBeaconId()
 {
     //todo
+}
+
+void ExplorerManagementProtocol::sendStopExploring()// without confirmation
+{
+    std::set<int>::iterator it = usedRobots.begin();
+    // Iterate till the end of set
+    while (it != usedRobots.end())
+    {
+        VSMMessage stopRequest(behaviour->owner->id,*it,MessageContents::STOP_EXPLORING,"st");// reply to querry, could send some additional info, e.g. bat level
+        behaviour->owner->sendMsg(stopRequest);
+        it++;
+    }
 }
 
 //void BeaconManagementProtocol::sendChangeType(int robotId, VSMSubsystems s1NewType)// to call from outside of class
@@ -46,53 +71,34 @@ int ExplorerManagementProtocol::getUnusedBeaconId()
 
 bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
-    VSMMessage* res= behaviour->receive(MessageContents::NONE);// use none content description, because there should be only one type of msg in this topic
+    VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);
     if(res!=0){
         // add senders id to beacons list
-        availableBeaconsSet.insert(res->senderNumber);
-        cout<<"bmp manager- availablebeaconssize: "<<availableBeaconsSet.size()<<"\n";
-        ((S2BeaconsBehaviour*)behaviour)->lastS1Count=availableBeaconsSet.size();//set this value in behaviour for other protocols to use it
+        availableRobotsSet.insert(res->senderNumber);
+        cout<<"emp manager- availableRobotsSize: "<<availableRobotsSet.size()<<"\n";
+        ((S2ExplorersBehaviour*)behaviour)->lastS1Count=availableRobotsSet.size();//set this value in behaviour for other protocols to use it
     }
+
 
     switch (state) {
-    case ProtocolStates::WAITING_REPLY:{
+    case ProtocolStates::BEACONS_DEPLOYED:{
 
-        if(availableBeaconsSet.size()>=3){
-            //send roles to beacons
-            std::vector<int> avb(availableBeaconsSet.begin(), availableBeaconsSet.end()); //convert set to vector to acces elements
-            VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_ONE));// reply to querry, could send some additional info, e.g. bat level
-            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_TWO));// reply to querry, could send some additional info, e.g. bat level
-            VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::BEACON_MASTER));// reply to querry, could send some additional info, e.g. bat level
+        // periodically ask for s1
+        ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
 
-            behaviour->owner->sendMsg(roleRequest);
-            behaviour->owner->sendMsg(roleRequest2);
-            behaviour->owner->sendMsg(roleRequest3);
+        // send start request to all new unused explorers (on by one each tick for now)
+        std::set<int> unusedRobots = getUnusedRobotsSet();
 
-            state = ProtocolStates::WAITING_CONFIRM_ROLE;
+        if(unusedRobots.size()>=1){
+
+            VSMMessage startRequest(behaviour->owner->id,*unusedRobots.begin(),MessageContents::START_EXPLORING,"seb");// reply to querry, could send some additional info, e.g. bat level
+            behaviour->owner->sendMsg(startRequest);
+            usedRobots.insert(*unusedRobots.begin());//for now mark it as employed without confirmation from robot itself
 
         }
     }
-
         break;
-    case ProtocolStates::WAITING_CONFIRM_ROLE:{
-        VSMMessage* res= behaviour->receive(MessageContents::CONFIRM_ROLE);
-        if(res!=0){
-            VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res->content));
-            switch (role) {
-            case VSMSubsystems::BEACON_ONE:
-                bOneIsFilled = true;
-                break;
-            case VSMSubsystems::BEACON_TWO:
-                bTwoIsFilled = true;
-                break;
-            case VSMSubsystems::BEACON_MASTER:
-                bMasterIsFilled = true;
-                break;
-            }
-            if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled) state = ProtocolStates::WAITING_FORMATION_COMPLETE;
-            std::cout<<"bmp all beacon roles filled \n";
-        }
-    }
+
     case ProtocolStates::WAITING_FORMATION_COMPLETE:
         break;
 
@@ -101,24 +107,20 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 
 bool ExplorerManagementProtocol::explorerTick()
 {
+ //listen for stop/start commands
+    VSMMessage* res= behaviour->receive(MessageContents::START_EXPLORING);
+    if(res!=0){
+        ((ExplorerListenerBehaviour*)behaviour)->startExploring();
+    }
+    VSMMessage* res2= behaviour->receive(MessageContents::STOP_EXPLORING);
+    if(res2!=0){
+        ((ExplorerListenerBehaviour*)behaviour)->startExploring();
+    }
+
     switch (state) {
     case ProtocolStates::IDLE:{
-        VSMMessage* res= behaviour->receive(MessageContents::QUERRY_INFO);// use none content description, because there should be only one type of msg in this topic
-        if(res!=0){// reply to querry
-            VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::NONE,"rq");// reply to querry, could send some additional info, e.g. bat level
-            behaviour->owner->sendMsg(replyToQuerry);
-            // state = ProtocolStates::WAITING_REPLY;
-            std::cout<<"bmp beacon replying to s2 querry\n";
 
-        }// try to receive order
-        VSMMessage* res2= behaviour->receive(MessageContents::BEACON_ROLE);// use none content description, because there should be only one type of msg in this topic
-        if(res2 !=0){
-            VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
-            std::cout<<"bmp beacon received role"<<res2->content <<"\n";
-            // todo inform agent to start (add) coresp. behaviour and start protocol
-            behaviour->owner->addBehaviour(role);
-        }
-     
+
     }
         break;
     }

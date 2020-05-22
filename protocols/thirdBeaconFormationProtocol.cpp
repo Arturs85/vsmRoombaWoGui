@@ -66,10 +66,20 @@ bool ThirdBeaconFormationProtocol::standingBeaconTick()
         }
         break;
     }
-    case ProtocolStates::STARTED:
+    case ProtocolStates::STARTED:{
         // listen for end of protocol msg ---todo implement ---
+        VSMMessage* res = behaviour->receive(MessageContents::FORMATION_COMPLETED);
+        if(res!= 0){
+            wasSuccessful = true;
+            state = ProtocolStates::FINISHED;
+            return true;
+        }
+    }
         break;
-
+    case ProtocolStates::FINISHED:{
+        return true;
+    }
+        break;
     default:
         break;
     }
@@ -200,7 +210,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         std::cout<<" Actual measure :" << measuredDistToFirst[2]<<"\n";
         std::cout<<" Predicted measureH1 :" << predictedDistH1First<<"\n";
         std::cout<<" Predicted measureH2 :" << predictedDistH2First<<"\n";
-std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
+        std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
         std::cout<<" Predicted measureH2 to second :" << predictedDistH2Second<<"\n";
         
         double errH1 = abs(predictedDistH1First - measuredDistToFirst[2]);
@@ -242,7 +252,7 @@ std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
         double alfa = apb - PI / 3; //todo check this final angle calculation method
         finalDistance = TwoPointFormationProtocol::calcThirdSide(closestVertexDist, BEACONS_TRIANGLE_SIDE_MM, alfa);
         finalAngle = TwoPointFormationProtocol::calcAngle(finalDistance, closestVertexDist, BEACONS_TRIANGLE_SIDE_MM);
-       std::cout<<"final angle: " << (angleAfterMovement*180/PI)<<"\n";
+        std::cout<<"final angle: " << (angleAfterMovement*180/PI)<<"\n";
         
         // System.out.println("final angle : " + Math.toDegrees(finalAngle));
         dirBeforeTurn = behaviour->owner->movementManager->direction;
@@ -257,7 +267,7 @@ std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
 
     case ProtocolStates::FINAL_POSITION_TURN:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
-        
+
             behaviour->owner->movementManager->driveDistance(finalDistance);  // drive forward distace
             odoBeforeTravel = behaviour->owner->movementManager->odometry;
             enterState(ProtocolStates::FINAL_POSITION_MOVE);
@@ -293,7 +303,10 @@ std::cout<<" Predicted measureH1 to second :" << predictedDistH1Second<<"\n";
         //just send to s2 that formation is done, for now dont wait for answer
         VSMMessage formDone(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FORMATION_COMPLETED,"fc1");
         behaviour->owner->sendMsg(formDone);
-state = ProtocolStates::IDLE;//temporary- to do nothing, actually we should not to call this protocol tick() anymore at all
+        VSMMessage formDone2(behaviour->owner->id,Topics::THIRD_BEACON_OUT,MessageContents::FORMATION_COMPLETED,"fcb");
+        behaviour->owner->sendMsg(formDone2);
+
+        state = ProtocolStates::IDLE;//temporary- to do nothing, actually we should not to call this protocol tick() anymore at all
         wasSuccessful = true;// indicates that owner behaviour of this protocol can proceed with next protocol
         return true;
         break;

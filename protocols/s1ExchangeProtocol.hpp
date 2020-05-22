@@ -11,7 +11,7 @@ vector<int> cVals;
 virtual void start();
 virtual bool tick();
 
-void askS1(int cValue);
+void askS1();
 
 private:
 int tickCount=0;

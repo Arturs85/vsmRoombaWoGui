@@ -30,10 +30,17 @@ void BeaconTwoBehaviour::behaviourStep()
 
         break;
     case BeaconOneStates::PFP:{
-        if(thirdBeaconFormationProtocol->tick()){// end this protocol properly - switchh to beacons operation
+        if(thirdBeaconFormationProtocol->tick()){// end this protocol properly - switch to beacons operation
+        beaconState = BeaconOneStates::BEACON;
         }
+
     }
         break;
+    case BeaconOneStates::BEACON:{//measurements is done automaticly in uwblistener, uwblistener subscription to beacon aderessed measurements is done at adding behaviour, mayby it should be transfered to entering this state
+
+    }
+        break;
+
     }
 }
 

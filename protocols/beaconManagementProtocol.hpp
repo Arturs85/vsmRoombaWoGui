@@ -15,8 +15,7 @@ virtual bool tick();
 int getUnusedBeaconId();
 void sendChangeType(int robotId, VSMSubsystems s1NewType );
 private:
-std::set<int> availableBeaconsSet;
-std::set<int> usedBeacons; //use set or vctor?
+//std::set<int> availableRobotsSet;
 bool bOneIsFilled =false;
 bool bTwoIsFilled =false;
 bool bMasterIsFilled =false;

@@ -2,7 +2,7 @@
 #define EXPLORERLISTENERBEHAVIOUR_HPP
 #include "roombaAgent.hpp"
 
-//class BeaconManagementProtocol;
+class ExplorerManagementProtocol;
 
 enum class ExplorerStates{IDLE,EXPLORING,MEASURING_XY};
 
@@ -16,10 +16,12 @@ class ExplorerListenerBehaviour: public BaseCommunicationBehaviour{// listen s2 
 void localise();
     ExplorerListenerBehaviour(RoombaAgent *roombaAgent);
     void startExploring();//to call after comand from s2 is received
+    void stopExploring();//to call after comand from s2 is received
+
 private:
     void behaviourStep();
 ExplorerStates explorerState = ExplorerStates::IDLE;
-//BeaconManagementProtocol* beaconManagementProtocol;
+ExplorerManagementProtocol* explorerManagementProtocol;
 
 };
 

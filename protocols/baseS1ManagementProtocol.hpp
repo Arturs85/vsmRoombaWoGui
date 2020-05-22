@@ -14,8 +14,12 @@ virtual void start();
 virtual bool tick();
 virtual int getUnusedBeaconId();
 void sendChangeType(int robotId, std::string vSMSubsystemsS1NewTypeString );
-private:
-std::set<int> availableBeaconsSet;
+std::set<int> availableRobotsSet;
+
+protected:
+std::set<int> usedRobots; //use set or vctor?
+
+std::set<int> getUnusedRobotsSet();
 
 bool managerTick();
 bool beaconTick();

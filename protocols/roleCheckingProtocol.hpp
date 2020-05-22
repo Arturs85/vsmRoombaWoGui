@@ -19,7 +19,7 @@ private:
 
 bool initiatorTick();
 bool responderTick();
-
+bool s2Tick();// to listen s1 types
 };
 
 

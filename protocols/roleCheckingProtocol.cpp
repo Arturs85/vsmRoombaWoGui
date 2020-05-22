@@ -3,6 +3,8 @@
 #include "roombaAgent.hpp"// for editing
 #include <unistd.h>
 #include "s3Behaviour.hpp"
+#include "s2BaseBehaviour.hpp"
+#include "baseS1ManagementProtocol.hpp"
 
 #define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
 #define NUMBER_OF_RETRYS 3
@@ -15,8 +17,11 @@ RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCo
     this->roleInProtocol = roleInProtocol;
     if(roleInProtocol==RoleInProtocol::RESPONDER)// responder needs to listen for requests in this topic, initiator will receive direct messages
         behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);
-    else
+    else if(roleInProtocol==RoleInProtocol::INITIATOR)
         behaviour->subscribeToDirectMsgs();
+else if(roleInProtocol==RoleInProtocol::S2BASE)
+    behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);//to receive info of s1 types
+
 }
 
 bool RoleCheckingProtocol::tick()
@@ -29,7 +34,9 @@ bool RoleCheckingProtocol::tick()
     case RoleInProtocol::RESPONDER:
         return   responderTick();
         break;
-
+    case RoleInProtocol::S2BASE:
+        return   s2Tick();
+        break;
     default:
         break;
     }
@@ -41,8 +48,9 @@ void RoleCheckingProtocol::start()
     //state = STARTED;
     //send message to s3 asking for role,
     waitTicksCounter=0;
+// send own S1 type as msg contents, so s2 will know available robots of coresp. type
 
-    VSMMessage request(behaviour->owner->id,Topics::S3_ROLE_CHECKING,MessageContents::ROLE_CHECK_WITH_S3,"roleCh");
+    VSMMessage request(behaviour->owner->id,Topics::S3_ROLE_CHECKING,MessageContents::ROLE_CHECK_WITH_S3,std::to_string((int)(behaviour->owner->s1Type)));
 
     behaviour->owner->sendMsg(request);// null ptr check, change to send
     
@@ -142,4 +150,27 @@ bool RoleCheckingProtocol::responderTick()
     }
 
     return false;
+}
+
+bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
+{
+    VSMMessage* res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
+    if(res!=0){
+        VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res->content));
+        switch (((S2BaseBehavior*)behaviour)->s2type) {
+        case S2Types::EXPLORERS:
+        if(role==VSMSubsystems::S1_EXPLORERS)
+            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
+            break;
+
+        case S2Types::BEACONS:
+        if(role==VSMSubsystems::S1_BEACONS)
+            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
+            break;
+
+        default:
+            break;
+        }
+
+    }
 }
