@@ -99,7 +99,8 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             usedRobots.insert(avb.at(1));
             usedRobots.insert(avb.at(2));
 
-            state = ProtocolStates::WAITING_CONFIRM_ROLE;
+           // state = ProtocolStates::WAITING_CONFIRM_ROLE;
+            state = ProtocolStates::WAITING_FORMATION_COMPLETE;//bypassing beacons role confirmation
 
         }
     }
@@ -120,8 +121,11 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
                 bMasterIsFilled = true;
                 break;
             }
-            if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled) state = ProtocolStates::WAITING_FORMATION_COMPLETE;
-            std::cout<<"bmp all beacon roles filled \n";
+            if(bOneIsFilled && bTwoIsFilled && bMasterIsFilled)
+            {
+                state = ProtocolStates::WAITING_FORMATION_COMPLETE;
+                std::cout<<"bmp all beacon roles filled \n";
+            }
         }
     } break;
     case ProtocolStates::WAITING_FORMATION_COMPLETE:{
