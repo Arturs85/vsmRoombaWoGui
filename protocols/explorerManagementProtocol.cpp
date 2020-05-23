@@ -95,17 +95,20 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 
         // periodically ask for s1
         ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
+//std::cout<<"ask s1 ok \n";
 
         // send start request to all new unused explorers (one by one each tick for now)
         std::set<int> unusedRobots = getUnusedRobotsSet();
-
+//std::cout<<"got unused robots set \n";
         if(unusedRobots.size()>=1){
 
             VSMMessage startRequest(behaviour->owner->id,*unusedRobots.begin(),MessageContents::START_EXPLORING,"seb");// reply to querry, could send some additional info, e.g. bat level
             behaviour->owner->sendMsg(startRequest);
             usedRobots.insert(*unusedRobots.begin());//for now mark it as employed without confirmation from robot itself
+    std::cout<<"sent start exploring to robot "<<*unusedRobots.begin()<<"\n";
 
         }
+    
     }
         break;
 

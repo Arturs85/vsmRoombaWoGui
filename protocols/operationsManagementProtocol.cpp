@@ -148,6 +148,7 @@ bool OperationsManagementProtocol::s2ExplorersTick()
     if(res!= 0){
         std::cout<<"explorers S2 received start exploring \n";
         ((S2ExplorersBehaviour*)behaviour)->enterExploringState();
+    delete res;
     }
     VSMMessage* res2 = behaviour->receive(MessageContents::STOP_EXPLORING);
     if(res2!= 0){

@@ -30,7 +30,7 @@ bool S1ExchangeProtocol::tick()
         if(beaconId!=0){
             //send message to s1 to change type
             // res->content
-            VSMSubsystems typeToChangeTo;
+            VSMSubsystems typeToChangeTo= VSMSubsystems::NONE;
             if(res->sender==VSMSubsystems::S2_EXPLORERS) typeToChangeTo = VSMSubsystems::S1_EXPLORERS;
             else if(res->sender==VSMSubsystems::S2_BEACONS) typeToChangeTo = VSMSubsystems::S1_BEACONS;
 

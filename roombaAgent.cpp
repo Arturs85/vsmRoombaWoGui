@@ -140,7 +140,7 @@ void RoombaAgent::startCycle()
 
 void RoombaAgent::behavioursStep()
 {
-           // cout<<"roomn=ba agent behaviour step\n";
+        //    cout<<"-------roomba agent behaviour step--------\n";
 
     for (BaseCommunicationBehaviour* b : behavioursList) {
         b->behaviourStep();

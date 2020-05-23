@@ -27,6 +27,11 @@ void S2ExplorersBehaviour::enterExploringState()
 void S2ExplorersBehaviour::behaviourStep()
 {
     S2BaseBehavior::behaviourStep();
+       
     explorerManagementProtocol->tick();
+       // 	cout<<"emp s2 ex step returned \n";
+
     operationsManagementProtocol->tick();
+        	//cout<<"omp s2 ex step returned \n";
+
 }
