@@ -15,6 +15,7 @@ ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProt
     this->roleInProtocol = roleInProtocol;
     if(roleInProtocol==RoleInProtocol::S2EXPLORERS)// responder needs to listen for requests in this topic, initiator will receive direct messages
     {  behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
+        state = ProtocolStates::IDLE;
     }
     else{
         behaviour->subscribeToTopic(Topics::S2_TO_EXPLORERS);
@@ -24,7 +25,10 @@ ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProt
 }
 
 void ExplorerManagementProtocol::start(){
-    if(roleInProtocol==RoleInProtocol::S2BEACON){}
+    if(roleInProtocol==RoleInProtocol::S2EXPLORERS){
+        state = ProtocolStates::BEACONS_DEPLOYED;
+
+    }
     //querryBeacons();
 }
 
@@ -32,10 +36,10 @@ bool ExplorerManagementProtocol::tick()// todo modify from source copy
 {
     switch (roleInProtocol) {
     case RoleInProtocol::S2EXPLORERS:
-       return managerTick();
+        return managerTick();
         break;
     case RoleInProtocol::EXPLORER:
-       return explorerTick();
+        return explorerTick();
         break;
 
     default:
@@ -48,6 +52,12 @@ bool ExplorerManagementProtocol::tick()// todo modify from source copy
 int ExplorerManagementProtocol::getUnusedBeaconId()
 {
     //todo
+}
+
+void ExplorerManagementProtocol::enterIdleState()
+{
+    state= ProtocolStates::IDLE;
+    sendStopExploring();
 }
 
 void ExplorerManagementProtocol::sendStopExploring()// without confirmation
@@ -101,13 +111,14 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 
     case ProtocolStates::WAITING_FORMATION_COMPLETE:
         break;
-
+    case ProtocolStates::IDLE:
+        break;
     }
 }
 
 bool ExplorerManagementProtocol::explorerTick()
 {
- //listen for stop/start commands
+    //listen for stop/start commands
     VSMMessage* res= behaviour->receive(MessageContents::START_EXPLORING);
     if(res!=0){
         ((ExplorerListenerBehaviour*)behaviour)->startExploring();

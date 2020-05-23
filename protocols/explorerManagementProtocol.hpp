@@ -14,7 +14,8 @@ virtual void start();
 virtual bool tick();
 int getUnusedBeaconId();
 void sendChangeType(int robotId, VSMSubsystems s1NewType );
-void sendStopExploring();
+void enterIdleState();
+
 private:
 //std::set<int> availableExplorersSet;// move to Superclass?
 bool bOneIsFilled =false;
@@ -22,6 +23,7 @@ bool bTwoIsFilled =false;
 bool bMasterIsFilled =false;
 bool managerTick();
 bool explorerTick();
+void sendStopExploring();
 
 void querryExplorers();//ask own type s1 for reply, to know how many are available
 

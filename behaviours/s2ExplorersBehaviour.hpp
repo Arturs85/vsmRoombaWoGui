@@ -13,6 +13,8 @@ public:
     S2ExplorersBehaviour(RoombaAgent* roombaAgent);
  ExplorerManagementProtocol* explorerManagementProtocol;
 OperationsManagementProtocol* operationsManagementProtocol;
+void enterIdleState();
+void enterExploringState();
 private:
     void behaviourStep();
 

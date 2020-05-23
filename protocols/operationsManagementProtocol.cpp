@@ -7,6 +7,7 @@
 #include <cmath>
 #include "s2BeaconsBehaviour.hpp"
 #include "beaconManagementProtocol.hpp"
+#include "s2ExplorersBehaviour.hpp"
 
 #define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
 #define BEACONS_COUNT_NORMAL 3
@@ -19,10 +20,10 @@ OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleIn
         behaviour->subscribeToTopic(Topics::S3_IN);
     else if (roleInProtocol==RoleInProtocol::S2BEACON) {
         behaviour->subscribeToTopic(Topics::S2BEACONS_IN);
- }
-        else if (roleInProtocol==RoleInProtocol::S2EXPLORERS) {
-            behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
-}
+    }
+    else if (roleInProtocol==RoleInProtocol::S2EXPLORERS) {
+        behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
+    }
 
     behaviour->subscribeToDirectMsgs();
 }
@@ -36,7 +37,7 @@ void OperationsManagementProtocol::start()
         VSMMessage startRequest(behaviour->owner->id,Topics::S2BEACONS_IN,MessageContents::FIRST_FORMATION_START,"r");
         behaviour->owner->sendMsg(startRequest);
         enterState(ProtocolStates::WAITING_REPLY);
-      //  cout<<"omp s3 sent start formation to s2b\n";
+        //  cout<<"omp s3 sent start formation to s2b\n";
     }
         break;
     case RoleInProtocol::S2BEACON:
@@ -70,7 +71,7 @@ bool OperationsManagementProtocol::tick(){
 
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
 {
-           //  cout<<"omp s3 tick state "<<(int)state <<"\n";
+    //  cout<<"omp s3 tick state "<<(int)state <<"\n";
 
     switch (state) {
     case ProtocolStates::WAITING_REPLY:
@@ -83,8 +84,8 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
             delete res;
             break;
         }
-            // std::cout<<"s3 omp waitingTicksCounter"<<waitTicksCounter<<"\n";
- 
+        // std::cout<<"s3 omp waitingTicksCounter"<<waitTicksCounter<<"\n";
+
         waitTicksCounter++;
         if(waitTicksCounter>=REPLY_WAITING_TICKS){
             waitTicksCounter=0;
@@ -103,7 +104,7 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
     }
         break;
 
-    case ProtocolStates::BEACONS_DEPLOYED:{
+    case ProtocolStates::BEACONS_DEPLOYED:{//stay in this state until we are ready to continue with next operation- move beacons to new place
 
     }  break;
 
@@ -126,8 +127,8 @@ bool OperationsManagementProtocol::s2BeaconsTick()
             behaviour->owner->sendMsg(agree);
 
             cout<<"S2 beacons received -start first formation \n";
-           ((BeaconManagementProtocol*) (((S2BeaconsBehaviour*)behaviour)->s1ManagementProtocol))->start();
-                      cout<<"omp S2 beacons start returned \n";
+            ((BeaconManagementProtocol*) (((S2BeaconsBehaviour*)behaviour)->s1ManagementProtocol))->start();
+            cout<<"omp S2 beacons start returned \n";
 
             //send confirmation to s3 - todo
             state = ProtocolStates::WAITING_FORMATION_COMPLETE;// same state as s3
@@ -142,10 +143,16 @@ bool OperationsManagementProtocol::s2BeaconsTick()
 
 bool OperationsManagementProtocol::s2ExplorersTick()
 {
-//receive start exploring command and propogate it to s1 as they joins explorers
+    //receive start exploring command and propogate it to s1 as they joins explorers
     VSMMessage* res = behaviour->receive(MessageContents::START_EXPLORING);
     if(res!= 0){
-
+        std::cout<<"explorers S2 received start exploring \n";
+        ((S2ExplorersBehaviour*)behaviour)->enterExploringState();
+    }
+    VSMMessage* res2 = behaviour->receive(MessageContents::STOP_EXPLORING);
+    if(res2!= 0){
+        std::cout<<"explorers S2 received stop exploring \n";
+        ((S2ExplorersBehaviour*)behaviour)->enterIdleState();
     }
 }
 
@@ -154,7 +161,7 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
     switch (stateToEnter) {
     case ProtocolStates::WAITING_REPLY:
     {
-                std::cout<<"s3 omp entering state WAITING REPLY\n";
+        std::cout<<"s3 omp entering state WAITING REPLY\n";
 
         state = ProtocolStates::WAITING_REPLY;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
@@ -165,16 +172,16 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
     case ProtocolStates::WAITING_FORMATION_COMPLETE:{
         std::cout<<"s3 omp entering state WAITING FORMATION COMPLETE\n";
         state = ProtocolStates::WAITING_FORMATION_COMPLETE;
-    ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
     }
         break;
 
     case ProtocolStates::BEACONS_DEPLOYED:{
-                std::cout<<"s3 omp entering state BEACONS DEPLOYED\n";
+        std::cout<<"s3 omp entering state BEACONS DEPLOYED\n";
 
         state = ProtocolStates::BEACONS_DEPLOYED;
-    ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
-    //send explorers s2 to start exploring
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+        //send explorers s2 to start exploring
         VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");
         behaviour->owner->sendMsg(startRequest);
     }

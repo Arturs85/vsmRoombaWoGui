@@ -6,11 +6,21 @@ S2ExplorersBehaviour::S2ExplorersBehaviour(RoombaAgent *roombaAgent):S2BaseBehav
 {
     this->ra = roombaAgent;
     s2type = S2Types::EXPLORERS;
-type = VSMSubsystems::S2_EXPLORERS;
+    type = VSMSubsystems::S2_EXPLORERS;
     explorerManagementProtocol = new ExplorerManagementProtocol(RoleInProtocol::S2EXPLORERS,this);
     operationsManagementProtocol = new OperationsManagementProtocol(RoleInProtocol::S2EXPLORERS,this);
     operationsManagementProtocol->start();
 
+}
+
+void S2ExplorersBehaviour::enterIdleState()
+{
+    explorerManagementProtocol->enterIdleState();
+}
+
+void S2ExplorersBehaviour::enterExploringState()
+{
+    explorerManagementProtocol->start();
 }
 
 
