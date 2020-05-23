@@ -144,11 +144,25 @@ void RoombaAgent::behavioursStep()
 
     for (BaseCommunicationBehaviour* b : behavioursList) {
         b->behaviourStep();
+	}
+        //add new roles 
+    if(rolesToAdd.size()>0)
+    {
+    for (VSMSubsystems b : rolesToAdd) {
+        addBehaviourToList(b);
+    }
+    rolesToAdd.clear();
     }
 }
-
 void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and remove conflicting existing ones
 {
+	rolesToAdd.push_back(behaviour);
+	}
+void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
+{
+    
+
+
     auto search = conflictingBehaviours.find(behaviour);
 
     if (search != conflictingBehaviours.end()) {

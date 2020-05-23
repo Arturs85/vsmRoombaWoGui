@@ -15,6 +15,7 @@ BeaconTwoBehaviour::BeaconTwoBehaviour(RoombaAgent *roombaAgent):BaseCommunicati
 
 void BeaconTwoBehaviour::behaviourStep()
 {
+    BaseCommunicationBehaviour::logKeypoints("BTB beh step started");
     switch(beaconState){
     case BeaconOneStates::TPFP:  // if protocol has ended check result and proceed with next protocol if result is ok
         if(twoPointFormationProtocol->tick()){
@@ -42,10 +43,14 @@ void BeaconTwoBehaviour::behaviourStep()
         break;
 
     }
+        BaseCommunicationBehaviour::logKeypoints("BTB beh step ended");
+
 }
 
 void BeaconTwoBehaviour::remove()
 {
+        BaseCommunicationBehaviour::logKeypoints("BTB remove called");
+
     BaseCommunicationBehaviour::remove();
     ra->uwbMsgListener.idFromBeaconType=0;//erease id so uwb listener does not respond to triang measurements
 

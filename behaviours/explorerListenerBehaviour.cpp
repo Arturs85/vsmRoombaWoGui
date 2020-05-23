@@ -29,7 +29,9 @@ void ExplorerListenerBehaviour::stopExploring()
 
 void ExplorerListenerBehaviour::behaviourStep()
 {
+     BaseCommunicationBehaviour::logKeypoints("emp tick called\n");
     explorerManagementProtocol->tick();
+    BaseCommunicationBehaviour::logKeypoints("emp tick returned\n");
     //manage driving
     switch (explorerState) {
     case ExplorerStates::IDLE:

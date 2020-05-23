@@ -21,10 +21,10 @@ void S2BeaconsBehaviour::behaviourStep()
     //cout<<"bmp s2 inherited step returned \n";
 
     ((BeaconManagementProtocol*)s1ManagementProtocol)->tick();
-    // cout<<"bmp s2 tick returned \n";
+    BaseCommunicationBehaviour::logKeypoints("bmp s2 tick returned \n");
 
     operationsManagementProtocol->tick();
-    // cout<<"omp s2 tick returned \n";
+    BaseCommunicationBehaviour::logKeypoints("omp s2 tick returned \n");
 
 }
 

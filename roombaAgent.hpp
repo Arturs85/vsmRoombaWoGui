@@ -21,6 +21,9 @@ std::map<VSMSubsystems,vector<VSMSubsystems > > conflictingBehaviours;
 bool isS3=false;
 VSMSubsystems s1Type=VSMSubsystems::S1_BEACONS;//default s1type of robot
 
+void addBehaviourToList(VSMSubsystems behaviour);
+vector<VSMSubsystems> rolesToAdd;
+
 char id=0;
 std::string getRoleListForMsg();
 void initHardware();

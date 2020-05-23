@@ -122,6 +122,7 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 bool ExplorerManagementProtocol::explorerTick()
 {
     //listen for stop/start commands
+    BaseCommunicationBehaviour::logKeypoints("emp exp tick started\n");
     VSMMessage* res= behaviour->receive(MessageContents::START_EXPLORING);
     if(res!=0){
         ((ExplorerListenerBehaviour*)behaviour)->startExploring();
@@ -138,6 +139,7 @@ bool ExplorerManagementProtocol::explorerTick()
     }
         break;
     }
+    return false;
 }
 
 void ExplorerManagementProtocol::querryExplorers()
