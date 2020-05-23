@@ -24,6 +24,7 @@ public:
     void unSubscribeToTopic(Topics topic);
     virtual void behaviourStep();
     virtual void remove();
+    static void logKeypoints(std::string text);
 
 };
 

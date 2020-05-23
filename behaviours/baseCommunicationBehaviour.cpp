@@ -52,5 +52,10 @@ void BaseCommunicationBehaviour::behaviourStep()
 void BaseCommunicationBehaviour::remove()
 {
 
-owner->removeBehaviour(this);
+    owner->removeBehaviour(this);
+}
+
+void BaseCommunicationBehaviour::logKeypoints(std::string text)// for debuging
+{
+  std::cout<<text;
 }

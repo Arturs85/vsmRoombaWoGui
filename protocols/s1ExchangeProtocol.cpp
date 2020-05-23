@@ -25,7 +25,8 @@ bool S1ExchangeProtocol::tick()
         int askersCVal = std::stoi(res->content);
         if(askersCVal>((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count){
             //give agent, except if this is s2beacons with no more than 3 beacons
-        }
+
+
         int beaconId =((S2BaseBehavior*)behaviour)->getS1IdForGiveaway();// VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
         if(beaconId!=0){
             //send message to s1 to change type
@@ -35,6 +36,7 @@ bool S1ExchangeProtocol::tick()
             else if(res->sender==VSMSubsystems::S2_BEACONS) typeToChangeTo = VSMSubsystems::S1_BEACONS;
 
             ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->sendChangeType(beaconId,std::to_string((int)typeToChangeTo));
+        }
         }
         // behaviour->owner->sendMsg(reply);
 

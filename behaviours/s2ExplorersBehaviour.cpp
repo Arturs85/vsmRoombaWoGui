@@ -29,9 +29,9 @@ void S2ExplorersBehaviour::behaviourStep()
     S2BaseBehavior::behaviourStep();
        
     explorerManagementProtocol->tick();
-       // 	cout<<"emp s2 ex step returned \n";
+      BaseCommunicationBehaviour::logKeypoints("emp s2 ex step returned \n");
 
     operationsManagementProtocol->tick();
-        	//cout<<"omp s2 ex step returned \n";
+            BaseCommunicationBehaviour::logKeypoints("omp s2 ex step returned \n");
 
 }

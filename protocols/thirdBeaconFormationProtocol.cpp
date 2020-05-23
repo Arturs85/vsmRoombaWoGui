@@ -143,6 +143,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
             latestMeasurement = 10*std::stoi(res->content);//multiplying by ten to switch to mm
             std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
             state = nextStateOnPositeiveResult; //
+            measureRetryCounter=0;// reset counter
+
         }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
             state = ProtocolStates::TIMEOUT;//
             measureWaitCounter=0;

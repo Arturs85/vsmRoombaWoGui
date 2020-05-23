@@ -10,10 +10,10 @@ ControlValueProtocol::ControlValueProtocol(RoleInProtocol roleInProtocol, BaseCo
 {
 
     this->roleInProtocol = roleInProtocol;
-if(roleInProtocol==RoleInProtocol::RECEIVER)// responder needs to listen for requests in this topic, initiator will receive direct messages
-    behaviour->subscribeToTopic(Topics::CVAL_TO_S2);
-else
-    behaviour->subscribeToTopic(Topics::CVAL_INC_REQUEST);
+    if(roleInProtocol==RoleInProtocol::RECEIVER)// responder needs to listen for requests in this topic, initiator will receive direct messages
+        behaviour->subscribeToTopic(Topics::CVAL_TO_S2);
+    else
+        behaviour->subscribeToTopic(Topics::CVAL_INC_REQUEST);
 }
 
 void ControlValueProtocol::start()
@@ -50,10 +50,10 @@ void ControlValueProtocol::sendCvals(vector<int> cVals)
 
 bool ControlValueProtocol::senderTick()// for s3, aka initiator or sender ---todo implement
 {
-tickCount++;
-if(tickCount%10==0){// send cVals to s2 every 10 seconds, if tick is one second
-sendCvals(((S3Behaviour*)behaviour)->cvals);
-}
+    tickCount++;
+    if(tickCount%10==0){// send cVals to s2 every 10 seconds, if tick is one second
+        sendCvals(((S3Behaviour*)behaviour)->cvals);
+    }
 
     //listen for increase requests
 
@@ -62,12 +62,12 @@ sendCvals(((S3Behaviour*)behaviour)->cvals);
 
 bool ControlValueProtocol::receiverTick()//for s2, aka responder or receiver
 {
-// check for new cValues
+    // check for new cValues
     VSMMessage* res= behaviour->receive(MessageContents::CVALUES);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
         std::cout<<"cvp received cvals string: "<< res->content<<"\n";
         cVals = BaseProtocol::stringTointVector(res->content); //todo bad call
-   ((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
+        ((S2BaseBehavior*)behaviour)->lastControlValue=cVals.at(((S2BaseBehavior*)behaviour)->s2type);
     }
     return 0;
 }

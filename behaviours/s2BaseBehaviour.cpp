@@ -23,12 +23,12 @@ return 0;
 void S2BaseBehavior::behaviourStep()
 {
     controlValueProtocol->tick();
-     //	cout<<"cvp s2 inherited step returned \n";
+    BaseCommunicationBehaviour::logKeypoints("cvp s2 inherited step returned \n");
 
     s1ExchangeProtocol->tick();
-    //	cout<<"s1e s2 inherited step returned \n";
+    BaseCommunicationBehaviour::logKeypoints("s1e s2 inherited step returned \n");
 
     roleCheckingProtocol->tick();
-       // 	cout<<"rcp s2 inherited step returned \n";
+    BaseCommunicationBehaviour::logKeypoints("rcp s2 inherited step returned \n");
 
 }
