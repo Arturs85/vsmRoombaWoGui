@@ -151,7 +151,7 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
 bool BeaconManagementProtocol::beaconTick()
 {
     //  cout<<"bmp beacon tick ,state  "<< (int)state<<"\n";
-
+BaseS1ManagementProtocol::tick();
     switch (state) {
     case ProtocolStates::IDLE:{
         VSMMessage* res= behaviour->receive(MessageContents::QUERRY_INFO);// use none content description, because there should be only one type of msg in this topic

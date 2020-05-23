@@ -200,6 +200,7 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     case VSMSubsystems::S1_BEACONS:{
         cout<<"changing s1 type to BEACON\n";
         bcb = new BeaconListenerBehaviour(this);
+
     }break;
     case VSMSubsystems::BEACON_MASTER:{
         bcb = new BeaconMasterBehaviour(this);
@@ -212,6 +213,7 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     }break;
     case VSMSubsystems::S2_EXPLORERS:{
         bcb = new S2ExplorersBehaviour(this);
+
     }break;
     default:{
         cout<<"not implemented \n";
@@ -299,6 +301,9 @@ double RoombaAgent::getSystemTimeSec(void){
 
 void RoombaAgent::setS1Type(VSMSubsystems type)
 {
-    s1Type= type;
-    if(type==VSMSubsystems::S1_BEACONS || type==VSMSubsystems::S1_EXPLORERS )addBehaviour(type);
-}
+    if(type==VSMSubsystems::S1_BEACONS || type==VSMSubsystems::S1_EXPLORERS ){
+        addBehaviour(type);
+        s1Type= type;
+
+    }
+    }

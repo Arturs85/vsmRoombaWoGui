@@ -157,6 +157,8 @@ bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
     VSMMessage* res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
     if(res!=0){
         VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res->content));
+        std ::cout<<"role reporting "<<(int)role<<"\n";
+
         switch (((S2BaseBehavior*)behaviour)->s2type) {
         case S2Types::EXPLORERS:
         if(role==VSMSubsystems::S1_EXPLORERS)
@@ -172,5 +174,9 @@ bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
             break;
         }
 
+       std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
+       std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
+
     }
+return false;
 }

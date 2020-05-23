@@ -12,7 +12,7 @@ BaseS1ManagementProtocol::BaseS1ManagementProtocol(RoleInProtocol roleInProtocol
 {
 
     this->roleInProtocol = roleInProtocol;
-
+behaviour->subscribeToDirectMsgs();
 }
 
 void BaseS1ManagementProtocol::start()
@@ -22,9 +22,15 @@ void BaseS1ManagementProtocol::start()
 
 
 
-bool BaseS1ManagementProtocol::tick()// todo modify from source copy
+bool BaseS1ManagementProtocol::tick()
 {
-
+    VSMMessage* res2= behaviour->receive(MessageContents::S1_CHANGE_TYPE);// use none content description, because there should be only one type of msg in this topic
+    if(res2 !=0){
+        VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
+        std::cout<<"s1mp robot received role"<<res2->content <<"\n";
+        // todo inform agent to start (add) coresp. behaviour and start protocol
+        behaviour->owner->setS1Type(role);// this call also adds type to agent, so it can advertisize via rcp correctly
+    }
     return false;
 }
 
@@ -35,7 +41,7 @@ int BaseS1ManagementProtocol::getUnusedBeaconId()
 
 void BaseS1ManagementProtocol::sendChangeType(int robotId,std::string vSMSubsystemsS1NewTypeString)// to call from outside of class
 {
-    VSMMessage roleRequest(behaviour->owner->id,robotId,MessageContents::BEACON_ROLE,vSMSubsystemsS1NewTypeString);
+    VSMMessage roleRequest(behaviour->owner->id,robotId,MessageContents::S1_CHANGE_TYPE,vSMSubsystemsS1NewTypeString);
     behaviour->owner->sendMsg(roleRequest);
     availableRobotsSet.erase(robotId);// mark that robot is no longer available
 }
