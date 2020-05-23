@@ -1,6 +1,8 @@
 #include "roombaController.hpp"
 #include <iostream>
 
+#define DRIVING_SPEED 80
+
 UartTest* RoombaController::uartDevice=0;
 RoombaController::RoombaController(UartTest *uartDevice)
 {
@@ -175,19 +177,19 @@ void RoombaController::driveForward()
 {
     cout<<"fwd called \n";
 
-drive(50,32767);
+drive(DRIVING_SPEED,32767);
 }
 
 void RoombaController::turnLeft()
 {
     cout<<"left called \n";
-    drive(50,1);
+    drive(DRIVING_SPEED,1);
 }
 
 void RoombaController::turnRight()
 {
     cout<<"turn right called \n";
-    drive(50,-1);
+    drive(DRIVING_SPEED,-1);
 }
 
 void RoombaController::stopMoving()

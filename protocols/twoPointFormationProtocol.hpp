@@ -17,7 +17,7 @@ static double calculateRelativeAngle(double mes1, double mes2, double odoDist);
 static double calcThirdSide(double a, double b, double angleRad);
 static double calcAngle(double a,double b,double c);
 
-static constexpr int measureRetries = 3;
+static constexpr int measureRetries = 6;
 static constexpr int measureResWaitTicks = 2;
 static constexpr int finalAcknowledgeWaitTicks = 2;
 static constexpr int finalAcknowledgeRetries = 3;

@@ -105,6 +105,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             latestMeasurement = 10*std::stoi(res->content);//multiplying by ten to switch to mm
             std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
             state = nextStateOnPositeiveResult; //
+            measureRetryCounter=0;// reset counter
         }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
             state = ProtocolStates::TIMEOUT;//
             measureWaitCounter=0;
@@ -216,7 +217,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
 
         behaviour->owner->sendMsg(tpfpFinished);
         state = ProtocolStates::WAITING_ACKNOWLEDGE;
-      }
+    }
         break;
     case ProtocolStates::WAITING_ACKNOWLEDGE:{
         if(acknowledgeWaitCounter++ >finalAcknowledgeWaitTicks){// resend finished message to third beacon
@@ -224,14 +225,14 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         }
         VSMMessage* res = behaviour->receive(MessageContents::ACKNOWLEDGE);
         if(res!= 0){
-        state = ProtocolStates::ACKNOWLEDGE_RECEIVED;
+            state = ProtocolStates::ACKNOWLEDGE_RECEIVED;
         }}
         break;
     case ProtocolStates::ACKNOWLEDGE_RECEIVED:
-{
+    {
         wasSuccessful = true;// indicates that owner behaviour of this protocol can proceed with next protocol
         return true;
-}
+    }
         break;
 
     case ProtocolStates::TIMEOUT:{
@@ -290,7 +291,7 @@ TwoPointFormationProtocol::TwoPointFormationProtocol(RoleInProtocol roleInProtoc
     this->roleInProtocol=roleInProtocol;
     if(roleInProtocol==RoleInProtocol::STANDING_BEACON){// responder needs to listen for requests in this topic, initiator will receive direct messages
         behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_STILL);
-    behaviour->subscribeToTopic(Topics::THIRD_BEACON_IN);// to receive tpfp done from moving beacon
+        behaviour->subscribeToTopic(Topics::THIRD_BEACON_IN);// to receive tpfp done from moving beacon
     }
     else{
         behaviour->subscribeToTopic(Topics::TWO_POINT_FORMATION_TO_MOVING);
