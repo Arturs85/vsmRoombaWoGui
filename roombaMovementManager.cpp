@@ -14,6 +14,7 @@ int RoombaMovementManager::distanceRemaining =0;
 int RoombaMovementManager::angleRemaining =0;
 int RoombaMovementManager::direction =0;
 int RoombaMovementManager::odometry =0;
+bool RoombaMovementManager::isObstacleDetected=false;
 
 MovementStates RoombaMovementManager::state= MovementStates::IDLE; 
 
@@ -34,7 +35,7 @@ bool RoombaMovementManager::driveDistance(int distMm)
 {
     if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
 std::cout<<"rmm drive called: " << distMm<<"\n";
-
+isObstacleDetected=false;
     roombaController->readDistance();// this clears roomba internal counter
     distanceRemaining = distMm;
     state = MovementStates::DRIVING;
@@ -109,7 +110,14 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
             if(distanceRemaining<0){
                 state = MovementStates::FINISHED;
                 roombaController->stopMoving();
-            }}
+            }
+if(lb != 0){//obstacle
+isObstacleDetected=true;
+roombaController->stopMoving();
+state = MovementStates::FINISHED;
+
+}
+        }
             break;
         case MovementStates::TURNING_LEFT:{
             int16_t angle = 3*roombaController->readAngle();

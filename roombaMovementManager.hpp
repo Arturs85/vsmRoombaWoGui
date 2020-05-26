@@ -29,6 +29,9 @@ public:
 static int direction;//tracks direction relative to starting point
 static int odometry;//tracks travel from starting point
 
+static bool isObstacleDetected;//set if driving was inhibited by obstacle
+
+
 static MovementStates state;
 private:
     static bool isDriving;

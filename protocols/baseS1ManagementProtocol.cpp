@@ -12,7 +12,7 @@ BaseS1ManagementProtocol::BaseS1ManagementProtocol(RoleInProtocol roleInProtocol
 {
 
     this->roleInProtocol = roleInProtocol;
-behaviour->subscribeToDirectMsgs();
+//behaviour->subscribeToDirectMsgs();
 }
 
 void BaseS1ManagementProtocol::start()

@@ -5,6 +5,7 @@
 class ExplorerManagementProtocol;
 
 enum class ExplorerStates{IDLE,EXPLORING,MEASURING_XY};
+struct PointInt{int x;int y;};
 
 class LocalisationProtocol;
 
@@ -17,7 +18,7 @@ void localise();
     ExplorerListenerBehaviour(RoombaAgent *roombaAgent);
     void startExploring();//to call after comand from s2 is received
     void stopExploring();//to call after comand from s2 is received
-
+static PointInt getRandomPointAtDistance(int distance);
 private:
     void behaviourStep();
 ExplorerStates explorerState = ExplorerStates::IDLE;
