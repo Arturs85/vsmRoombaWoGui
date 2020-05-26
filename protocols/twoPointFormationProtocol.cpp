@@ -9,7 +9,6 @@
 #define TRIANGLE_SIDE_MM 1000
 #define BEACONS_TRIANGLE_SIDE_MM 1500
 
-#define PI 3.1415926
 bool TwoPointFormationProtocol::tick()
 {
     //cout<<"tpf tick \n";

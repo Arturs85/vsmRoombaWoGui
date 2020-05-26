@@ -3,8 +3,14 @@
 #include "explorerManagementProtocol.hpp"
 #include "roombaMovementManager.hpp"
 #include <cmath>
+#include "twoPointFormationProtocol.hpp" //for PI
+
 // add this behaviour when unit becomes of explore type, so it can listen to commands from s2
 
+#define NEXT_TARGET_DISTANCE 2000 // 2m
+//#define NEXT_TARGET_DISTANCE 2000 // 2m
+
+#define AREA_RADI 5000
 
 ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
@@ -16,8 +22,8 @@ ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):B
 void ExplorerListenerBehaviour::startExploring()
 {
     std::cout<<"elb explorer starting explore\n";
-    explorerState=ExplorerStates::EXPLORING;
-    localise();//for testing
+    explorerState=ExplorerStates::IDLE;
+    localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
 }
 
 void ExplorerListenerBehaviour::stopExploring()
@@ -45,32 +51,123 @@ void ExplorerListenerBehaviour::behaviourStep()
     explorerManagementProtocol->tick();
     BaseCommunicationBehaviour::logKeypoints("emp tick returned\n");
     //manage driving
+
+
+
     switch (explorerState) {
     case ExplorerStates::IDLE:
 
         break;
+
+    case ExplorerStates::FIRST_MEASUREMENT:{// at this point location result should be valid
+        previousLocation.x = localisationProtocol->result.at(0);
+        previousLocation.y = localisationProtocol->result.at(1);
+
+        odometryBeforeDriving = owner->movementManager->odometry;
+        owner->movementManager->driveDistance(NEXT_TARGET_DISTANCE);
+        explorerState = ExplorerStates::FIRST_DRIVE;
+
+    }
+        break;
+
+
+    case ExplorerStates::FIRST_DRIVE:{
+        if(owner->movementManager->state == MovementStates::FINISHED){//finished moving, localise and pick new dest
+
+            if(owner->movementManager->isObstacleDetected){// this flag is cleared when calling manager.move
+                std::cout<<"elb obstacle was detected fd\n";
+                //for now just pick next dest point as if no obstacle was detected
+            }
+
+            explorerState = ExplorerStates::ARRIVED_DEST;
+        }
+
+    }break;
+
 
     case ExplorerStates::MEASURING_XY:{
         bool finished = localisationProtocol->tick();
         if(finished){//
             if(localisationProtocol->wasSuccessful)
             {// xy are available, use them for mapping or direction calculation, if this is second measurement after traveling dist
+                explorerState= stateAfterLocalise;// return to desired state
+
+            }else {
+                localise(stateAfterLocalise);//try localise indefinetly
 
             }
         }
     }
         break;
-    case ExplorerStates::EXPLORING:
-        if(owner->movementManager->state == MovementStates::FINISHED){//check wether previous command exec was inhibited by obst
-            if(owner->movementManager->isObstacleDetected){
+
+    case ExplorerStates::MOVING_FORWARD:{
+        if(owner->movementManager->state == MovementStates::FINISHED){//finished moving, localise and pick new dest
+
+            if(owner->movementManager->isObstacleDetected){// this flag is cleared when calling manager.move
                 std::cout<<"elb obstacle was detected\n";
-                // pick a new destination
-
-
+                //for now just pick next dest point as if no obstacle was detected
             }
 
+            explorerState = ExplorerStates::ARRIVED_DEST;
         }
-        break;
+
+    }break;
+
+    case ExplorerStates::ARRIVED_DEST:{
+
+        localise(ExplorerStates::ARRIVED_DEST_AND_LOCALISED);
+
+    }break;
+
+    case ExplorerStates::ARRIVED_DEST_AND_LOCALISED:{
+
+        //compare 2x triang and odom
+
+        int odometryAfterDriving = owner->movementManager->odometry;
+        int distanceOdo = odometryAfterDriving-odometryBeforeDriving;
+
+        latestLocation.x = localisationProtocol->result.at(0);
+        latestLocation.y = localisationProtocol->result.at(1);
+        int dx =latestLocation.x-previousLocation.x;
+        int dy =latestLocation.y-previousLocation.y;
+
+        latestDirection = std::atan2(dx,dy);
+        int distTriang = std::sqrt(dx*dx+dy*dy);
+        std::cout<< "elb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
+
+        previousLocation.x = localisationProtocol->result.at(0);
+        previousLocation.y = localisationProtocol->result.at(1);
+
+        // pick a new destination
+        PointInt dest;
+        int absX;
+        int absY;
+        //check if dest is within coverage
+        do{
+            dest =getRandomPointAtDistance(NEXT_TARGET_DISTANCE);
+            absX = latestLocation.x+dest.x;
+            absY = latestLocation.y+dest.y;
+            //c
+        }while(absX*absX+absY*absY > AREA_RADI*AREA_RADI );
+        //turn to new destination direction
+        float destAngle = std::atan2(dest.y,dest.x);
+        float angleToTurn = destAngle - latestDirection;
+        distToTravelAfterTurning = NEXT_TARGET_DISTANCE;
+        owner->movementManager->turn(angleToTurn*180/PI);
+        explorerState = ExplorerStates::TURNING;
+    }break;
+
+    case ExplorerStates::TURNING:{
+
+        if(owner->movementManager->state == MovementStates::FINISHED){//finished turning, move forward
+
+            odometryBeforeDriving = owner->movementManager->odometry;
+            owner->movementManager->driveDistance(distToTravelAfterTurning);
+            explorerState = ExplorerStates::MOVING_FORWARD;
+        }
+    }   break;
+
+
     default:
         break;
     }
@@ -79,8 +176,9 @@ void ExplorerListenerBehaviour::behaviourStep()
 }
 
 //add localisation protocol as client
-void ExplorerListenerBehaviour::localise()
+void ExplorerListenerBehaviour::localise(ExplorerStates nextState)
 {
     localisationProtocol->localise();
     explorerState = ExplorerStates::MEASURING_XY;
+    stateAfterLocalise = nextState;
 }

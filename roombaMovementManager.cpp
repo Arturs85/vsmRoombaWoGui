@@ -128,7 +128,8 @@ state = MovementStates::FINISHED;
             if(angleRemaining<0){
                 roombaController->stopMoving();
                 state = MovementStates::FINISHED;
-            }}
+            }
+        }
             break;
         case MovementStates::TURNING_RIGHT:{
             int16_t angle = 3*roombaController->readAngle();
@@ -139,7 +140,8 @@ state = MovementStates::FINISHED;
             if(angleRemaining<0){
                 roombaController->stopMoving();
                 state = MovementStates::FINISHED;
-            }}
+            }
+        }
             break;
         case MovementStates::FINISHED:
             break;

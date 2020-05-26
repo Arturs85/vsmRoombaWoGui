@@ -3,6 +3,9 @@
 #include "baseProtocol.hpp"
 //enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
 
+#define PI 3.1415926
+
+
 class TwoPointFormationProtocol: public BaseProtocol {
 public:
     //roleInProtocol::Responder is only usable for S3Behaviour, pointer to ownerBehaviour is cast to S3beh

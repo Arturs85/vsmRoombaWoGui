@@ -181,7 +181,7 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
         std::cout<<"s3 omp entering state BEACONS DEPLOYED\n";
 
         state = ProtocolStates::BEACONS_DEPLOYED;
-        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL-1);// todo for test deceresd val by 1
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);// todo for test deceresd val by 1
         //send explorers s2 to start exploring
         VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");
         behaviour->owner->sendMsg(startRequest);

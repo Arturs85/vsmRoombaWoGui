@@ -52,7 +52,7 @@ void RoombaAgent::initHardware(){
 
 RoombaAgent::RoombaAgent()
 {
-    conflictingBehaviours.emplace(VSMSubsystems::S3,std::vector<VSMSubsystems>({VSMSubsystems::ROLE_CHECKING}));// where to initialize this?
+ //   conflictingBehaviours.emplace(VSMSubsystems::S3,std::vector<VSMSubsystems>({VSMSubsystems::ROLE_CHECKING}));// where to initialize this?
     conflictingBehaviours.emplace(VSMSubsystems::S1_BEACONS,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
     conflictingBehaviours.emplace(VSMSubsystems::S1_EXPLORERS,std::vector<VSMSubsystems>({VSMSubsystems::S1_BEACONS}));
 
