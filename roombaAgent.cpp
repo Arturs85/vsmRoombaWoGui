@@ -179,6 +179,7 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     BaseCommunicationBehaviour* bcb;
     switch (behaviour) {
     case VSMSubsystems::S3 :{
+        if(isS3)return;//workaround for not adding more than one s3 behaviour
         bcb = new S3Behaviour(this);
     }break;
     case VSMSubsystems::ROLE_CHECKING:{

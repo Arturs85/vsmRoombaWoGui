@@ -121,6 +121,7 @@ bool RoleCheckingProtocol::responderTick()
             //get unfilled role
             VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
             if(unfilled!=VSMSubsystems::NONE){
+               std::cout<<"rcp s3 got unfilled role "<<(int)unfilled<<"\n";
                 //mark it as filled
                 ((S3Behaviour*)behaviour)->markAsFilled(unfilled,res->senderNumber);//  todo mar as filled after received confirm
 
