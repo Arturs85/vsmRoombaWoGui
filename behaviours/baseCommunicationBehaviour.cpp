@@ -57,5 +57,5 @@ void BaseCommunicationBehaviour::remove()
 
 void BaseCommunicationBehaviour::logKeypoints(std::string text)// for debuging
 {
-  std::cout<<text;
+  //std::cout<<text;
 }

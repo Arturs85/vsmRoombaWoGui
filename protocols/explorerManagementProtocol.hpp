@@ -24,7 +24,7 @@ bool bMasterIsFilled =false;
 bool managerTick();
 bool explorerTick();
 void sendStopExploring();
-
+int askingIntervalCounter=0;
 void querryExplorers();//ask own type s1 for reply, to know how many are available
 
 };

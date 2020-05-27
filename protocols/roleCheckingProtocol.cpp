@@ -108,6 +108,9 @@ bool RoleCheckingProtocol::initiatorTick()
     default:
         break;
     }
+    
+    behaviour->msgDeque.clear();  //clear unintresting msgs 
+
     return ended;// not ment to execute
 }
 

@@ -437,7 +437,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                     pthread_mutex_unlock(&rxDequeLock);
 
                     //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                    cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
+                    cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" rec: "<<(int)m.receiverNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
                 }
 
                 t = clock();

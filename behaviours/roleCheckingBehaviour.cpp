@@ -11,6 +11,8 @@ RoleCheckingBehaviour::RoleCheckingBehaviour(RoombaAgent *owner):BaseCommunicati
 
 void RoleCheckingBehaviour::behaviourStep()
 {
+	std::cout<<" rcb msg size "<<msgDeque.size()<<"\n";
+
 bool hasEnded =roleCheckingProtocol->tick();
 //std::cout<<"rcp tick returned\n";
 }
