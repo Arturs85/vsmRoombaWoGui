@@ -211,6 +211,8 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
 
 bool LocalisationProtocol::clientTick()//  wait for final result timeout
 {
+    std::cout<<"lp client tick, state "<<(int)state<<"\n";
+
     switch (state) {
 
     case ProtocolStates::MASTER_MEAS_RECEIVED:{// measure distance to beacon 2
@@ -269,7 +271,7 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
     default:
         break;
     }
-
+return false;
 }
 
 void LocalisationProtocol::localise()//send dist measurement request to beacon master- initiates localisation process
