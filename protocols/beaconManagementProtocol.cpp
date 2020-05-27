@@ -54,7 +54,7 @@ int BeaconManagementProtocol::getUnusedBeaconId()
     // Iterate till the end of set
     while (it != availableRobotsSet.end())
     {
-        if(usedRobots.find(*it)!=usedRobots.end())
+        if(usedRobots.find(*it)==usedRobots.end())
         {
             return *it;
         }

@@ -180,6 +180,7 @@ bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
 
        std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
        std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
+       ((S2BaseBehavior*)behaviour)->lastS1Count=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();//set this value in behaviour for other protocols to use it
 
     }
 return false;

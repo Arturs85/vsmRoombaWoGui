@@ -23,11 +23,13 @@ bool S1ExchangeProtocol::tick()
     VSMMessage* res = behaviour->receive(MessageContents::REQUEST_S1);
     if(res!= 0){// check if there is robot to give and perform it if possible
         int askersCVal = std::stoi(res->content);
+            std::string ownVal = std::to_string(((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count);
+
+        std::cout<<("askers val"+std::to_string(askersCVal)+" own val "+ownVal+"\n");
         if(askersCVal>((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count){
             //give agent, except if this is s2beacons with no more than 3 beacons
-            std::string ownVal = std::to_string(((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count);
             BaseCommunicationBehaviour::logKeypoints("askers val"+std::to_string(askersCVal)+" own val "+ownVal+"\n");
-            std::cout<<("askers val"+std::to_string(askersCVal)+" own val "+ownVal+"\n");
+            
 
             int beaconId =((S2BaseBehavior*)behaviour)->getS1IdForGiveaway();// VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
             if(beaconId!=0){
