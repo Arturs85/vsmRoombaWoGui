@@ -27,9 +27,11 @@ bool S1ExchangeProtocol::tick()
             //give agent, except if this is s2beacons with no more than 3 beacons
             std::string ownVal = std::to_string(((S2BaseBehavior*)behaviour)->lastControlValue-((S2BaseBehavior*)behaviour)->lastS1Count);
             BaseCommunicationBehaviour::logKeypoints("askers val"+std::to_string(askersCVal)+" own val "+ownVal+"\n");
+            std::cout<<("askers val"+std::to_string(askersCVal)+" own val "+ownVal+"\n");
+
             int beaconId =((S2BaseBehavior*)behaviour)->getS1IdForGiveaway();// VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
             if(beaconId!=0){
-                std::cout<<"s1e found beacon to give "<<beaconId<<"\n";
+                std::cout<<">>>s1e found beacon to give<<< "<<beaconId<<"\n";
                 //send message to s1 to change type
                 // res->content
                 VSMSubsystems typeToChangeTo= VSMSubsystems::NONE;

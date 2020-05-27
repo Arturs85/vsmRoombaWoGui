@@ -96,6 +96,7 @@ void RoombaAgent::advertise()// send msg with own id and role list
 
 void RoombaAgent::distributeMessages()// copy received messages from uwblistener to subscribers queues
 {
+
     VSMMessage* msg = uwbMsgListener.getFirstRxMessageFromDeque();
     int receiver=0;
     if(msg == 0) return;
@@ -106,11 +107,14 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
 
     vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
 
-    if(subs.empty()) delete msg;// delete msg if there is no subscribers for it
+ //   if(subs.empty()) delete msg;// delete msg if there is no subscribers for it
 
     for (int i =0; i<subs.size();i++) {
         subs.at(i)->msgDeque.push_back(new VSMMessage(msg));
     }
+     delete msg;// delete msg after it is copied to rec behaviours
+
+    distributeMessages();//recursion
 }
 
 void RoombaAgent::startCycle()

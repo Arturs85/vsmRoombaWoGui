@@ -437,7 +437,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                     pthread_mutex_unlock(&rxDequeLock);
 
                     //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                    cout <<"rx valid msg--> sender: "<<(int)m.sender<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<"\n";
+                    cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
                 }
 
                 t = clock();
@@ -519,7 +519,7 @@ void UwbMsgListener::addToTxDeque(std::string msgText){
     tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
     memcpy(msg.macHeader,tx_poll_mod_msg2,ALL_MSG_COMMON_LEN);
 
-    snprintf(msg.data,30," --message nr %d",frame_seq_nb++);
+    snprintf(msg.data,30," --fnr %d",frame_seq_nb++);
     
     std::string s((char*)msg.data);
     //cout<< s<<"\n";
