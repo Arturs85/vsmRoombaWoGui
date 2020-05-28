@@ -89,6 +89,7 @@ bool ThirdBeaconFormationProtocol::standingBeaconTick()
 //returns true if protocol has ended
 bool ThirdBeaconFormationProtocol::movingBeaconTick()
 {
+   int travel=0;
     switch (state) {
     case ProtocolStates::IDLE:
     {
@@ -156,32 +157,35 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
             startDistanceMeasurement(stillBeacon1Id,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED,ProtocolStates::TIMEOUT);
             std::cout<<">> 3rdbfp started second measurement\n";
         }break;
-    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:// now we have two measurements and traveled distance
+    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:{// now we have two measurements and traveled distance
         measuredDistToFirst[1]=latestMeasurement;
-        relativeAngleH1First = TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToFirst[0], measuredDistToFirst[1], TRIANGLE_SIDE_MM);
-        relativeAngleH2First = -TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToFirst[0], measuredDistToFirst[1], TRIANGLE_SIDE_MM);
+         travel = behaviour->owner->movementManager->odometry-odoBeforeTravel;
+       std::cout<<"first travel "<<travel<<"\n";
+        relativeAngleH1First = TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToFirst[0], measuredDistToFirst[1], travel);
+        relativeAngleH2First = -TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToFirst[0], measuredDistToFirst[1], travel);
         
-        std::cout<<"relAngleH1f "<<relativeAngleH1First<<"  relAngleH2f "<<relativeAngleH2First<<"\n";
+        std::cout<<"relAngleH1f "<<relativeAngleH1First*180/PI<<"  relAngleH2f "<<relativeAngleH2First<<"\n";
         startDistanceMeasurement(stillBeacon2Id,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED_FROM_2,ProtocolStates::TIMEOUT);
-
+}
         break;
-    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED_FROM_2:
+    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED_FROM_2:{
         measuredDistToSecond[1] = latestMeasurement;
-        relativeAngleH1Second = TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToSecond[0], measuredDistToSecond[1], TRIANGLE_SIDE_MM);
-        relativeAngleH2Second = -TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToSecond[0], measuredDistToSecond[1], TRIANGLE_SIDE_MM);
+        relativeAngleH1Second = TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToSecond[0], measuredDistToSecond[1], travel);
+        relativeAngleH2Second = -TwoPointFormationProtocol::calculateRelativeAngle(measuredDistToSecond[0], measuredDistToSecond[1], travel);
 
         dirBeforeTurn = behaviour->owner->movementManager->direction;
         behaviour->owner->movementManager->turn(relativeAngleH1First*180/PI);//todo turn right is in sim, implement in movement manager
 
         state = ProtocolStates::TURN_DEGREES;
-        break;
+    }break;
     case ProtocolStates::TURN_DEGREES:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
-            relativeAngleH1First = relativeAngleH1First - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
-            relativeAngleH2First = relativeAngleH2First - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
+            double lastTurn = PI*(behaviour->owner->movementManager->direction - dirBeforeTurn)/180;
+            relativeAngleH1AfterTurnF = relativeAngleH1First - lastTurn;// angle for triangle calc
+            relativeAngleH1AfterTurnF = relativeAngleH2First - lastTurn;// angle for triangle calc
 
-            relativeAngleH1Second = relativeAngleH1Second - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
-            relativeAngleH2Second = relativeAngleH2Second - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
+            relativeAngleH1AfterTurnS = relativeAngleH1Second - lastTurn;// angle for triangle calc
+            relativeAngleH1AfterTurnS = relativeAngleH2Second - lastTurn;// angle for triangle calc
 
 
             enterState(ProtocolStates::SECOND_MOVE);// starts movement and changes state
@@ -195,6 +199,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         break;
     case ProtocolStates::SECOND_MOVE_MEASUREMENT_RECEIVED:
         measuredDistToFirst[2]=latestMeasurement;
+        travel = behaviour->owner->movementManager->odometry-odoBeforeTravel;
+      std::cout<<"second travel "<<travel<<"\n";
         startDistanceMeasurement(stillBeacon2Id,ProtocolStates::SECOND_MOVE_MEASUREMENT_RECEIVED_FROM_2,ProtocolStates::TIMEOUT);
         break;
 
@@ -202,10 +208,10 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
     {
         measuredDistToSecond[2]=latestMeasurement;
 
-        double predictedDistH1First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], TRIANGLE_SIDE_MM / 2, relativeAngleH1First);
-        double predictedDistH2First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], TRIANGLE_SIDE_MM / 2, relativeAngleH2First);
-        double predictedDistH1Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], TRIANGLE_SIDE_MM / 2, relativeAngleH1Second);
-        double predictedDistH2Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], TRIANGLE_SIDE_MM / 2, relativeAngleH2Second);
+        double predictedDistH1First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], travel, relativeAngleH1AfterTurnF);
+        double predictedDistH2First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], travel, relativeAngleH1AfterTurnF);
+        double predictedDistH1Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], travel, relativeAngleH1AfterTurnS);
+        double predictedDistH2Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], travel, relativeAngleH1AfterTurnS);
 
 
 
@@ -221,21 +227,26 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         double errH2Two = abs(predictedDistH2Second - measuredDistToSecond[2]);
 
         double da, daTwo;
+        double angleAfterMovement=0;
         if (errH1 < errH2) {
             da = relativeAngleH1First;
-        } else
+        } else{
             da = relativeAngleH2First;
+             angleAfterMovement = PI - TwoPointFormationProtocol::calcAngle(measuredDistToFirst[2],travel,measuredDistToFirst[1]);
+             if (cos(da) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
+                 angleAfterMovement = -angleAfterMovement;
+
+
+        }
         // System.out.println("da : " + Math.toDegrees(da));
         if (errH1Two < errH2Two) {
             daTwo = relativeAngleH1Second;
         } else
             daTwo = relativeAngleH2Second;
 
-        double angleAfterMovement = PI - TwoPointFormationProtocol::calcAngle(measuredDistToFirst[2],TRIANGLE_SIDE_MM/2,measuredDistToFirst[1]);
-        double angleAfterMovementSecond = PI - TwoPointFormationProtocol::calcAngle(measuredDistToSecond[2],TRIANGLE_SIDE_MM/2,measuredDistToSecond[1]);
+        double angleAfterMovementSecond = PI - TwoPointFormationProtocol::calcAngle(measuredDistToSecond[2],travel,measuredDistToSecond[1]);
 
-        if (sin(da) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
-            angleAfterMovement = -angleAfterMovement;
+
         if (sin(daTwo) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
             angleAfterMovementSecond = -angleAfterMovementSecond;
 
@@ -270,8 +281,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
     case ProtocolStates::FINAL_POSITION_TURN:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
 
-            behaviour->owner->movementManager->driveDistance(finalDistance);  // drive forward distace
             odoBeforeTravel = behaviour->owner->movementManager->odometry;
+            behaviour->owner->movementManager->driveDistance(finalDistance);  // drive forward distace
             enterState(ProtocolStates::FINAL_POSITION_MOVE);
         }
 
@@ -300,7 +311,7 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         angleToFirstRobot = calcAngleAfterTurnAndMove(angleToFirstRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToFirst[2]);
 
         angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToSecond[2]);
-                std::cout<<"angle1 "<<angleToFirstRobot<<"  angle2 "<<angleToSecondRobot<<"\n";
+                std::cout<<"angle1 "<<angleToFirstRobot*180/PI<<"  angle2 "<<angleToSecondRobot*180/PI<<"\n";
 
         //todo - how to end protocol?
 
@@ -336,6 +347,7 @@ void ThirdBeaconFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::FIRST_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM);  // drive forward distace
         state = ProtocolStates::FIRST_MOVE;
         cout<<("3rdbfp entering first move\n");
@@ -343,6 +355,8 @@ void ThirdBeaconFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::SECOND_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
+
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM/2);  // drive forward distace
         state = ProtocolStates::SECOND_MOVE;
         cout<<("3rdbfp entering second move\n");
@@ -350,6 +364,8 @@ void ThirdBeaconFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::FINAL_POSITION_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
+
         state = ProtocolStates::FINAL_POSITION_MOVE;
         cout<<("3rdbfp entering final move\n");
         break;
