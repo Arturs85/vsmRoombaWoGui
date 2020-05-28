@@ -31,6 +31,7 @@ int measureRetryCounter=0;
 int measureWaitCounter=0;
 int acknowledgeRetryCounter=0;
 int acknowledgeWaitCounter=0;
+int odoBeforeTravel =0;
 
 int measuredDist[4];
 int latestMeasurement=0;

@@ -92,7 +92,6 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         }
         if(latestMeasurement!=0){//measurement result is received
             measuredDist[0]= latestMeasurement;
-
             enterState(ProtocolStates::FIRST_MOVE);
         }
     }
@@ -116,17 +115,20 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             startDistanceMeasurement(stillBeaconId,ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED,ProtocolStates::TIMEOUT);
             std::cout<<">> tpfp started second measurement\n";
         }break;
-    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:// now we have two measurements and traveled distance
+    case ProtocolStates::FIRST_MOVE_MEASUREMENT_RECEIVED:{// now we have two measurements and traveled distance
         measuredDist[1]=latestMeasurement;
-        relativeAngleH1 = calculateRelativeAngle(measuredDist[0], measuredDist[1], TRIANGLE_SIDE_MM);
-        relativeAngleH2 = -calculateRelativeAngle(measuredDist[0], measuredDist[1], TRIANGLE_SIDE_MM);
+        int dist = behaviour->owner->movementManager->odometry-odoBeforeTravel;
+        std::cout<<"distTraveled "<<dist<<"\n";
+
+        relativeAngleH1 = calculateRelativeAngle(measuredDist[0], measuredDist[1], dist);
+        relativeAngleH2 = -calculateRelativeAngle(measuredDist[0], measuredDist[1], dist);
         
         std::cout<<"relAngleH1 "<<relativeAngleH1<<"  relAngleH2 "<<relativeAngleH2<<"\n";
         
         dirBeforeTurn = behaviour->owner->movementManager->direction;
         behaviour->owner->movementManager->turn(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
 
-        state = ProtocolStates::TURN_DEGREES;
+        state = ProtocolStates::TURN_DEGREES;}
         break;
     case ProtocolStates::TURN_DEGREES:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
@@ -143,9 +145,11 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         break;
     case ProtocolStates::SECOND_MOVE_MEASUREMENT_RECEIVED:
     {
+        int dist = behaviour->owner->movementManager->odometry-odoBeforeTravel;
+        std::cout<<"distTraveled "<<dist<<"\n";
         measuredDist[2]=latestMeasurement;
-        double predictedDistH1 = calcThirdSide(measuredDist[1], TRIANGLE_SIDE_MM / 2, relativeAngleH1);
-        double predictedDistH2 = calcThirdSide(measuredDist[1], TRIANGLE_SIDE_MM / 2, relativeAngleH2);
+        double predictedDistH1 = calcThirdSide(measuredDist[1], dist, relativeAngleH1);
+        double predictedDistH2 = calcThirdSide(measuredDist[1], dist, relativeAngleH2);
 
         std::cout<<" Actual measure :" << measuredDist[2]<<"\n";
         std::cout<<" Predicted measureH1 :" << predictedDistH1<<"\n";
@@ -161,7 +165,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             da = relativeAngleH2;
         // System.out.println("da : " + Math.toDegrees(da));
 
-        double angleAfterMovement = PI - calcAngle(measuredDist[2],TRIANGLE_SIDE_MM/2,measuredDist[1]);
+        double angleAfterMovement = PI - calcAngle(measuredDist[2],dist,measuredDist[1]);
 
         if (sin(da) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
             angleAfterMovement = -angleAfterMovement;
@@ -255,6 +259,7 @@ void TwoPointFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::FIRST_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM);  // drive forward distace
         state = ProtocolStates::FIRST_MOVE;
         cout<<("entering first move\n");
@@ -262,6 +267,7 @@ void TwoPointFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::SECOND_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
         behaviour->owner->movementManager->driveDistance(TRIANGLE_SIDE_MM/2);  // drive forward distace
         state = ProtocolStates::SECOND_MOVE;
         cout<<("entering second move\n");
@@ -269,6 +275,7 @@ void TwoPointFormationProtocol::enterState(ProtocolStates stateToEnter)
 
     case ProtocolStates::FINAL_POSITION_MOVE:
         // start to move robot: owner.publicPartOfAgent.moveForwardBy(triangleTravelside);
+        odoBeforeTravel = behaviour->owner->movementManager->odometry;
         state = ProtocolStates::FINAL_POSITION_MOVE;
         cout<<("entering final move\n");
         break;
