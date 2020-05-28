@@ -37,6 +37,9 @@ int measuredDist[4];
 int latestMeasurement=0;
 double relativeAngleH1;
    double relativeAngleH2;
+   double relativeAngleH1AfterTurn=0;
+   double relativeAngleH2AfterTurn=0;
+   
    double dirBeforeTurn;
    double angleToOtherRobot;
 ProtocolStates nextStateOnPositeiveResult;

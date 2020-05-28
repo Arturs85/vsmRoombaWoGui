@@ -123,7 +123,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         relativeAngleH1 = calculateRelativeAngle(measuredDist[0], measuredDist[1], dist);
         relativeAngleH2 = -calculateRelativeAngle(measuredDist[0], measuredDist[1], dist);
         
-        std::cout<<"relAngleH1 "<<relativeAngleH1<<"  relAngleH2 "<<relativeAngleH2<<"\n";
+        std::cout<<"relAngleH1 "<<relativeAngleH1*180/PI<<"  relAngleH2 "<<relativeAngleH2<<"\n";
         
         dirBeforeTurn = behaviour->owner->movementManager->direction;
         behaviour->owner->movementManager->turn(relativeAngleH1*180/PI);//todo turn right is in sim, implement in movement manager
@@ -132,8 +132,8 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         break;
     case ProtocolStates::TURN_DEGREES:
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
-            relativeAngleH1 = relativeAngleH1 - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
-            relativeAngleH2 = relativeAngleH2 - (behaviour->owner->movementManager->direction - dirBeforeTurn);// angle for triangle calc
+            relativeAngleH1AfterTurn = relativeAngleH1 - PI*(behaviour->owner->movementManager->direction - dirBeforeTurn)/180;// angle for triangle calc
+            relativeAngleH2AfterTurn = relativeAngleH2 - PI*(behaviour->owner->movementManager->direction - dirBeforeTurn)/180;// angle for triangle calc
             enterState(ProtocolStates::SECOND_MOVE);// starts movement and changes state
         }
         break;
@@ -148,8 +148,8 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         int dist = behaviour->owner->movementManager->odometry-odoBeforeTravel;
         std::cout<<"distTraveled "<<dist<<"\n";
         measuredDist[2]=latestMeasurement;
-        double predictedDistH1 = calcThirdSide(measuredDist[1], dist, relativeAngleH1);
-        double predictedDistH2 = calcThirdSide(measuredDist[1], dist, relativeAngleH2);
+        double predictedDistH1 = calcThirdSide(measuredDist[1], dist, relativeAngleH1AfterTurn);
+        double predictedDistH2 = calcThirdSide(measuredDist[1], dist, relativeAngleH2AfterTurn);
 
         std::cout<<" Actual measure :" << measuredDist[2]<<"\n";
         std::cout<<" Predicted measureH1 :" << predictedDistH1<<"\n";
@@ -158,22 +158,23 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         double errH1 = abs(predictedDistH1 - measuredDist[2]);
         double errH2 = abs(predictedDistH2 - measuredDist[2]);
 
-        double da, daTwo;
-        if (errH1 < errH2) {
+          double da, daTwo;
+       double angleAfterMovement=0;
+        if (errH1 < errH2) {// we turned right hipo, therefore angle should be 0
             da = relativeAngleH1;
-        } else
+        } else{// other hipo was right, calc angle to it
             da = relativeAngleH2;
-        // System.out.println("da : " + Math.toDegrees(da));
 
-        double angleAfterMovement = PI - calcAngle(measuredDist[2],dist,measuredDist[1]);
+         angleAfterMovement = PI - calcAngle(measuredDist[2],dist,measuredDist[1]);
 
-        if (sin(da) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
+        if (cos(da) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
             angleAfterMovement = -angleAfterMovement;
-
+}
         std::cout<<"angle to another after move: " << (angleAfterMovement*180/PI)<<"\n";
         //System.out.println("absolute angle2 : " + Math.toDegrees(owner.publicPartOfAgent.direction));
 
         angleToOtherRobot = angleAfterMovement;
+
 
         double turnBy = 0;
         if (measuredDist[2] < BEACONS_TRIANGLE_SIDE_MM) {
@@ -317,6 +318,8 @@ double TwoPointFormationProtocol::calculateRelativeAngle(double mes1, double mes
     return PI - angle;
 }
 double TwoPointFormationProtocol::calcThirdSide(double a,double b,double angleRad){
+       std::cout<<"calc3rdSide called "<<a<<" "<<b<<" "<<angleRad*180/PI<<"\n";
+
     return sqrt(a*a+b*b-2*a*b*cos(angleRad));
 }
 
