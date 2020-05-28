@@ -300,6 +300,8 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         angleToFirstRobot = calcAngleAfterTurnAndMove(angleToFirstRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToFirst[2]);
 
         angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToSecond[2]);
+                std::cout<<"angle1 "<<angleToFirstRobot<<"  angle2 "<<angleToSecondRobot<<"\n";
+
         //todo - how to end protocol?
 
         //just send to s2 that formation is done, for now dont wait for answer

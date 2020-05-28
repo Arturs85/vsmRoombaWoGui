@@ -47,7 +47,14 @@ public:
         this->receiverNumber= old->receiverNumber;
         this->senderNumber= old->senderNumber;
     }
-
+   VSMMessage(const VSMMessage &old){
+        this->contentDescription = old.contentDescription;
+        this->content = old.content;
+        this->receiver=old.receiver;
+        this->sender = old.sender;
+        this->receiverNumber= old.receiverNumber;
+        this->senderNumber= old.senderNumber;
+    }
     void setSender(int sender){senderNumber = sender;}
     void setSender(VSMSubsystems sender){this->sender = sender;}
     void setReceiver(int receiver){receiverNumber = receiver;}

@@ -165,6 +165,8 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
     possibleAngles.push_back(angleToB1-beta);
     possibleAngles.push_back(angleToB2+gamma);
     possibleAngles.push_back(angleToB2-gamma);
+    std::cout<<"a1a "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
+
     return findTwoClosestValues(possibleAngles);
 }
 
@@ -183,10 +185,12 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
 
         }else{//create neew entry
             measurementResults.insert( std::pair<int,MeasurementResults>(id,{0,0,0}) );
+std::cout<<"lp meas res size "<<measurementResults.size()<<"\n";
 
         }
         MeasurementResults mr = measurementResults.at(id);
-        bool isFilled =insertResult((Topics)res->senderNumber,&mr,dist);// todo check if sender number realy contains topic number
+        bool isFilled =insertResult((Topics)res->sender,&mr,dist);// todo check if sender number realy contains topic number
+        measurementResults.at(id)=mr;
         if(isFilled){//calculate xy and send to client and erease entry
 
             double angleToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->angleToFirstRobot;
@@ -194,8 +198,10 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
             int distToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToFirst[3];
             int distToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToSecond[3];
             float angleToExplorer = calcAngleToExplorer(distToB1,distToB2,angleToB1,angleToB2,&mr);
+                       std::cout<<"lp angle to exp "<<angleToExplorer<<"\n";
+
             int x = mr.BeaconMasterDist*std::cos(angleToExplorer);
-            int y = mr.BeaconMasterDist*std::cos(angleToExplorer);
+            int y = mr.BeaconMasterDist*std::sin(angleToExplorer);
             vector<int> resVect{x,y};
             std::string resString = BaseProtocol::intVectorToString(resVect);
             VSMMessage resultXY(behaviour->owner->id,id,MessageContents::CORDINATES_XY,resString);
@@ -291,6 +297,7 @@ void LocalisationProtocol::startDistanceMeasurement(Topics beaconId,ProtocolStat
 
 bool LocalisationProtocol::insertResult(Topics sender,MeasurementResults* mr, int result)//returns true if mr is filled after insertion
 {
+    std::cout<<"lp bm inserting dist at "<<(int)sender<<" res "<<result<<"\n";
     switch (sender) {
     case Topics::BEACON_MASTER_IN:
         mr->BeaconMasterDist=result;
@@ -304,6 +311,8 @@ bool LocalisationProtocol::insertResult(Topics sender,MeasurementResults* mr, in
     default:
         break;
     }
+        std::cout<<"mr b1"<<mr->b1Dist<<"mr b2"<<mr->b2Dist<<"mr bm"<<mr->BeaconMasterDist<<"\n";
+
     if(mr->b1Dist!=0 && mr->b2Dist!= 0 && mr->BeaconMasterDist!=0 )
         return true;
     else return false;

@@ -270,11 +270,14 @@ void RoombaAgent::sendMsg(VSMMessage msg)
     else
         receiver = (int)msg.receiver;
 
-    cout<<"send to receiver: " <<receiver<<"\n";
+        cout<<"ra send to rec: " <<receiver<< "from s "<<(int)msg.sender<<"\n";
+
     vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
 
     for (int i =0; i<subs.size();i++) {
-        subs.at(i)->msgDeque.push_back(msg);
+       // subs.at(i)->msgDeque.push_back(msg);
+            subs.at(i)->msgDeque.push_back(new VSMMessage(&msg));
+
     }
 
 

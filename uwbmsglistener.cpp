@@ -657,6 +657,8 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
             {
                 vector<int> data{(int)(twrDistance*100),rx_buffer[INITIATOR_ID_IDX]};
                 VSMMessage   replymsg2={ownId,Topics::BEACON_MASTER_IN,MessageContents::DISTANCE_MEASUREMENT_AND_ID,BaseProtocol::intVectorToString(data)};// todo- update receiver and sender with id
+                              replymsg2.setSender(static_cast<VSMSubsystems>(ownId));
+
                owner->sendMsg(replymsg2);// use owner send, because it will intercept own messages
             }
             //usleep(SLEEP_BETWEEN_SENDING_US);
