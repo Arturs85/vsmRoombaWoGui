@@ -22,7 +22,7 @@ LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCo
         ownerBeh->subscribeToTopic(Topics::BEACON_MASTER_IN);
         break;
     case RoleInProtocol::CLIENT:
-
+ownerBeh->subscribeToDirectMsgs();
         break;
     default:
         break;
@@ -131,7 +131,7 @@ float LocalisationProtocol::checkPointsWithThirdBeacon(int a, int b, int r, floa
 /**
    *
    * @param l
-   * @return average of two values in the list @param l that are closest
+   * @return average of two values in the list @param l that has closest sines
    */
 
 float LocalisationProtocol::findTwoClosestValues(vector<float> l)
@@ -149,8 +149,8 @@ float LocalisationProtocol::findTwoClosestValues(vector<float> l)
             }
         }
     }
-    cout<<" err From two triangles, degrees = "<<(minErrSoFar)<<"\n";
-    return (cand1+cand2)/2;
+    cout<<" err From two triangles, degrees = "<<(asin(minErrSoFar))<<"\n";
+    return asin((cand1+cand2)/2);
 }
 
 float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angleToB1,float angleToB2,MeasurementResults *mr)
@@ -161,11 +161,11 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
     double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
     double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
     vector<float> possibleAngles;
-    possibleAngles.push_back(angleToB1+beta);
-    possibleAngles.push_back(angleToB1-beta);
-    possibleAngles.push_back(angleToB2+gamma);
-    possibleAngles.push_back(angleToB2-gamma);
-    std::cout<<"a1a "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
+    possibleAngles.push_back(sin(angleToB1+beta));
+    possibleAngles.push_back(sin(angleToB1-beta));
+    possibleAngles.push_back(sin(angleToB2+gamma));
+    possibleAngles.push_back(sin(angleToB2-gamma));
+    std::cout<<"sines a1a  "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
 
     return findTwoClosestValues(possibleAngles);
 }
