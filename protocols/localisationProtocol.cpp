@@ -131,7 +131,7 @@ float LocalisationProtocol::checkPointsWithThirdBeacon(int a, int b, int r, floa
 /**
    *
    * @param l
-   * @return average of two values in the list @param l that has closest sines
+   * @return first of two values in the list @param l that has closest sines
    */
 
 float LocalisationProtocol::findTwoClosestValues(vector<float> l)
@@ -141,7 +141,7 @@ float LocalisationProtocol::findTwoClosestValues(vector<float> l)
     float minErrSoFar = std::numeric_limits<float>::max();
     for (int i = 0; i < l.size(); i++) {
         for (int j = i+1; j < l.size(); j++) {
-            float err = std::abs(l.at(i)-l.at(j));
+            float err = std::abs(sin(l.at(i))-sin(l.at(j)));//compare sines
             if(err<minErrSoFar){
                 cand1= l.at(i);
                 cand2 = l.at(j);
@@ -150,24 +150,26 @@ float LocalisationProtocol::findTwoClosestValues(vector<float> l)
         }
     }
     cout<<" err From two triangles, degrees = "<<(asin(minErrSoFar))<<"\n";
-    return asin((cand1+cand2)/2);
+    return (cand1);
 }
 
 float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angleToB1,float angleToB2,MeasurementResults *mr)
 {
     // TreeMap<AID, Double> distances)
+    std::cout<<"lp cate angle to b1 "<<angleToB1<<" to b2 "<<angleToB2<<"\n";
     double distFromMB= mr->BeaconMasterDist;// this implies that BeaconsMaster must bee one of beacons
 
     double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
     double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
     vector<float> possibleAngles;
-    possibleAngles.push_back(sin(angleToB1+beta));
-    possibleAngles.push_back(sin(angleToB1-beta));
-    possibleAngles.push_back(sin(angleToB2+gamma));
-    possibleAngles.push_back(sin(angleToB2-gamma));
-    std::cout<<"sines a1a  "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
+    possibleAngles.push_back((angleToB1+beta));
+    possibleAngles.push_back((angleToB1-beta));
+    possibleAngles.push_back((angleToB2+gamma));
+    possibleAngles.push_back((angleToB2-gamma));
+    std::cout<<"possible angles a1a  "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
 
-    return findTwoClosestValues(possibleAngles);
+    float closestVal= findTwoClosestValues(possibleAngles);
+return closestVal;//converting to radians
 }
 
 
