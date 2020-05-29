@@ -23,7 +23,9 @@ void ExplorerListenerBehaviour::startExploring()
 {
     std::cout<<"elb explorer starting explore\n";
     explorerState=ExplorerStates::IDLE;
-    localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
+//    localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
+localise(ExplorerStates::IDLE);//for loop localise
+
 }
 
 void ExplorerListenerBehaviour::stopExploring()
@@ -56,6 +58,7 @@ void ExplorerListenerBehaviour::behaviourStep()
 
     switch (explorerState) {
     case ExplorerStates::IDLE:
+localise(ExplorerStates::IDLE);//for loop localise
 
         break;
 

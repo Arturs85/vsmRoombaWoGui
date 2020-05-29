@@ -115,7 +115,7 @@ if(lb != 0){//obstacle
 isObstacleDetected=true;
 roombaController->stopMoving();
 state = MovementStates::FINISHED;
-
+std::cout<<"rmm stopped due to the obst \n";
 }
         }
             break;

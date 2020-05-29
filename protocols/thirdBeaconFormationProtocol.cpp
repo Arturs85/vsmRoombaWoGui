@@ -89,7 +89,7 @@ bool ThirdBeaconFormationProtocol::standingBeaconTick()
 //returns true if protocol has ended
 bool ThirdBeaconFormationProtocol::movingBeaconTick()
 {
-   int travel=0;
+   
     switch (state) {
     case ProtocolStates::IDLE:
     {
@@ -182,10 +182,10 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         if(behaviour->owner->movementManager->state==MovementStates::FINISHED){// movement is done
             double lastTurn = PI*(behaviour->owner->movementManager->direction - dirBeforeTurn)/180;
             relativeAngleH1AfterTurnF = relativeAngleH1First - lastTurn;// angle for triangle calc
-            relativeAngleH1AfterTurnF = relativeAngleH2First - lastTurn;// angle for triangle calc
+            relativeAngleH2AfterTurnF = relativeAngleH2First - lastTurn;// angle for triangle calc
 
             relativeAngleH1AfterTurnS = relativeAngleH1Second - lastTurn;// angle for triangle calc
-            relativeAngleH1AfterTurnS = relativeAngleH2Second - lastTurn;// angle for triangle calc
+            relativeAngleH2AfterTurnS = relativeAngleH2Second - lastTurn;// angle for triangle calc
 
 
             enterState(ProtocolStates::SECOND_MOVE);// starts movement and changes state
@@ -209,9 +209,9 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         measuredDistToSecond[2]=latestMeasurement;
 
         double predictedDistH1First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], travel, relativeAngleH1AfterTurnF);
-        double predictedDistH2First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], travel, relativeAngleH1AfterTurnF);
+        double predictedDistH2First = TwoPointFormationProtocol::calcThirdSide(measuredDistToFirst[1], travel, relativeAngleH2AfterTurnF);
         double predictedDistH1Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], travel, relativeAngleH1AfterTurnS);
-        double predictedDistH2Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], travel, relativeAngleH1AfterTurnS);
+        double predictedDistH2Second = TwoPointFormationProtocol::calcThirdSide(measuredDistToSecond[1], travel, relativeAngleH2AfterTurnS);
 
 
 
@@ -240,14 +240,14 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         }
         // System.out.println("da : " + Math.toDegrees(da));
         if (errH1Two < errH2Two) {
-            daTwo = relativeAngleH1Second;
+            daTwo = relativeAngleH1AfterTurnS;
         } else
-            daTwo = relativeAngleH2Second;
+            daTwo = relativeAngleH2AfterTurnS;
 
         double angleAfterMovementSecond = PI - TwoPointFormationProtocol::calcAngle(measuredDistToSecond[2],travel,measuredDistToSecond[1]);
 
 
-        if (sin(daTwo) > 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
+        if ((daTwo) < 0)//if last angle to other was mor than 180deg then we should now turn to the left and vice versa
             angleAfterMovementSecond = -angleAfterMovementSecond;
 
         std::cout<<"angle to another b1 after move: " << (angleAfterMovement*180/PI)<<"\n";
@@ -308,9 +308,9 @@ bool ThirdBeaconFormationProtocol::movingBeaconTick()
         // calculate positions of other beacons after final move
         double deltaAngle = behaviour->owner->movementManager->direction - dirBeforeTurn;
         double travel = behaviour->owner->movementManager->odometry-odoBeforeTravel;
-        angleToFirstRobot = calcAngleAfterTurnAndMove(angleToFirstRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToFirst[2]);
+        angleToFirstRobot = calcAngleAfterTurnAndMove(angleToFirstRobot,deltaAngle*PI/180,travel,measuredDistToFirst[3],measuredDistToFirst[2]);
 
-        angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle,travel,measuredDistToFirst[3],measuredDistToSecond[2]);
+        angleToSecondRobot = calcAngleAfterTurnAndMove(angleToSecondRobot,deltaAngle*PI/180,travel,measuredDistToSecond[3],measuredDistToSecond[2]);
                 std::cout<<"angle1 "<<angleToFirstRobot*180/PI<<"  angle2 "<<angleToSecondRobot*180/PI<<"\n";
 
         //todo - how to end protocol?
@@ -397,6 +397,7 @@ ThirdBeaconFormationProtocol::ThirdBeaconFormationProtocol(RoleInProtocol roleIn
 
 double ThirdBeaconFormationProtocol::calcAngleAfterTurnAndMove(double prevRelatAngle, double turnAngle, double travel, double measAfter,double measBefore){
     double angleAfterMovement = PI - TwoPointFormationProtocol::calcAngle(travel,measAfter,measBefore);
+std::cout<<"caatm prv rel angle "<<prevRelatAngle<<" turn angle "<<turnAngle<<"\n";
 
     if (sin(prevRelatAngle-turnAngle) < 0)// todo is this right for all cases
         angleAfterMovement = -angleAfterMovement;

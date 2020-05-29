@@ -158,8 +158,8 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
     // TreeMap<AID, Double> distances)
     double distFromMB= mr->BeaconMasterDist;// this implies that BeaconsMaster must bee one of beacons
 
-    double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1,mr->b1Dist);
-    double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2,mr->b2Dist);
+    double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
+    double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
     vector<float> possibleAngles;
     possibleAngles.push_back(angleToB1+beta);
     possibleAngles.push_back(angleToB1-beta);

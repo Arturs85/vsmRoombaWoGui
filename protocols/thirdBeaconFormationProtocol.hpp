@@ -37,6 +37,7 @@ int replyWaitCounter=0;
 
 int latestMeasurement=0;
 int latestMeasuredBeaconId=0;
+int travel=0;
 
 double relativeAngleH1First;
 double relativeAngleH2First;
