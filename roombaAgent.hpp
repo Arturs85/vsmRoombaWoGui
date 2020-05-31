@@ -6,6 +6,7 @@
 #include "uartTest.h"
 #include "baseCommunicationBehaviour.hpp"
 #include <map>
+#include <set>
 //class BaseCommunicationBehaviour;
 class RoombaMovementManager;
 class RoombaAgent{
@@ -15,8 +16,8 @@ RoombaController* roombaController;
 UwbMsgListener uwbMsgListener; // start uwb device
 UartTest uartTest;
 vector<VSMSubsystems> roleList;
-vector<BaseCommunicationBehaviour*> behavioursList;
-vector<vector<BaseCommunicationBehaviour*>> subscribersMap; // index of vector- topic ordinal, vector of Behaviors- subscribers whom to deliver msg
+std::vector<BaseCommunicationBehaviour*> behavioursList;
+vector<set<BaseCommunicationBehaviour*>> subscribersMap; // index of vector- topic ordinal, vector of Behaviors- subscribers whom to deliver msg
 std::map<VSMSubsystems,vector<VSMSubsystems > > conflictingBehaviours;
 bool isS3=false;
 VSMSubsystems s1Type=VSMSubsystems::S1_BEACONS;//default s1type of robot

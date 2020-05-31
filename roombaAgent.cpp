@@ -60,7 +60,7 @@ RoombaAgent::RoombaAgent()
     //roleList.push_back(VSMSubsystems::S1);//for test
     //roleList.push_back(VSMSubsystems::S3);//for test
     getRoleListForMsg();
-    vector<BaseCommunicationBehaviour*> init;
+    set<BaseCommunicationBehaviour*> init;
     subscribersMap.resize(static_cast<int>(Topics::SIZE_OF_THIS_ENUM),init);// initialize map with empty lists
     cout<<" size of subscribers map: "<<subscribersMap.size()<<"\n";
 UwbMsgListener::owner=this;
@@ -105,12 +105,13 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
     else
         receiver = (int)msg->receiver;
 
-    vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
+    std::set<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
 
  //   if(subs.empty()) delete msg;// delete msg if there is no subscribers for it
+    std::set<BaseCommunicationBehaviour*>::iterator it;
 
-    for (int i =0; i<subs.size();i++) {
-        subs.at(i)->msgDeque.push_back(new VSMMessage(msg));
+    for (it = subs.begin(); it != subs.end(); ++it) {
+        (*it)->msgDeque.push_back(new VSMMessage(msg));
     }
      delete msg;// delete msg after it is copied to rec behaviours
 
@@ -272,13 +273,15 @@ void RoombaAgent::sendMsg(VSMMessage msg)
 
         cout<<"ra send to rec: " <<receiver<< "from s "<<(int)msg.sender<<"\n";
 
-    vector<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
 
-    for (int i =0; i<subs.size();i++) {
-       // subs.at(i)->msgDeque.push_back(msg);
-            subs.at(i)->msgDeque.push_back(new VSMMessage(&msg));
 
+    std::set<BaseCommunicationBehaviour*> subs = subscribersMap.at(receiver);
+    std::set<BaseCommunicationBehaviour*>::iterator it;
+
+    for (it = subs.begin(); it != subs.end(); ++it) {
+        (*it)->msgDeque.push_back(new VSMMessage(&msg));
     }
+
 
 
     // send message to others

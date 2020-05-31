@@ -29,19 +29,19 @@ return 0;
 
 void BaseCommunicationBehaviour::subscribeToTopic(Topics topic)
 {
-    owner->subscribersMap.at((int)topic).push_back(this);
+    owner->subscribersMap.at((int)topic).insert(this);
 }
 
 void BaseCommunicationBehaviour::subscribeToDirectMsgs()
 {
-    owner->subscribersMap.at(owner->id).push_back(this);
+    owner->subscribersMap.at(owner->id).insert(this);
 
 }
 
 void BaseCommunicationBehaviour::unSubscribeToTopic(Topics topic)
 {
-    vector<BaseCommunicationBehaviour*> subs = owner->subscribersMap.at((int)topic);
-    subs.erase(std::remove(subs.begin(), subs.end(), this), subs.end());// remove by value
+    std:set<BaseCommunicationBehaviour*> subs = owner->subscribersMap.at((int)topic);
+    subs.erase(this);// remove by value
 }
 
 void BaseCommunicationBehaviour::behaviourStep()

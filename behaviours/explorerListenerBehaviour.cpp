@@ -23,8 +23,8 @@ void ExplorerListenerBehaviour::startExploring()
 {
     std::cout<<"elb explorer starting explore\n";
     explorerState=ExplorerStates::IDLE;
-//    localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
-localise(ExplorerStates::IDLE);//for loop localise
+    localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
+//localise(ExplorerStates::IDLE);//for loop localise
 
 }
 
@@ -54,11 +54,11 @@ void ExplorerListenerBehaviour::behaviourStep()
     BaseCommunicationBehaviour::logKeypoints("emp tick returned\n");
     //manage driving
 
-
+std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
 
     switch (explorerState) {
     case ExplorerStates::IDLE:
-localise(ExplorerStates::IDLE);//for loop localise
+//localise(ExplorerStates::IDLE);//for loop localise
 
         break;
 

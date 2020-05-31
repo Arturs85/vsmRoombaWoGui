@@ -161,6 +161,7 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
 
     double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
     double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
+  std::cout<<"beta "<<180*beta/PI<< "gamma "<<180*gamma/PI<<"\n";
     vector<float> possibleAngles;
     possibleAngles.push_back((angleToB1+beta));
     possibleAngles.push_back((angleToB1-beta));
@@ -238,9 +239,17 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
 
             result = BaseProtocol::stringTointVector(res->content);
            std::cout<<"localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
-            wasSuccessful = true;
+           //erease older msgs
+            VSMMessage* res2 =0;
+            do{
+           res2 = behaviour->receive(MessageContents::CORDINATES_XY);
+           }while(res2 != 0);
+
+           wasSuccessful = true;
             return true;
         }
+
+
         finalResultWaitCounter++;
         if(finalResultWaitCounter>finalResultWaitTicks){
             std::cout<<"localisation client failed to receive cords, stopping\n";

@@ -328,6 +328,7 @@ double TwoPointFormationProtocol::calcAngle(double a, double b, double c)
     if ((a + b) < c) return PI;
     if (abs(a-b) > c) return 0;
     //cos theorem
+
     return acos((a*a+b*b-c*c)/(2*a*b));
 
 
