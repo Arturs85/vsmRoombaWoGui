@@ -6,6 +6,7 @@
 //#include "roombaAgent.hpp"
 
 #define TICK_PERIOD_SEC 1.0
+struct PointF{float x; float y;};
 
 class RoombaAgent;
 
