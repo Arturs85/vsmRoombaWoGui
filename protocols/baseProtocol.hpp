@@ -25,9 +25,10 @@ protected:
     ProtocolStates state;
     ProtocolStates onPositiveQuerry;
     ProtocolStates onNoReply;
-    VSMMessage receivedReplyOnQuerry;
+    VSMMessage* receivedReplyOnQuerry;
  VSMMessage querryMessage;
-    void querryWithTimeout(VSMMessage message, ProtocolStates onReply, ProtocolStates noReply, int retries, int timeout);
+ MessageContents expectedReplyContents;
+    void querryWithTimeout(VSMMessage message,MessageContents replyContents, ProtocolStates onReply, ProtocolStates noReply, int retries, int timeout);
     int  querrieTicksCounter=0;
     int querrieRetryCounter=0;
     int querieTicksMax =3;

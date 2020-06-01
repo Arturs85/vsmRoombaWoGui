@@ -14,7 +14,7 @@ vector<int> BaseProtocol::stringTointVector(string s){
     while(ss>>i){
 
         //if(ss>>i)
-            res.push_back(i);
+        res.push_back(i);
 
     }
     return  res;
@@ -29,11 +29,13 @@ string BaseProtocol::intVectorToString(vector<int> iv)
     return ss.str();
 }
 
-void BaseProtocol::querryWithTimeout(VSMMessage message,ProtocolStates onReply, ProtocolStates noReply, int retries, int timeout)
+void BaseProtocol::querryWithTimeout(VSMMessage message,MessageContents replyContents,ProtocolStates onReply, ProtocolStates noReply, int retries, int timeout)
 {
+    receivedReplyOnQuerry=0;//delete this message erlier
     querrieRetryCounter=0;
     querrieTicksCounter=0;
     querryMessage = message;
+    expectedReplyContents= replyContents;
     onPositiveQuerry=onReply;
     onNoReply = noReply;
     querieTicksMax = timeout;
@@ -48,9 +50,17 @@ void BaseProtocol::querryWithTimeout(VSMMessage message,ProtocolStates onReply, 
 bool BaseProtocol::tick(){//call this in subclass for querryWithTimeout feature to work
     switch (state) {
     case ProtocolStates::QUERRY_WAITING_REPLY:{
+        receivedReplyOnQuerry = behaviour->receive(expectedReplyContents);
+        if(receivedReplyOnQuerry!=0){
+            state = onPositiveQuerry;
+        }
         querrieTicksCounter++;
         if(querrieTicksCounter>querieTicksMax){
+            querrieTicksCounter=0;
             if(querrieRetryCounter++ > querryRetriesMax){
+                state =onNoReply;
+            }else{//resend querry
+                behaviour->owner->sendMsg(querryMessage);
 
             }
         }
