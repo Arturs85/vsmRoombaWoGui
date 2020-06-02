@@ -24,6 +24,9 @@ OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleIn
     else if (roleInProtocol==RoleInProtocol::S2EXPLORERS) {
         behaviour->subscribeToTopic(Topics::S2EXPLORERS_IN);
     }
+    else if (roleInProtocol==RoleInProtocol::S4) {
+        behaviour->subscribeToTopic(Topics::TO_S4);
+    }
 
     behaviour->subscribeToDirectMsgs();
 }
@@ -78,6 +81,7 @@ void OperationsManagementProtocol::initiateBeaconsRegroup()//for s4
 }
 
 bool OperationsManagementProtocol::s4Tick(){
+    BaseProtocol::tick();
     switch (state) {
     case ProtocolStates::BEACONS_DEPLOYED:
         //receive visited points from bm
