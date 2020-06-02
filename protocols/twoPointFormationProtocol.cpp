@@ -82,6 +82,7 @@ bool TwoPointFormationProtocol::standingBeaconTick()
 //returns true if protocol has ended
 bool TwoPointFormationProtocol::movingBeaconTick()
 {
+    BaseProtocol::tick();// to execute querryWithReply
     switch (state) {
     case ProtocolStates::WAITING_REPLY:{
         VSMMessage* res = behaviour->receive(MessageContents::AGREE);
@@ -219,11 +220,13 @@ bool TwoPointFormationProtocol::movingBeaconTick()
         }
         VSMMessage tpfpFinished(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"a");
 
-        behaviour->owner->sendMsg(tpfpFinished);
-        state = ProtocolStates::WAITING_ACKNOWLEDGE;
+        querryWithTimeout(tpfpFinished,MessageContents::ACKNOWLEDGE,ProtocolStates::ACKNOWLEDGE_RECEIVED,ProtocolStates::TIMEOUT,3,3);
+
+       // behaviour->owner->sendMsg(tpfpFinished);
+       // state = ProtocolStates::WAITING_ACKNOWLEDGE;
     }
         break;
-    case ProtocolStates::WAITING_ACKNOWLEDGE:{
+    case ProtocolStates::WAITING_ACKNOWLEDGE:{// todo erease because it is handled in superclass
         if(acknowledgeWaitCounter++ >finalAcknowledgeWaitTicks){// resend finished message to third beacon
             state= ProtocolStates::FINAL_POSITION_MOVE_MEAS_RECEIVED;
         }

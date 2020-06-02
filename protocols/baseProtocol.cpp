@@ -31,7 +31,7 @@ string BaseProtocol::intVectorToString(vector<int> iv)
 
 void BaseProtocol::querryWithTimeout(VSMMessage message,MessageContents replyContents,ProtocolStates onReply, ProtocolStates noReply, int retries, int timeout)
 {
-    receivedReplyOnQuerry=0;//delete this message erlier
+    receivedReplyOnQuerry=0;//delete this message erlier, now only mark it as 0
     querrieRetryCounter=0;
     querrieTicksCounter=0;
     querryMessage = message;
@@ -41,7 +41,7 @@ void BaseProtocol::querryWithTimeout(VSMMessage message,MessageContents replyCon
     querieTicksMax = timeout;
     querryRetriesMax = retries;
     behaviour->owner->sendMsg(message);
-    state =ProtocolStates::QUERRY_WAITING_REPLY;
+    state = ProtocolStates::QUERRY_WAITING_REPLY;
 
 }
 
@@ -60,6 +60,7 @@ bool BaseProtocol::tick(){//call this in subclass for querryWithTimeout feature 
             if(querrieRetryCounter++ > querryRetriesMax){
                 state =onNoReply;
             }else{//resend querry
+                std::cout<<"retry querry "<<querrieRetryCounter<<"\n";
                 behaviour->owner->sendMsg(querryMessage);
 
             }

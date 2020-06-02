@@ -166,6 +166,12 @@
 		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s3Behaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
+		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s4Behaviour.cpp">
+			<Option target="vsmRoombaWoGui"/>
+		</Unit>
+		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s4Behaviour.hpp">
+			<Option target="vsmRoombaWoGui"/>
+		</Unit>
 		<Unit filename="/home/vnpc/vsmRoombaWoGui/localMap.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>

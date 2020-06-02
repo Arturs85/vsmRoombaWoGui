@@ -34,9 +34,9 @@ protected:
     int querieTicksMax =3;
     int querryRetriesMax =3;//defaults
     BaseCommunicationBehaviour* behaviour;
+    virtual bool tick();
 
 private:
-    virtual bool tick();
     virtual void start();
 
 
