@@ -68,6 +68,9 @@ bool OperationsManagementProtocol::tick(){
     case RoleInProtocol::S2EXPLORERS:
         return s2ExplorersTick();
         break;
+    case RoleInProtocol::S4:
+        return s4Tick();
+        break;
 
     default:
         break;

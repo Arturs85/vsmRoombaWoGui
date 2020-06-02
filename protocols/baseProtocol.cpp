@@ -50,6 +50,7 @@ void BaseProtocol::querryWithTimeout(VSMMessage message,MessageContents replyCon
 bool BaseProtocol::tick(){//call this in subclass for querryWithTimeout feature to work
     switch (state) {
     case ProtocolStates::QUERRY_WAITING_REPLY:{
+      std::cout<<"BP tick state qwr \n";
         receivedReplyOnQuerry = behaviour->receive(expectedReplyContents);
         if(receivedReplyOnQuerry!=0){
             state = onPositiveQuerry;
@@ -66,8 +67,9 @@ bool BaseProtocol::tick(){//call this in subclass for querryWithTimeout feature 
             }
         }
 
+    }break;
     }
-    }
+    return false;
 }
 
 void BaseProtocol::start()
