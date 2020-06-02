@@ -8,6 +8,8 @@
 #include "s2BeaconsBehaviour.hpp"
 #include "beaconManagementProtocol.hpp"
 #include "s2ExplorersBehaviour.hpp"
+#include "s4Behaviour.hpp"
+//#include "baseProtocol.hpp"
 
 #define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
 #define BEACONS_COUNT_NORMAL 3
@@ -91,7 +93,9 @@ bool OperationsManagementProtocol::s4Tick(){
 
         break;
     case ProtocolStates::ACKNOWLEDGE_RECEIVED:{
-        VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::S2BEACONS_IN,MessageContents::EXPLORING_DONE,"edb");
+        vector<int> cords = ((S4Behaviour*)behaviour)->getCordsForRegrouping(BEACONS_TRIANGLE_SIDE_MM);
+        string s = BaseProtocol::intVectorToString(cords);
+        VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::S2BEACONS_IN,MessageContents::EXPLORING_DONE,s);
         querryWithTimeout(regroupRequestToS2Beacons,MessageContents::ACKNOWLEDGE,ProtocolStates::REGROUPING,ProtocolStates::TIMEOUT,3,3);//receive reply and inform s2beaconsof new cordinates
 
     }   break;
@@ -198,7 +202,8 @@ bool OperationsManagementProtocol::s2BeaconsTick()
         VSMMessage* res = behaviour->receive(MessageContents::EXPLORING_DONE);
         if(res!= 0){// s4 sent that exploring is done, find additional 3 beacons to send them to the new positions
             std::cout<<"s2b received exploring done,regrouping \n";
-
+vector<int>cords = BaseProtocol::stringTointVector(res->content);
+            ((S2BeaconsBehaviour*)behaviour)->startRegroupingBeacons(cords);
             //reply to sender
             VSMMessage agree(VSMSubsystems::S2_BEACONS,Topics::TO_S4,MessageContents::ACKNOWLEDGE,"acb");
             behaviour->owner->sendMsg(agree);

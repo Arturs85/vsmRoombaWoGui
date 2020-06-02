@@ -37,6 +37,7 @@ bool BaseS1ManagementProtocol::tick()
 int BaseS1ManagementProtocol::getUnusedBeaconId()
 {
     //todo
+
 }
 
 void BaseS1ManagementProtocol::sendChangeType(int robotId,std::string vSMSubsystemsS1NewTypeString)// to call from outside of class

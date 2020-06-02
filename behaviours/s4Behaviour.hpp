@@ -3,6 +3,8 @@
 #include "baseCommunicationBehaviour.hpp"
 #include "s2BaseBehaviour.hpp"
 #include <map>
+#include "explorerListenerBehaviour.hpp"
+
 
 class RoleCheckingProtocol;
 class LocalisationProtocol;
@@ -21,9 +23,12 @@ public:
    
 int addPointToMap(int x, int y);
 void InitiateBeaconsRegroup();//to use when current area is explored
+vector<int> getCordsForRegrouping(int side);
+PointInt getFaresPoint();
+
 private:
 S4States state;
-  vector<PointF> mapPoints;
+  vector<PointInt> mapPoints;
     OperationsManagementProtocol* operationsManagementProtocol;
     LocalisationProtocol* localisationProtocol;
 

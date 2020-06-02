@@ -14,6 +14,7 @@ public:
  BeaconManagementProtocol* beaconManagementProtocol;
 OperationsManagementProtocol* operationsManagementProtocol;
 int getS1IdForGiveaway();
+void startRegroupingBeacons(vector<int> cords);
 
 private:
     void behaviourStep();

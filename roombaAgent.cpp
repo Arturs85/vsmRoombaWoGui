@@ -16,6 +16,7 @@
 #include "explorerListenerBehaviour.hpp"
 #include "s2ExplorersBehaviour.hpp"
 #include "s4Behaviour.hpp"
+#include "moveToTargetBehaviour.hpp"
 
 #define USLEEP_TIME_US 10000
 
@@ -56,6 +57,7 @@ RoombaAgent::RoombaAgent()
  //   conflictingBehaviours.emplace(VSMSubsystems::S3,std::vector<VSMSubsystems>({VSMSubsystems::ROLE_CHECKING}));// where to initialize this?
     conflictingBehaviours.emplace(VSMSubsystems::S1_BEACONS,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
     conflictingBehaviours.emplace(VSMSubsystems::S1_EXPLORERS,std::vector<VSMSubsystems>({VSMSubsystems::S1_BEACONS}));
+    conflictingBehaviours.emplace(VSMSubsystems::TARGET_MOVING_BEACON,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
 
     getId();
     //roleList.push_back(VSMSubsystems::S1);//for test
@@ -224,6 +226,10 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     }break;
     case VSMSubsystems::S4:{
         bcb = new S4Behaviour(this);
+
+    }break;
+    case VSMSubsystems::TARGET_MOVING_BEACON:{
+        bcb = new MoveToTargetBehaviour(this);
 
     }break;
     default:{

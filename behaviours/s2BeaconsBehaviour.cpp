@@ -37,3 +37,8 @@ int S2BeaconsBehaviour::getS1IdForGiveaway()
     //if(beaconManagementProtocol->)
     return 0;
 }
+
+void S2BeaconsBehaviour::startRegroupingBeacons(vector<int> cords)
+{
+   ((BeaconManagementProtocol*)s1ManagementProtocol)->startReformation(cords);
+}

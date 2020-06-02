@@ -4,7 +4,7 @@
 #include "roombaMovementManager.hpp"
 #include <cmath>
 #include "twoPointFormationProtocol.hpp" //for PI
-
+#include "beaconManagementProtocol.hpp"
 // add this behaviour when unit becomes of explore type, so it can listen to commands from s2
 
 #define FIRST_DISTANCE 500 // 50cm
@@ -12,12 +12,13 @@
 
 //#define NEXT_TARGET_DISTANCE 2000 // 2m
 
-#define AREA_RADI 5000
+//#define AREA_RADI 5000
 
 MoveToTargetBehaviour::MoveToTargetBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
     this->ra = roombaAgent;
     localisationProtocol=new LocalisationProtocol(RoleInProtocol::CLIENT,this);
+beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::MOVING_BEACON,this);
 }
 
 PointInt MoveToTargetBehaviour::getNextPointToTravel()
@@ -35,17 +36,24 @@ void MoveToTargetBehaviour::startRoute()
 
 }
 
+void MoveToTargetBehaviour::setTarget(int x, int y)//to set single point route
+{
+    PointInt p = {x,y};
+    route.push_back(p);
+}
+
 
 
 
 
 void MoveToTargetBehaviour::behaviourStep()
 {
-
+beaconManagementProtocol->tick();// receives cordinates
 
     switch (movementState) {
     case ExplorerStates::IDLE:
-        //localise(ExplorerStates::IDLE);//for loop localise
+        //listen for coordinates
+
 
         break;
 

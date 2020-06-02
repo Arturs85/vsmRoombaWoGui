@@ -6,8 +6,7 @@
 #include "roombaMovementManager.hpp"
 #include <cmath>
 
-#define TRIANGLE_SIDE_MM 1000
-#define BEACONS_TRIANGLE_SIDE_MM 1500
+
 
 bool TwoPointFormationProtocol::tick()
 {

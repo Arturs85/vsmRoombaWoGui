@@ -3,7 +3,7 @@
 #include "roombaAgent.hpp"
 #include "explorerListenerBehaviour.hpp"
 
-class BeaconsManagementProtocol;
+class BeaconManagementProtocol;
 
 //enum class ExplorerStates{IDLE,EXPLORING,MEASURING_XY, MOVING_FORWARD,TURNING,ARRIVED_DEST,ENCOUNTERED_OBST,ARRIVED_DEST_AND_LOCALISED,FIRST_MEASUREMENT, FIRST_DRIVE};
 
@@ -15,6 +15,8 @@ public:
 
     RoombaAgent* ra;
     LocalisationProtocol* localisationProtocol;
+    BeaconManagementProtocol* beaconManagementProtocol;
+
     void localise(ExplorerStates nextState);
 vector<PointInt> route;
     MoveToTargetBehaviour(RoombaAgent *roombaAgent);
@@ -26,7 +28,7 @@ vector<PointInt> route;
 
     PointInt getNextPointToTravel();
     void startRoute();
-
+void setTarget(int x, int y);
 private:
     PointInt destinationPoint;
     void behaviourStep();
