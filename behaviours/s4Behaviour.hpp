@@ -5,7 +5,7 @@
 #include <map>
 
 class RoleCheckingProtocol;
-class ControlValueProtocol;
+class LocalisationProtocol;
 class OperationsManagementProtocol;
 
 #define MARK_ABSENT_TIMEOUT 30.0// seconds
@@ -19,11 +19,13 @@ public:
 
     S4Behaviour(RoombaAgent* owner);
    
-
+int addPointToMap(int x, int y);
+void InitiateBeaconsRegroup();//to use when current area is explored
 private:
 S4States state;
   vector<PointF> mapPoints;
     OperationsManagementProtocol* operationsManagementProtocol;
+    LocalisationProtocol* localisationProtocol;
 
 
 void behaviourStep();

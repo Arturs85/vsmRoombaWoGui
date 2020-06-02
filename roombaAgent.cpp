@@ -15,6 +15,7 @@
 #include "beaconMasterBehaviour.hpp"
 #include "explorerListenerBehaviour.hpp"
 #include "s2ExplorersBehaviour.hpp"
+#include "s4Behaviour.hpp"
 
 #define USLEEP_TIME_US 10000
 
@@ -219,6 +220,10 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     }break;
     case VSMSubsystems::S2_EXPLORERS:{
         bcb = new S2ExplorersBehaviour(this);
+
+    }break;
+    case VSMSubsystems::S4:{
+        bcb = new S4Behaviour(this);
 
     }break;
     default:{

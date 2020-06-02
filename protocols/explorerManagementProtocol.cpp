@@ -94,7 +94,7 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
     case ProtocolStates::BEACONS_DEPLOYED:{
 
         // periodically ask for s1
-        if(askingIntervalCounter%5==0)//todo number to header
+        if(askingIntervalCounter++%5==0)//todo number to header
         ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
         //std::cout<<"ask s1 ok \n";
 

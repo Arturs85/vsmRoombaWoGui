@@ -35,6 +35,9 @@ Topics currentBeacon;
 bool beaconMsterTick();
 bool beaconTick();
 bool clientTick();
+bool s4Tick();
+
+
 void startDistanceMeasurement(Topics beaconId,ProtocolStates nextStatePosResult,ProtocolStates nextStateNegResult);
 std::map<int,MeasurementResults > measurementResults;
 bool insertResult(Topics sender, MeasurementResults *mr, int result);

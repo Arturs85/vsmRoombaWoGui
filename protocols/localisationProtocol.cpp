@@ -10,7 +10,9 @@
 #include "twoPointFormationProtocol.hpp"
 #include <cmath>
 #include <limits>
+#include "s4Behaviour.hpp"
 
+#define POINT_COUNT_FOR_MAP 3
 
 LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
@@ -22,8 +24,13 @@ LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCo
         ownerBeh->subscribeToTopic(Topics::BEACON_MASTER_IN);
         break;
     case RoleInProtocol::CLIENT:
-ownerBeh->subscribeToDirectMsgs();
+        ownerBeh->subscribeToDirectMsgs();
         break;
+    case RoleInProtocol::S4:
+        ownerBeh->subscribeToTopic(Topics::TO_S4);
+        state = ProtocolStates::BEACONS_DEPLOYED;// dont care for initial forming, start with waiting coordinates
+        break;
+
     default:
         break;
     }
@@ -46,10 +53,15 @@ bool LocalisationProtocol::tick()//beacon listens measurements and sends them to
     case RoleInProtocol::CLIENT:
         return clientTick();
         break;
+    case RoleInProtocol::S4:
+        return s4Tick();
+        break;
     default:
         break;
     }
 }
+
+
 /**
  * a - xcord of beacon
  * b- ycord of beacon
@@ -161,7 +173,7 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
 
     double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
     double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
-  std::cout<<"beta "<<180*beta/PI<< "gamma "<<180*gamma/PI<<"\n";
+    std::cout<<"beta "<<180*beta/PI<< "gamma "<<180*gamma/PI<<"\n";
     vector<float> possibleAngles;
     possibleAngles.push_back((angleToB1+beta));
     possibleAngles.push_back((angleToB1-beta));
@@ -170,7 +182,7 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
     std::cout<<"possible angles a1a  "<<possibleAngles.at(0)<<"a1b "<<possibleAngles.at(1)<<"a2a "<<possibleAngles.at(2)<<"a2b "<<possibleAngles.at(3)<<"\n";
 
     float closestVal= findTwoClosestValues(possibleAngles);
-return closestVal;//converting to radians
+    return closestVal;//converting to radians
 }
 
 
@@ -188,7 +200,7 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
 
         }else{//create neew entry
             measurementResults.insert( std::pair<int,MeasurementResults>(id,{0,0,0}) );
-std::cout<<"lp meas res size "<<measurementResults.size()<<"\n";
+            std::cout<<"lp meas res size "<<measurementResults.size()<<"\n";
 
         }
         MeasurementResults mr = measurementResults.at(id);
@@ -201,7 +213,7 @@ std::cout<<"lp meas res size "<<measurementResults.size()<<"\n";
             int distToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToFirst[3];
             int distToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToSecond[3];
             float angleToExplorer = calcAngleToExplorer(distToB1,distToB2,angleToB1,angleToB2,&mr);
-                       std::cout<<"lp angle to exp "<<angleToExplorer<<"\n";
+            std::cout<<"lp angle to exp "<<angleToExplorer<<"\n";
 
             int x = mr.BeaconMasterDist*std::cos(angleToExplorer);
             int y = mr.BeaconMasterDist*std::sin(angleToExplorer);
@@ -238,14 +250,18 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
         if(res!=0){
 
             result = BaseProtocol::stringTointVector(res->content);
-           std::cout<<"localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
-           //erease older msgs
+            std::cout<<"localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
+            //resend coordinates to s4
+            VSMMessage resultXY(behaviour->owner->id,Topics::TO_S4,MessageContents::CORDINATES_XY,res->content);
+            behaviour->owner->sendMsg(resultXY);
+
+            //erease older msgs
             VSMMessage* res2 =0;
             do{
-           res2 = behaviour->receive(MessageContents::CORDINATES_XY);
-           }while(res2 != 0);
+                res2 = behaviour->receive(MessageContents::CORDINATES_XY);
+            }while(res2 != 0);
 
-           wasSuccessful = true;
+            wasSuccessful = true;
             return true;
         }
 
@@ -288,7 +304,36 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
     default:
         break;
     }
-return false;
+    return false;
+}
+
+bool LocalisationProtocol::s4Tick()
+{
+    switch (state) {
+    case ProtocolStates::BEACONS_DEPLOYED:{
+        // listen point messages
+        VSMMessage* res = behaviour->receive(MessageContents::CORDINATES_XY);
+        if(res!=0){// add poin to the list
+            result = BaseProtocol::stringTointVector(res->content);
+
+            int size =  ((S4Behaviour*)behaviour)->addPointToMap(result.at(0),result.at(1));
+            if(size>POINT_COUNT_FOR_MAP){
+                state = ProtocolStates::REGROUPING;
+                ((S4Behaviour*)behaviour)->InitiateBeaconsRegroup();// triggers operation management protocol to regroup beacons
+std::cout<<"lp s4 map is filled ";
+            }
+        }
+    }
+        break;
+    case ProtocolStates::REGROUPING:{//todo next states
+
+
+    }
+        break;
+    default:
+        break;
+    }
+
 }
 
 void LocalisationProtocol::localise()//send dist measurement request to beacon master- initiates localisation process
@@ -322,7 +367,7 @@ bool LocalisationProtocol::insertResult(Topics sender,MeasurementResults* mr, in
     default:
         break;
     }
-        std::cout<<"mr b1"<<mr->b1Dist<<"mr b2"<<mr->b2Dist<<"mr bm"<<mr->BeaconMasterDist<<"\n";
+    std::cout<<"mr b1"<<mr->b1Dist<<"mr b2"<<mr->b2Dist<<"mr bm"<<mr->BeaconMasterDist<<"\n";
 
     if(mr->b1Dist!=0 && mr->b2Dist!= 0 && mr->BeaconMasterDist!=0 )
         return true;

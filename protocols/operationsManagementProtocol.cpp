@@ -46,7 +46,9 @@ void OperationsManagementProtocol::start()
     case RoleInProtocol::S2EXPLORERS:
         state = ProtocolStates::WAITING_START_REQUEST;// does not matter for test
         break;
-
+    case RoleInProtocol::S4:
+        state = ProtocolStates::IDLE;//dont care of initial state, protocol will start when initiateRegroup() will be called
+        break;
     }
 
 }
@@ -67,6 +69,36 @@ bool OperationsManagementProtocol::tick(){
     default:
         break;
     }
+}
+
+void OperationsManagementProtocol::initiateBeaconsRegroup()//for s4
+{
+    VSMMessage regroupRequestToS3(VSMSubsystems::S4,Topics::S3_IN,MessageContents::EXPLORING_DONE,"ed");
+    querryWithTimeout(regroupRequestToS3,MessageContents::ACKNOWLEDGE,ProtocolStates::ACKNOWLEDGE_RECEIVED,ProtocolStates::TIMEOUT,3,3);//receive reply and inform s2beaconsof new cordinates
+}
+
+bool OperationsManagementProtocol::s4Tick(){
+    switch (state) {
+    case ProtocolStates::BEACONS_DEPLOYED:
+        //receive visited points from bm
+
+        break;
+    case ProtocolStates::ACKNOWLEDGE_RECEIVED:{
+        VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::TO_S2BEACONS,MessageContents::EXPLORING_DONE,"edb");
+        querryWithTimeout(regroupRequestToS2Beacons,MessageContents::ACKNOWLEDGE,ProtocolStates::REGROUPING,ProtocolStates::TIMEOUT,3,3);//receive reply and inform s2beaconsof new cordinates
+
+    }   break;
+
+    case ProtocolStates::REGROUPING:{
+
+
+    }break;
+
+    default:
+        break;
+    }
+    //
+    return false;
 }
 
 bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 behavior state?
@@ -105,9 +137,29 @@ bool OperationsManagementProtocol::s3Tick()// todo - use protocol state or s3 be
         break;
 
     case ProtocolStates::BEACONS_DEPLOYED:{//stay in this state until we are ready to continue with next operation- move beacons to new place
+        VSMMessage* res = behaviour->receive(MessageContents::EXPLORING_DONE);
+        if(res!= 0){// s4 sent that exploring is done, increase cValues of beacons so that they can regroup
+            std::cout<<"s3 received exploring done,update cValues\n";
+            //reply to sender
+            VSMMessage agree(VSMSubsystems::S3,Topics::TO_S4,MessageContents::ACKNOWLEDGE,"ac");
+            behaviour->owner->sendMsg(agree);
+            enterState(ProtocolStates::REGROUPING);
+        }
 
     }  break;
+    case ProtocolStates::REGROUPING:{
+        //if s4 did not receive initial reply it will continue to querry, so listen also now for those msgs
+        VSMMessage* res = behaviour->receive(MessageContents::EXPLORING_DONE);
+        if(res!= 0){// s4 sent that exploring is done, increase cValues of beacons so that they can regroup
 
+            //reply to sender
+            VSMMessage agree(VSMSubsystems::S3,Topics::TO_S4,MessageContents::ACKNOWLEDGE,"ac");
+            behaviour->owner->sendMsg(agree);
+        }
+
+
+
+    }break;
     }
     return false;
 }
@@ -135,7 +187,16 @@ bool OperationsManagementProtocol::s2BeaconsTick()
             delete res;
         }}
         break;
-    case ProtocolStates::WAITING_FORMATION_COMPLETE:
+    case ProtocolStates::WAITING_FORMATION_COMPLETE:{// todo move this to aprppriate state e.g. exploring
+        VSMMessage* res = behaviour->receive(MessageContents::EXPLORING_DONE);
+        if(res!= 0){// s4 sent that exploring is done, find additional 3 beacons to send them to the new positions
+            std::cout<<"s2b received exploring done,regrouping \n";
+
+            //reply to sender
+            VSMMessage agree(VSMSubsystems::S2_BEACONS,Topics::TO_S4,MessageContents::ACKNOWLEDGE,"acb");
+            behaviour->owner->sendMsg(agree);
+        }
+    }
         break;
     }
     return false;
@@ -148,7 +209,7 @@ bool OperationsManagementProtocol::s2ExplorersTick()
     if(res!= 0){
         std::cout<<"explorers S2 received start exploring \n";
         ((S2ExplorersBehaviour*)behaviour)->enterExploringState();
-    delete res;
+        delete res;
     }
     VSMMessage* res2 = behaviour->receive(MessageContents::STOP_EXPLORING);
     if(res2!= 0){
@@ -183,8 +244,14 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
         state = ProtocolStates::BEACONS_DEPLOYED;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);// todo for test deceresd val by 1
         //send explorers s2 to start exploring
-        VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");
+        VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");// wait confirmation?
         behaviour->owner->sendMsg(startRequest);
+    }
+        break;
+    case ProtocolStates::REGROUPING:{
+        std::cout<<"s3 omp entering state REGROUPING\n";
+        state = ProtocolStates::REGROUPING;
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_REFORMATION);
     }
         break;
     }

@@ -10,6 +10,7 @@ OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBeh
 virtual void start();
 virtual bool tick();
 
+void initiateBeaconsRegroup();
 
 private:
 
@@ -18,6 +19,10 @@ bool s2BeaconsTick();
 bool s2ExplorersTick();
 
 void enterState(ProtocolStates stateToEnter);
+
+bool s4Tick();
+
+
 
 };
 
