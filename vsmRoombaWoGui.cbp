@@ -130,6 +130,12 @@
 		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/explorerListenerBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
+		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.cpp">
+			<Option target="vsmRoombaWoGui"/>
+		</Unit>
+		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.hpp">
+			<Option target="vsmRoombaWoGui"/>
+		</Unit>
 		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/roleCheckingBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>

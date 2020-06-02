@@ -202,9 +202,17 @@ bool OperationsManagementProtocol::s2BeaconsTick()
             //reply to sender
             VSMMessage agree(VSMSubsystems::S2_BEACONS,Topics::TO_S4,MessageContents::ACKNOWLEDGE,"acb");
             behaviour->owner->sendMsg(agree);
+       state = ProtocolStates::REGROUPING;
+
         }
     }
         break;
+    case ProtocolStates::REGROUPING:{
+
+
+
+    }break;
+
     }
     return false;
 }
