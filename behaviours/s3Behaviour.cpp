@@ -5,15 +5,15 @@
 #include "roombaAgent.hpp"
 
 
-const std::vector<VSMSubsystems> S3Behaviour::requiredRoles ({VSMSubsystems::S2_BEACONS,VSMSubsystems::S2_EXPLORERS});//,VSMSubsystems::S2_EXPLORERS});
+const std::vector<VSMSubsystems> S3Behaviour::requiredRoles ({VSMSubsystems::S2_BEACONS,VSMSubsystems::S2_EXPLORERS,VSMSubsystems::S4});//,VSMSubsystems::S2_EXPLORERS});
 
 S3Behaviour::S3Behaviour(RoombaAgent *owner):BaseCommunicationBehaviour(owner)
 {
     unfilledRoles = requiredRoles;// copy contents of vector
     type=VSMSubsystems::S3;
-     cvals=vector<int>((int)S2Types::SIZE_OF_THIS_ENUM,0);//initialize cvals according to the size of defined s2 role count
-std::cout<<"s3 -sizeOf cvals at constructor  "<<cvals.size()<<"\n";
-knownAgents.emplace(owner->id,owner->getSystemTimeSec());//mark itself as available robot for cvalue calculation
+    cvals=vector<int>((int)S2Types::SIZE_OF_THIS_ENUM,0);//initialize cvals according to the size of defined s2 role count
+    std::cout<<"s3 -sizeOf cvals at constructor  "<<cvals.size()<<"\n";
+    knownAgents.emplace(owner->id,owner->getSystemTimeSec());//mark itself as available robot for cvalue calculation
 
     roleCheckingProtocol = new RoleCheckingProtocol(RoleInProtocol::RESPONDER,this);
     roleCheckingProtocol->start();
@@ -58,7 +58,7 @@ void S3Behaviour::markAsFilled(VSMSubsystems role, int agentId)
 
 int S3Behaviour::getActiveRobotsCount()// for initial control value calc
 {
-                   knownAgents.at(owner->id)= owner->getSystemTimeSec();//update self availability
+    knownAgents.at(owner->id)= owner->getSystemTimeSec();//update self availability
 
     int count =0;
     std::map<int, double>::iterator it = knownAgents.begin();
@@ -78,12 +78,12 @@ int S3Behaviour::getActiveRobotsCount()// for initial control value calc
 
 void S3Behaviour::updateCvals(int beaconsNeeded)
 {
-int robotsAlvail = getActiveRobotsCount();
-//std::cout<<"s3 -robots avail "<<robotsAlvail<<"\n";
-//std::cout<<"s3 -sizeOf cvals  "<<cvals.size()<<"\n";
+    int robotsAlvail = getActiveRobotsCount();
+    //std::cout<<"s3 -robots avail "<<robotsAlvail<<"\n";
+    //std::cout<<"s3 -sizeOf cvals  "<<cvals.size()<<"\n";
 
-cvals.at(S2Types::BEACONS)=beaconsNeeded;
-cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;
+    cvals.at(S2Types::BEACONS)=beaconsNeeded;
+    cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;
 }
 
 void S3Behaviour::behaviourStep()
@@ -91,7 +91,7 @@ void S3Behaviour::behaviourStep()
     roleCheckingProtocol->tick();
     controlValueProtocol->tick();
     operationsManagementProtocol->tick();
- //   switch (state) {
+    //   switch (state) {
 
-   // }
+    // }
 }
