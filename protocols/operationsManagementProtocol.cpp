@@ -84,7 +84,7 @@ bool OperationsManagementProtocol::s4Tick(){
 
         break;
     case ProtocolStates::ACKNOWLEDGE_RECEIVED:{
-        VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::TO_S2BEACONS,MessageContents::EXPLORING_DONE,"edb");
+        VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::S2BEACONS_IN,MessageContents::EXPLORING_DONE,"edb");
         querryWithTimeout(regroupRequestToS2Beacons,MessageContents::ACKNOWLEDGE,ProtocolStates::REGROUPING,ProtocolStates::TIMEOUT,3,3);//receive reply and inform s2beaconsof new cordinates
 
     }   break;

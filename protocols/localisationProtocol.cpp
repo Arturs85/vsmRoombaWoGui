@@ -320,7 +320,7 @@ bool LocalisationProtocol::s4Tick()
             if(size>POINT_COUNT_FOR_MAP){
                 state = ProtocolStates::REGROUPING;
                 ((S4Behaviour*)behaviour)->InitiateBeaconsRegroup();// triggers operation management protocol to regroup beacons
-std::cout<<"lp s4 map is filled ";
+                std::cout<<"lp s4 map is filled ";
             }
         }
     }
