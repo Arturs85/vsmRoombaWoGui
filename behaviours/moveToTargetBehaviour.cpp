@@ -18,7 +18,7 @@ MoveToTargetBehaviour::MoveToTargetBehaviour(RoombaAgent *roombaAgent):BaseCommu
 {
     this->ra = roombaAgent;
     localisationProtocol=new LocalisationProtocol(RoleInProtocol::CLIENT,this);
-beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::MOVING_BEACON,this);
+    beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::MOVING_BEACON,this);
 }
 
 PointInt MoveToTargetBehaviour::getNextPointToTravel()
@@ -49,7 +49,7 @@ void MoveToTargetBehaviour::setTarget(int x, int y)//to set single point route
 
 void MoveToTargetBehaviour::behaviourStep()
 {
-beaconManagementProtocol->tick();// receives cordinates
+    beaconManagementProtocol->tick();// receives cordinates
 
     switch (movementState) {
     case ExplorerStates::IDLE:
@@ -102,11 +102,7 @@ beaconManagementProtocol->tick();// receives cordinates
     case ExplorerStates::MOVING_FORWARD:{
         if(owner->movementManager->state == MovementStates::FINISHED){//finished moving, localise and pick new dest
 
-            if(owner->movementManager->isObstacleDetected){// this flag is cleared when calling manager.move
-                std::cout<<"elb obstacle was detected\n";
-                //for now just pick next dest point as if no obstacle was detected
-                //todo ask s4 for new route and start again with that
-            }
+
 
             movementState = ExplorerStates::ARRIVED_DEST;
         }
@@ -135,7 +131,7 @@ beaconManagementProtocol->tick();// receives cordinates
 
         latestDirection = std::atan2(dx,dy);
         int distTriang = std::sqrt(dx*dx+dy*dy);
-        std::cout<< "elb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
+        std::cout<< "mttb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
 
         previousLocation.x = localisationProtocol->result.at(0);
         previousLocation.y = localisationProtocol->result.at(1);
@@ -147,30 +143,48 @@ beaconManagementProtocol->tick();// receives cordinates
 
         if(sqrt(dxDest*dxDest+dyDest*dyDest)<TARGET_DISTANCE_ALLOWANCE){//we are at dest, end
             movementState= ExplorerStates::FINAL_DESTINATION;//todo notify s2 that target point has been reashed
+            std::cout<<"mttb    >>>arrived at destination point<<< \n";
+            break;
         }
-
+        if(owner->movementManager->isObstacleDetected){// this flag is cleared when calling manager.move
+            std::cout<<"elb obstacle was detected\n";
+            //turn 90 degrees and move 50 cm to possibly deal with obstacle, then proceed to the dest point
+            //calculate point of possible obst avoidance and add it to the route list
+            int x = cos(latestDirection-PI/2)*FIRST_DISTANCE;//50cm
+            int y = sin(latestDirection-PI/2)*FIRST_DISTANCE;//50cm
+            PointInt  p = {latestLocation.x+x,latestLocation.y+y};
+            route.push_back(p);
+            std::cout<<"mttb added point on route to avoid obstacle x "<<p.x<<" y "<<p.y<<"\n";
+        }
 
         // pick a new destination
+        PointInt dest;
         if(route.size()>0){
-            PointInt dest = route.at(route.size()-1);
-                        route.pop_back();
-            int dxTarget = dest.x-latestLocation.x;
-            int dyTarget = dest.y-latestLocation.y;
+            dest = route.at(route.size()-1);
+            route.pop_back();
+        }else{//there are no more points on route, but we are not at the destination, try again to go to the destination
+            dest = destinationPoint;
 
-            //turn to new destination direction
-            float destAngle = std::atan2(dyTarget,dxTarget);
-            float angleToTurn = destAngle - latestDirection;
-            distToTravelAfterTurning = sqrt(dxTarget*dxTarget+dyTarget*dyTarget);
-            owner->movementManager->turn(angleToTurn*180/PI);
-            movementState = ExplorerStates::TURNING;
         }
+        int dxTarget = dest.x-latestLocation.x;
+        int dyTarget = dest.y-latestLocation.y;
+
+        //turn to new destination direction
+        float destAngle = std::atan2(dyTarget,dxTarget);
+        float angleToTurn = destAngle - latestDirection;
+        distToTravelAfterTurning = 10*sqrt(dxTarget*dxTarget+dyTarget*dyTarget);
+        angleBeforTurning = owner->movementManager->direction;
+        owner->movementManager->turn(angleToTurn*180/PI);
+        movementState = ExplorerStates::TURNING;
+
 
     }break;
 
     case ExplorerStates::TURNING:{
 
         if(owner->movementManager->state == MovementStates::FINISHED){//finished turning, move forward
-
+            latestDirection += PI*(owner->movementManager->direction-angleBeforTurning)/180;// keep track on direction after turning, but is this needed?
+            std::cout<<"mttb direction after turning "<<latestDirection<<"\n";
             odometryBeforeDriving = owner->movementManager->odometry;
             owner->movementManager->driveDistance(distToTravelAfterTurning);
             movementState = ExplorerStates::MOVING_FORWARD;

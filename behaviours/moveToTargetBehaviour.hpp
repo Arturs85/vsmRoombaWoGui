@@ -24,6 +24,7 @@ vector<PointInt> route;
     PointInt previousLocation;
     PointInt latestLocation;
     float latestDirection;
+    float angleBeforTurning=0;
     int distToTravelAfterTurning =0;
 
     PointInt getNextPointToTravel();

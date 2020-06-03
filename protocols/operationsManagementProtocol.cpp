@@ -93,7 +93,7 @@ bool OperationsManagementProtocol::s4Tick(){
 
         break;
     case ProtocolStates::ACKNOWLEDGE_RECEIVED:{
-        vector<int> cords = ((S4Behaviour*)behaviour)->getCordsForRegrouping(BEACONS_TRIANGLE_SIDE_MM);
+        vector<int> cords = ((S4Behaviour*)behaviour)->getCordsForRegrouping(BEACONS_TRIANGLE_SIDE_MM/10);
         string s = BaseProtocol::intVectorToString(cords);
         VSMMessage regroupRequestToS2Beacons(VSMSubsystems::S4,Topics::S2BEACONS_IN,MessageContents::EXPLORING_DONE,s);
         querryWithTimeout(regroupRequestToS2Beacons,MessageContents::ACKNOWLEDGE,ProtocolStates::REGROUPING,ProtocolStates::TIMEOUT,3,3);//receive reply and inform s2beaconsof new cordinates

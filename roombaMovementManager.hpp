@@ -42,7 +42,7 @@ private:
 
     void startThread();
     static void* behaviourLoop(void* arg);
-
+static uint8_t bumperInitialstate;
 };
 
 

@@ -57,7 +57,7 @@ RoombaAgent::RoombaAgent()
  //   conflictingBehaviours.emplace(VSMSubsystems::S3,std::vector<VSMSubsystems>({VSMSubsystems::ROLE_CHECKING}));// where to initialize this?
     conflictingBehaviours.emplace(VSMSubsystems::S1_BEACONS,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
     conflictingBehaviours.emplace(VSMSubsystems::S1_EXPLORERS,std::vector<VSMSubsystems>({VSMSubsystems::S1_BEACONS}));
-    conflictingBehaviours.emplace(VSMSubsystems::TARGET_MOVING_BEACON,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS}));
+    conflictingBehaviours.emplace(VSMSubsystems::TARGET_MOVING_BEACON,std::vector<VSMSubsystems>({VSMSubsystems::S1_EXPLORERS,VSMSubsystems::TARGET_MOVING_BEACON}));
 
     getId();
     //roleList.push_back(VSMSubsystems::S1);//for test

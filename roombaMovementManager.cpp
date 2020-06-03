@@ -24,6 +24,8 @@ RoombaMovementManager::RoombaMovementManager(RoombaController *roombaController)
     //    RoombaMovementManager::localMap= localMap;
     roombaController->readAngle();
     roombaController->readDistance();// to reset roomba counters
+    RoombaMovementManager::bumperInitialstate =   roombaController->readBumpsnWheelDrops();
+    std::cout<<"bumpers and wheeldrops initial state "<<bumperInitialstate<<"\n";
     startThread();
 }
 
@@ -34,8 +36,8 @@ RoombaMovementManager::~RoombaMovementManager()
 bool RoombaMovementManager::driveDistance(int distMm)
 {
     if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
-std::cout<<"rmm drive called: " << distMm<<"\n";
-isObstacleDetected=false;
+    std::cout<<"rmm drive called: " << distMm<<"\n";
+    isObstacleDetected=false;
     roombaController->readDistance();// this clears roomba internal counter
     distanceRemaining = distMm;
     state = MovementStates::DRIVING;
@@ -100,8 +102,8 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
         uint8_t bwd = roombaController->readBumpsnWheelDrops();
 
 
-        uint16_t ca = roombaController->readBattCapacity();
-        uint16_t ch = roombaController->readBattCharge();
+        // uint16_t ca = roombaController->readBattCapacity();
+        // uint16_t ch = roombaController->readBattCharge();
 
         long int t = static_cast<long int> (time(NULL));
 
@@ -117,12 +119,12 @@ void *RoombaMovementManager::behaviourLoop(void *arg)
                 state = MovementStates::FINISHED;
                 roombaController->stopMoving();
             }
-if(lb != 0){//obstacle
-isObstacleDetected=true;
-roombaController->stopMoving();
-state = MovementStates::FINISHED;
-std::cout<<"rmm stopped due to the obst \n";
-}
+            if(lb != 0 || bwd!=bumperInitialstate){//obstacle
+                isObstacleDetected=true;
+                roombaController->stopMoving();
+                state = MovementStates::FINISHED;
+                std::cout<<"rmm stopped due to the obst \n";
+            }
         }
             break;
         case MovementStates::TURNING_LEFT:{
