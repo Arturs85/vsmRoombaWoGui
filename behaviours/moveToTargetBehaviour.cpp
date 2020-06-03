@@ -38,6 +38,7 @@ void MoveToTargetBehaviour::startRoute()
 
 void MoveToTargetBehaviour::setTarget(int x, int y)//to set single point route
 {
+    std::cout<<"mttb setting target x "<<x<<" y "<<y<<"\n";
     PointInt p = {x,y};
     route.push_back(p);
 }
@@ -142,6 +143,7 @@ beaconManagementProtocol->tick();// receives cordinates
         //see if we are at target
         int dxDest= destinationPoint.x-latestLocation.x;
         int dyDest= destinationPoint.y-latestLocation.y;
+        std::cout<<"mttb dist To Target dx "<<dxDest<<" dy "<<dyDest<<"\n";
 
         if(sqrt(dxDest*dxDest+dyDest*dyDest)<TARGET_DISTANCE_ALLOWANCE){//we are at dest, end
             movementState= ExplorerStates::FINAL_DESTINATION;//todo notify s2 that target point has been reashed

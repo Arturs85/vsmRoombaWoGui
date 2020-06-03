@@ -71,6 +71,12 @@ bool RoombaMovementManager::turn(int degrees)
         turnLeft(degrees);
 }
 
+void RoombaMovementManager::stopMotion()
+{
+    roombaController->stopMoving();
+    state= MovementStates::FINISHED;
+}
+
 void RoombaMovementManager::startThread()
 {
     int iret1 = pthread_create( &roombaMovementManagerThread, NULL, behaviourLoop, 0);

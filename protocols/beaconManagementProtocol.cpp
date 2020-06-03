@@ -166,23 +166,23 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
 
         std::set<int> unusedRobots = getUnusedRobotsSet();
-        if(unusedRobots.size()>=1){
+        if(unusedRobots.size()>=2){
             std::cout<<"bmp s2 sending to new beacons to add move roles \n";
 
             std::vector<int> avb(unusedRobots.begin(), unusedRobots.end()); //convert set to vector to acces elements
             VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
-           // VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
            // VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON ));// reply to querry, could send some additional info, e.g. bat level
 
             behaviour->owner->sendMsg(roleRequest);
-          //  behaviour->owner->sendMsg(roleRequest2);
+           behaviour->owner->sendMsg(roleRequest2);
           //  behaviour->owner->sendMsg(roleRequest3);
             usedRobots.insert(avb.at(0));
-           // usedRobots.insert(avb.at(1));
+            usedRobots.insert(avb.at(1));
           //  usedRobots.insert(avb.at(2));
 
             regroupingBeaconsSet.insert(avb.at(0));// to distinct between old and new beacons
-           // regroupingBeaconsSet.insert(avb.at(1));
+            regroupingBeaconsSet.insert(avb.at(1));
            // regroupingBeaconsSet.insert(avb.at(2));
             state = ProtocolStates::SENDING_CORDINATES;
         }
@@ -198,13 +198,14 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             std::vector<int> avb(regroupingBeaconsSet.begin(), regroupingBeaconsSet.end()); //convert set to vector to acces elements
 
             VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::MOVE_TO_TARGET,s1);// reply to querry, could send some additional info, e.g. bat level
-            //VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::MOVE_TO_TARGET ,s2);// reply to querry, could send some additional info, e.g. bat level
+            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::MOVE_TO_TARGET ,s2);// reply to querry, could send some additional info, e.g. bat level
             //VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::MOVE_TO_TARGET,s3);// reply to querry, could send some additional info, e.g. bat level
 
             behaviour->owner->sendMsg(roleRequest);
-           // behaviour->owner->sendMsg(roleRequest2);
+            behaviour->owner->sendMsg(roleRequest2);
            // behaviour->owner->sendMsg(roleRequest3);
 
+            state = ProtocolStates::WAITING_ACKNOWLEDGE;
 
         }
             break;

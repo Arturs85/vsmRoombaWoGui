@@ -1,6 +1,7 @@
 #include "baseCommunicationBehaviour.hpp"
 #include "roombaAgent.hpp"
 #include <algorithm>
+#include "roombaMovementManager.hpp"
 BaseCommunicationBehaviour::BaseCommunicationBehaviour(RoombaAgent* roombaAgent)
 {
     owner = roombaAgent;
@@ -51,7 +52,7 @@ void BaseCommunicationBehaviour::behaviourStep()
 
 void BaseCommunicationBehaviour::remove()
 {
-
+owner->movementManager->stopMotion();//stop robot when removing behaviour
     owner->removeBehaviour(this);
 }
 
