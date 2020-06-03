@@ -35,3 +35,8 @@ void S2ExplorersBehaviour::behaviourStep()
             BaseCommunicationBehaviour::logKeypoints("omp s2 ex step returned \n");
 
 }
+
+int S2ExplorersBehaviour::getS1IdForGiveaway()
+{
+ return s1ManagementProtocol->getUnusedBeaconId();
+}

@@ -13,6 +13,7 @@ public:
     S2ExplorersBehaviour(RoombaAgent* roombaAgent);
  ExplorerManagementProtocol* explorerManagementProtocol;
 OperationsManagementProtocol* operationsManagementProtocol;
+int getS1IdForGiveaway();
 void enterIdleState();
 void enterExploringState();
 private:

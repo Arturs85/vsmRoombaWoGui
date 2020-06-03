@@ -50,8 +50,14 @@ bool ExplorerManagementProtocol::tick()// todo modify from source copy
 }
 
 int ExplorerManagementProtocol::getUnusedBeaconId()
-{
-    //todo
+{// get first available robot id
+
+    if(availableRobotsSet.size()<1)return 0;
+
+    std::set<int>::iterator it = availableRobotsSet.begin();
+
+                return *it;
+
 }
 
 void ExplorerManagementProtocol::enterIdleState()
