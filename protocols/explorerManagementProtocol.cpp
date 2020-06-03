@@ -89,6 +89,7 @@ void ExplorerManagementProtocol::sendStopExploring()// without confirmation
 
 bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
+   BaseProtocol::tick();// for querrywithtimeout to work
     VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);
     if(res!=0){
         // add senders id to beacons list
