@@ -56,7 +56,9 @@ int ExplorerManagementProtocol::getUnusedBeaconId()
 
     std::set<int>::iterator it = availableRobotsSet.begin();
 
-                return *it;
+    int id = *it;
+    availableRobotsSet.erase(it);
+    return id;
 
 }
 
@@ -101,7 +103,7 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 
         // periodically ask for s1
         if(askingIntervalCounter++%5==0)//todo number to header
-        ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
+            ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
         //std::cout<<"ask s1 ok \n";
 
         // send start request to all new unused explorers (one by one each tick for now)
@@ -128,7 +130,7 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
 
 bool ExplorerManagementProtocol::explorerTick()
 {
-   BaseS1ManagementProtocol::tick();//listens to change type msgs
+    BaseS1ManagementProtocol::tick();//listens to change type msgs
     //listen for stop/start commands
     BaseCommunicationBehaviour::logKeypoints("emp exp tick started\n");
     VSMMessage* res= behaviour->receive(MessageContents::START_EXPLORING);

@@ -300,7 +300,7 @@ void RoombaAgent::sendMsg(VSMMessage msg)
 
 }
 
-BaseCommunicationBehaviour *RoombaAgent::findBehaviourByName(VSMSubsystems name)
+BaseCommunicationBehaviour *RoombaAgent::findBehaviourByName(VSMSubsystems name)// astually find by type
 {
     for (int i = 0; i < behavioursList.size(); ++i) {
         string bName = (typeid(behavioursList.at(i)).name());
@@ -310,6 +310,11 @@ BaseCommunicationBehaviour *RoombaAgent::findBehaviourByName(VSMSubsystems name)
         }
     }
     return 0;
+}
+
+BaseCommunicationBehaviour *RoombaAgent::findBehaviourByType(VSMSubsystems type)
+{
+
 }
 
 double RoombaAgent::getSystemTimeSec(void){

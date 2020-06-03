@@ -6,6 +6,7 @@ BeaconListenerBehaviour::BeaconListenerBehaviour(RoombaAgent *roombaAgent):BaseC
 {
     this->ra = roombaAgent;
 beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::BEACON,this);
+type = VSMSubsystems::S1_BEACONS;
 }
 
 

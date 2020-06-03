@@ -46,6 +46,8 @@ void behavioursStep();
 void removeBehaviour(std::string name);
 
 BaseCommunicationBehaviour* findBehaviourByName(VSMSubsystems name);
+BaseCommunicationBehaviour* findBehaviourByType(VSMSubsystems type);
+
 };
 
 #endif //ROOMBAAGENT_HPP
