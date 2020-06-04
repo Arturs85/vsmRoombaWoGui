@@ -52,7 +52,7 @@ bool ControlValueProtocol::senderTick()// for s3, aka initiator or sender ---tod
 {
     tickCount++;
     if(tickCount%10==0){// send cVals to s2 every 10 seconds, if tick is one second
-        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+        ((S3Behaviour*)behaviour)->updateCvals(((S3Behaviour*)behaviour)->controlValueProtocol->beaconsCountForCurrentState);
 
         sendCvals(((S3Behaviour*)behaviour)->cvals);
     }

@@ -16,6 +16,7 @@ virtual bool tick();
 
 void initiateBeaconsRegroup();
 
+int beaconsNeededForCurState =3;// to be changed
 private:
 
 bool s3Tick();

@@ -245,7 +245,7 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
 
         state = ProtocolStates::WAITING_REPLY;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
-
+beaconsNeededForCurState = BEACONS_COUNT_NORMAL;
     }
         break;
 
@@ -253,6 +253,8 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
         std::cout<<"s3 omp entering state WAITING FORMATION COMPLETE\n";
         state = ProtocolStates::WAITING_FORMATION_COMPLETE;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+        beaconsNeededForCurState = BEACONS_COUNT_NORMAL;
+
     }
         break;
 
@@ -264,12 +266,16 @@ void OperationsManagementProtocol::enterState(ProtocolStates stateToEnter)// for
         //send explorers s2 to start exploring
         VSMMessage startRequest(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::START_EXPLORING,"se");// wait confirmation?
         behaviour->owner->sendMsg(startRequest);
+        beaconsNeededForCurState = BEACONS_COUNT_NORMAL;
+
     }
         break;
     case ProtocolStates::REGROUPING:{
         std::cout<<"s3 omp entering state REGROUPING\n";
         state = ProtocolStates::REGROUPING;
         ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_REFORMATION);
+        beaconsNeededForCurState = BEACONS_COUNT_REFORMATION;
+
     }
         break;
     }

@@ -13,7 +13,7 @@ virtual void start();
 virtual bool tick();
 
 void sendCvals(vector<int> cVals);
-
+int beaconsCountForCurrentState =3;//to be changed by s3
 private:
 int tickCount=0;
 bool senderTick();

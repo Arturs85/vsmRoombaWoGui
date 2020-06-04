@@ -26,10 +26,11 @@ int getActiveRobotsCount();//return nr of robots that has used rcp protocol rece
 void updateCvals(int beaconsNeeded);
 vector<int> cvals;
 
+ControlValueProtocol* controlValueProtocol;
+
 private:
 S3States state;
     RoleCheckingProtocol* roleCheckingProtocol;
-    ControlValueProtocol* controlValueProtocol;
     OperationsManagementProtocol* operationsManagementProtocol;
 std::map< VSMSubsystems,int  > behaviourCarieers;//<managementBehaviour, agenId>, this map shows, witch behaviours are filled and by whom
 
