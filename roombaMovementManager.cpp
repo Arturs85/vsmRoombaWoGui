@@ -15,6 +15,7 @@ int RoombaMovementManager::angleRemaining =0;
 int RoombaMovementManager::direction =0;
 int RoombaMovementManager::odometry =0;
 bool RoombaMovementManager::isObstacleDetected=false;
+uint8_t RoombaMovementManager::bumperInitialstate=0;
 
 MovementStates RoombaMovementManager::state= MovementStates::IDLE; 
 
