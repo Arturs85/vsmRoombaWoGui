@@ -1,7 +1,7 @@
 #include "roombaController.hpp"
 #include <iostream>
 
-#define DRIVING_SPEED 80
+#define DRIVING_SPEED 110
 
 UartTest* RoombaController::uartDevice=0;
 RoombaController::RoombaController(UartTest *uartDevice)

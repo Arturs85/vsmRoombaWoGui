@@ -26,7 +26,7 @@ RoombaMovementManager::RoombaMovementManager(RoombaController *roombaController)
     roombaController->readAngle();
     roombaController->readDistance();// to reset roomba counters
     RoombaMovementManager::bumperInitialstate =   roombaController->readBumpsnWheelDrops();
-    std::cout<<"bumpers and wheeldrops initial state "<<bumperInitialstate<<"\n";
+    std::cout<<"bumpers and wheeldrops initial state "<<(int)bumperInitialstate<<"\n";
     startThread();
 }
 

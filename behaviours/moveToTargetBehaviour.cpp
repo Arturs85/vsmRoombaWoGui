@@ -131,7 +131,7 @@ void MoveToTargetBehaviour::behaviourStep()
 
         latestDirection = std::atan2(dx,dy);
         int distTriang = std::sqrt(dx*dx+dy*dy);
-        std::cout<< "mttb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
+        std::cout<< "mttb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<" dir "<<180*latestDirection/PI <<"\n";
 
         previousLocation.x = localisationProtocol->result.at(0);
         previousLocation.y = localisationProtocol->result.at(1);
@@ -141,17 +141,17 @@ void MoveToTargetBehaviour::behaviourStep()
         int dyDest= destinationPoint.y-latestLocation.y;
         std::cout<<"mttb dist To Target dx "<<dxDest<<" dy "<<dyDest<<"\n";
 
-        if(sqrt(dxDest*dxDest+dyDest*dyDest)<TARGET_DISTANCE_ALLOWANCE){//we are at dest, end
+        if(10*sqrt(dxDest*dxDest+dyDest*dyDest)<TARGET_DISTANCE_ALLOWANCE){//we are at dest, end
             movementState= ExplorerStates::FINAL_DESTINATION;//todo notify s2 that target point has been reashed
             std::cout<<"mttb    >>>arrived at destination point<<< \n";
             break;
         }
         if(owner->movementManager->isObstacleDetected){// this flag is cleared when calling manager.move
-            std::cout<<"elb obstacle was detected\n";
+            std::cout<<"mttb obstacle was detected\n";
             //turn 90 degrees and move 50 cm to possibly deal with obstacle, then proceed to the dest point
             //calculate point of possible obst avoidance and add it to the route list
-            int x = cos(latestDirection-PI/2)*FIRST_DISTANCE;//50cm
-            int y = sin(latestDirection-PI/2)*FIRST_DISTANCE;//50cm
+            int x = cos(latestDirection-PI/2)*FIRST_DISTANCE/10;//50cm
+            int y = sin(latestDirection-PI/2)*FIRST_DISTANCE/10;//50cm
             PointInt  p = {latestLocation.x+x,latestLocation.y+y};
             route.push_back(p);
             std::cout<<"mttb added point on route to avoid obstacle x "<<p.x<<" y "<<p.y<<"\n";
