@@ -33,6 +33,7 @@ bool S1ExchangeProtocol::tick()
 
             int beaconId =((S2BaseBehavior*)behaviour)->getS1IdForGiveaway();// VSMMessage reply(behaviour->owner->id,Topics::TWO_POINT_FORMATION_TO_MOVING,MessageContents::AGREE,"a");
             if(beaconId!=0){
+                 ((S2BaseBehavior*)behaviour)->resetRoleCheckingProtocol();// removes rcp for 3 ticks, so it does not possibly readd this beacon based on not updated info from rcp
                 std::cout<<">>>s1e found beacon to give<<< "<<beaconId<<"\n";
                 //send message to s1 to change type
                 // res->content

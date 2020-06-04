@@ -42,6 +42,7 @@ int BaseS1ManagementProtocol::getUnusedBeaconId()
 
 void BaseS1ManagementProtocol::sendChangeType(int robotId,std::string vSMSubsystemsS1NewTypeString)// to call from outside of class
 {
+    std::cout<<"bs1mp sendChangeType called send to "<<robotId<<"\n";
     VSMMessage roleRequest(behaviour->owner->id,robotId,MessageContents::S1_CHANGE_TYPE,vSMSubsystemsS1NewTypeString);
     behaviour->owner->sendMsg(roleRequest);
     availableRobotsSet.erase(robotId);// mark that robot is no longer available

@@ -19,9 +19,19 @@ RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCo
         behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);
     else if(roleInProtocol==RoleInProtocol::INITIATOR)
         behaviour->subscribeToDirectMsgs();
-else if(roleInProtocol==RoleInProtocol::S2BASE)
+else if(roleInProtocol==RoleInProtocol::S2BASE){
     behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);//to receive info of s1 types
+    //erese all old messages of this type, todo add as function
+    VSMMessage* res;
+    do{
+        res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
+    if(res != 0)
+        delete res;
+    }
+    while(res!=0);
 
+
+    }
 }
 
 bool RoleCheckingProtocol::tick()

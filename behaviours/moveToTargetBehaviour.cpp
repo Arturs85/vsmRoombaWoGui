@@ -17,8 +17,9 @@
 MoveToTargetBehaviour::MoveToTargetBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
     this->ra = roombaAgent;
-    localisationProtocol=new LocalisationProtocol(RoleInProtocol::CLIENT,this);
+    localisationProtocol = new LocalisationProtocol(RoleInProtocol::CLIENT,this);
     beaconManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::MOVING_BEACON,this);
+type = VSMSubsystems::TARGET_MOVING_BEACON;
 }
 
 PointInt MoveToTargetBehaviour::getNextPointToTravel()
