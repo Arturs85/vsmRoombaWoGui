@@ -23,7 +23,7 @@ bool bMasterIsFilled =false;
 bool managerTick();
 bool beaconTick();
 bool targetGoerBeaconTick();
-
+int currentRobotId =0;
 int askingIntervalCounter=0;
 void querryBeacons();//ask own type s1 for reply, to know how many are available
 std::set<int> regroupingBeaconsSet;

@@ -11,9 +11,7 @@
 #include "s4Behaviour.hpp"
 //#include "baseProtocol.hpp"
 
-#define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
-#define BEACONS_COUNT_NORMAL 3
-#define BEACONS_COUNT_REFORMATION 6
+
 
 OperationsManagementProtocol::OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {

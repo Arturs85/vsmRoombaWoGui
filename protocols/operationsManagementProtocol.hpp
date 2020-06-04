@@ -3,6 +3,10 @@
 #include "baseProtocol.hpp"
 //enum ProtocolStates{STARTED, FINISHED,WAITING_REPLY};
 
+#define REPLY_WAITING_TICKS 5/TICK_PERIOD_SEC
+#define BEACONS_COUNT_NORMAL 3
+#define BEACONS_COUNT_REFORMATION 6
+
 class OperationsManagementProtocol: public BaseProtocol {// protocol between s3 and s2, manages order and timing of actions
 public:
 OperationsManagementProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh);

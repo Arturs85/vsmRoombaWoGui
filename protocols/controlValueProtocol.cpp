@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "s3Behaviour.hpp"
 #include "s2BaseBehaviour.hpp"
-
+#include "operationsManagementProtocol.hpp"
 
 ControlValueProtocol::ControlValueProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {
@@ -52,6 +52,8 @@ bool ControlValueProtocol::senderTick()// for s3, aka initiator or sender ---tod
 {
     tickCount++;
     if(tickCount%10==0){// send cVals to s2 every 10 seconds, if tick is one second
+        ((S3Behaviour*)behaviour)->updateCvals(BEACONS_COUNT_NORMAL);
+
         sendCvals(((S3Behaviour*)behaviour)->cvals);
     }
 

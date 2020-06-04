@@ -88,7 +88,7 @@ void BeaconManagementProtocol::startReformation(vector<int> cords)//for s2
 bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
     // cout<<"bmp manager tick ,state  "<< (int)state<<"\n";
-
+    BaseProtocol::tick();
     VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);// use none content description, because there should be only one type of msg in this topic
     if(res!=0){
         // add senders id to beacons list
@@ -166,51 +166,36 @@ bool BeaconManagementProtocol::managerTick()//todo add reply waiting timeout and
             ((S2BaseBehavior*)behaviour)->s1ExchangeProtocol->askS1();
 
         std::set<int> unusedRobots = getUnusedRobotsSet();
-        if(unusedRobots.size()>=2){
-            std::cout<<"bmp s2 sending to new beacons to add move roles \n";
+        if(unusedRobots.size()>=1){
+            std::cout<<"bmp s2 sending to new beacon "<<currentRobotId<< "to add move roles \n";
+            currentRobotId = *(unusedRobots.begin());
+            VSMMessage roleRequest(behaviour->owner->id,currentRobotId,MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
+            querryWithTimeout(roleRequest,MessageContents::AGREE_MOVE_TO_TARGET,ProtocolStates::SENDING_CORDINATES,ProtocolStates::GATHERING_BEACONS,5,3);
 
-            std::vector<int> avb(unusedRobots.begin(), unusedRobots.end()); //convert set to vector to acces elements
-            VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
-            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON));// reply to querry, could send some additional info, e.g. bat level
-           // VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::BEACON_ROLE,std::to_string((int)VSMSubsystems::TARGET_MOVING_BEACON ));// reply to querry, could send some additional info, e.g. bat level
+            usedRobots.insert(currentRobotId);
 
-            behaviour->owner->sendMsg(roleRequest);
-           behaviour->owner->sendMsg(roleRequest2);
-          //  behaviour->owner->sendMsg(roleRequest3);
-            usedRobots.insert(avb.at(0));
-            usedRobots.insert(avb.at(1));
-          //  usedRobots.insert(avb.at(2));
+            regroupingBeaconsSet.insert(currentRobotId);// to distinct between old and new beacons
 
-            regroupingBeaconsSet.insert(avb.at(0));// to distinct between old and new beacons
-            regroupingBeaconsSet.insert(avb.at(1));
-           // regroupingBeaconsSet.insert(avb.at(2));
-            state = ProtocolStates::SENDING_CORDINATES;
         }
     } break;
     case ProtocolStates::SENDING_CORDINATES://
-        {
-          std::cout<<"bmp s2 sending to new beacons to travel to new positions \n";
+    {
+        std::cout<<"bmp s2 sending to new beacon to travel to new positions \n";
+        if(cords.size()>=2){//see if there is cordinates to send
+            std::string s1 = BaseProtocol::intVectorToString(vector<int> {cords.at(cords.size()-2),cords.at(cords.size()-1)});
+            cords.pop_back();
+            cords.pop_back();
 
-        std::string s1 = BaseProtocol::intVectorToString(vector<int> {cords.at(0),cords.at(1)});
-            std::string s2 = BaseProtocol::intVectorToString(vector<int> {cords.at(2),cords.at(3)});
-            std::string s3 = BaseProtocol::intVectorToString(vector<int> {cords.at(4),cords.at(5)});
+            VSMMessage roleRequest(behaviour->owner->id,currentRobotId,MessageContents::MOVE_TO_TARGET,s1);// reply to querry, could send some additional info, e.g. bat level
+            querryWithTimeout(roleRequest,MessageContents::TARGET_RECEIVED,ProtocolStates::GATHERING_BEACONS,ProtocolStates::GATHERING_BEACONS,5,3);
 
-            std::vector<int> avb(regroupingBeaconsSet.begin(), regroupingBeaconsSet.end()); //convert set to vector to acces elements
-
-            VSMMessage roleRequest(behaviour->owner->id,avb.at(0),MessageContents::MOVE_TO_TARGET,s1);// reply to querry, could send some additional info, e.g. bat level
-            VSMMessage roleRequest2(behaviour->owner->id,avb.at(1),MessageContents::MOVE_TO_TARGET ,s2);// reply to querry, could send some additional info, e.g. bat level
-            //VSMMessage roleRequest3(behaviour->owner->id,avb.at(2),MessageContents::MOVE_TO_TARGET,s3);// reply to querry, could send some additional info, e.g. bat level
-
-            behaviour->owner->sendMsg(roleRequest);
-            behaviour->owner->sendMsg(roleRequest2);
-           // behaviour->owner->sendMsg(roleRequest3);
-
+        }else
             state = ProtocolStates::WAITING_ACKNOWLEDGE;
 
-        }
-            break;
+    }
+        break;
     case ProtocolStates::WAITING_ACKNOWLEDGE://todo wait while all moving beacons notify they reached destination
-            break;
+        break;
 
     }
     return false;
@@ -234,6 +219,13 @@ bool BeaconManagementProtocol::beaconTick()
         if(res2 !=0){
             VSMSubsystems role = static_cast<VSMSubsystems>(std::stoi(res2->content));
             std::cout<<"bmp beacon received role"<<res2->content <<"\n";
+            if(role ==VSMSubsystems::TARGET_MOVING_BEACON){// reply to this querry, because it is waiting reply
+                VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::AGREE_MOVE_TO_TARGET,"amt");// reply to querry, could send some additional info, e.g. bat level
+                behaviour->owner->sendMsg(replyToQuerry);
+                // state = ProtocolStates::WAITING_REPLY;
+                std::cout<<"bmp beacon replying to s2 mmtb add request\n";
+            }
+
             // todo inform agent to start (add) coresp. behaviour and start protocol
             behaviour->owner->addBehaviour(role);
         }
@@ -249,11 +241,18 @@ bool BeaconManagementProtocol::targetGoerBeaconTick()//todo add states
     VSMMessage* res3= behaviour->receive(MessageContents::MOVE_TO_TARGET);// use none content description, because there should be only one type of msg in this topic
     if(res3 !=0){
         std::cout<<"bmp mttb received target\n";
+        //reply to querry
+
+        VSMMessage replyToQuerry(behaviour->owner->id,Topics::TO_S2BEACONS,MessageContents::TARGET_RECEIVED,"atr");// reply to querry, could send some additional info, e.g. bat level
+        behaviour->owner->sendMsg(replyToQuerry);
+        // state = ProtocolStates::WAITING_REPLY;
+        std::cout<<"bmp mttb replying to s2 new target request\n";
+
         vector<int> cords = BaseProtocol::stringTointVector(res3->content);
         ((MoveToTargetBehaviour*)behaviour)->setTarget(cords.at(0),cords.at(1));
         ((MoveToTargetBehaviour*)behaviour)->startRoute();
     }
-return false;
+    return false;
 }
 
 

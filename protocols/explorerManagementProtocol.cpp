@@ -89,7 +89,7 @@ void ExplorerManagementProtocol::sendStopExploring()// without confirmation
 
 bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout and send requests again
 {// receive messages independing of state
-   BaseProtocol::tick();// for querrywithtimeout to work
+    BaseProtocol::tick();// for querrywithtimeout to work
     VSMMessage* res= behaviour->receive(MessageContents::BEACONS_RQ);
     if(res!=0){
         // add senders id to beacons list
@@ -113,9 +113,9 @@ bool ExplorerManagementProtocol::managerTick()//todo add reply waiting timeout a
         if(unusedRobots.size()>=1){
 
             VSMMessage startRequest(behaviour->owner->id,*unusedRobots.begin(),MessageContents::START_EXPLORING,"seb");// reply to querry, could send some additional info, e.g. bat level
-        querryWithTimeout(startRequest,MessageContents::AGREE,ProtocolStates::BEACONS_DEPLOYED,ProtocolStates::BEACONS_DEPLOYED,3,3);
+            querryWithTimeout(startRequest,MessageContents::AGREE,ProtocolStates::BEACONS_DEPLOYED,ProtocolStates::BEACONS_DEPLOYED,3,3);
 
-           // behaviour->owner->sendMsg(startRequest);
+            // behaviour->owner->sendMsg(startRequest);
             usedRobots.insert(*unusedRobots.begin());//for now mark it as employed without confirmation from robot itself
             std::cout<<"sent start exploring to robot "<<*unusedRobots.begin()<<"\n";
 
@@ -140,8 +140,8 @@ bool ExplorerManagementProtocol::explorerTick()
     VSMMessage* res= behaviour->receive(MessageContents::START_EXPLORING);
     if(res!=0){
         ((ExplorerListenerBehaviour*)behaviour)->startExploring();
-    VSMMessage reply(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::AGREE,"seba");//reply to request,
-    behaviour->owner->sendMsg(reply);
+        VSMMessage reply(behaviour->owner->id,Topics::S2EXPLORERS_IN,MessageContents::AGREE,"seba");//reply to request,
+        behaviour->owner->sendMsg(reply);
     }
     VSMMessage* res2= behaviour->receive(MessageContents::STOP_EXPLORING);
     if(res2!=0){
