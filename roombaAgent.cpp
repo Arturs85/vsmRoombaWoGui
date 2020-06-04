@@ -241,7 +241,7 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     behavioursList.push_back(bcb);
     if(behaviour==VSMSubsystems::S3) isS3 = true; //todo - hardcoded name
     string behName =typeid(*bcb).name();
-    cout<<"added behaviour: "<<behName<<"\n";
+    cout<< getSystemTimeSec()<<" added behaviour: "<<behName<<"\n";
 
 }
 
@@ -282,7 +282,7 @@ void RoombaAgent::sendMsg(VSMMessage msg)
     else
         receiver = (int)msg.receiver;
 
-        cout<<"ra send to rec: " <<receiver<< "from s "<<(int)msg.sender<<"\n";
+       // cout<<"ra send to rec: " <<receiver<< "from s "<<(int)msg.sender<<"\n";
 
 
 

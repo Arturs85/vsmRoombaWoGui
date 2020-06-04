@@ -250,7 +250,7 @@ bool LocalisationProtocol::clientTick()//  wait for final result timeout
         if(res!=0){
 
             result = BaseProtocol::stringTointVector(res->content);
-            std::cout<<"localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
+            std::cout<<RoombaAgent::getSystemTimeSec()<<" localisation done x "<<result.at(0)<<" y "<<result.at(1) <<"\n";
             //resend coordinates to s4
             VSMMessage resultXY(behaviour->owner->id,Topics::TO_S4,MessageContents::CORDINATES_XY,res->content);
             behaviour->owner->sendMsg(resultXY);

@@ -13,7 +13,7 @@ int retrysSoFar =0;
 int intervalCounter =0;
 virtual void start();
 virtual bool tick();
-
+ int availSizeprev =0;
 
 private:
 

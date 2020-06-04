@@ -8,7 +8,7 @@
 // add this behaviour when unit becomes of explore type, so it can listen to commands from s2
 
 #define FIRST_DISTANCE 500 // 50cm
-#define TARGET_DISTANCE_ALLOWANCE 300 // 50cm
+#define TARGET_DISTANCE_ALLOWANCE 800 // 80cm
 
 //#define NEXT_TARGET_DISTANCE 2000 // 2m
 

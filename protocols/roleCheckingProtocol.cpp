@@ -129,7 +129,7 @@ bool RoleCheckingProtocol::responderTick()
     VSMMessage* res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
     if(res!=0){
         //see if there is some role to delegate to requesting agent, send reply adressed directly to requester
-        cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
+       // cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
         if(res->senderNumber!=behaviour->owner->id){//dont give roles to itsef - s3
             //get unfilled role
             VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
@@ -188,9 +188,12 @@ bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
             break;
         }
 
-       std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
-       std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
-       ((S2BaseBehavior*)behaviour)->lastS1Count=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();//set this value in behaviour for other protocols to use it
+      // std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
+       if(availSizeprev!=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()){
+        std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
+       }
+       availSizeprev = ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();
+    //    ((S2BaseBehavior*)behaviour)->lastS1Count=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();//set this value in behaviour for other protocols to use it
 
     }
 return false;

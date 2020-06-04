@@ -437,7 +437,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                     pthread_mutex_unlock(&rxDequeLock);
 
                     //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                    cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" rec: "<<(int)m.receiverNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
+                   // cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" rec: "<<(int)m.receiverNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
                 }
 
                 t = clock();
@@ -552,7 +552,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
 {
     uint32 resp_tx_time;
     int ret;
-    printf("resp received poll msg\n");
+    //printf("resp received poll msg\n");
 
     /* Retrieve poll reception timestamp. */
     poll_rx_ts = get_rx_timestamp_u64();
@@ -584,7 +584,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
     /* Poll for reception of expected "final" frame or error/timeout. See NOTE 8 below. */
     while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
     { };
-    printf("statusReg h: %x mask: %x\n",status_reg,(SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR));
+  //  printf("statusReg h: %x mask: %x\n",status_reg,(SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR));
 
     /* Increment frame sequence number after transmission of the response message (modulo 256). */
     frame_seq_nb++;
@@ -593,7 +593,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
     {
         /* Clear good RX frame event and TX frame sent in the DW1000 status register. */
         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
-        printf("final msg received\n");
+      //  printf("final msg received\n");
 
         /* A frame has been received, read it into the local buffer. */
         uint32 frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
@@ -648,7 +648,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
 
 
             /* Display computed twrDistance on LCD. */
-            printf("DIST: %3.2f m\n", twrDistance);
+          //  printf("DIST: %3.2f m\n", twrDistance);
 
             VSMMessage replymsg;
             replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
