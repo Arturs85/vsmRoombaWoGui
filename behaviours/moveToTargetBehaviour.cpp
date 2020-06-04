@@ -130,7 +130,7 @@ void MoveToTargetBehaviour::behaviourStep()
         int dx =latestLocation.x-previousLocation.x;
         int dy =latestLocation.y-previousLocation.y;
 
-        latestDirection = std::atan2(dx,dy);
+        latestDirection = std::atan2(dy,dx);
         int distTriang = std::sqrt(dx*dx+dy*dy);
         std::cout<< "mttb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<" dir "<<180*latestDirection/PI <<"\n";
 
