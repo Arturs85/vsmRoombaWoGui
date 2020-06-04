@@ -41,7 +41,7 @@ vector<int> S4Behaviour::getCordsForRegrouping(int side)
     int y1 = side*sin(a1);
     int x2 = side*cos(a2);
     int y2 = side*sin(a2);
-    return vector<int>{destPoint.x,destPoint.y,x1,y1,x2,y2};
+    return vector<int>{destPoint.x,destPoint.y,destPoint.x+x1,destPoint.y+y1,destPoint.x+x2,destPoint.y+y2};
 
 }
 
