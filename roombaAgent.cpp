@@ -17,6 +17,7 @@
 #include "s2ExplorersBehaviour.hpp"
 #include "s4Behaviour.hpp"
 #include "moveToTargetBehaviour.hpp"
+#include <iomanip>
 
 #define USLEEP_TIME_US 10000
 
@@ -241,7 +242,7 @@ void RoombaAgent::addBehaviourToList(VSMSubsystems behaviour)
     behavioursList.push_back(bcb);
     if(behaviour==VSMSubsystems::S3) isS3 = true; //todo - hardcoded name
     string behName =typeid(*bcb).name();
-    cout<< getSystemTimeSec()<<" added behaviour: "<<behName<<"\n";
+    cout<<std::setprecision (15)<< getSystemTimeSec()<<" added behaviour: "<<behName<<"\n";
 
 }
 

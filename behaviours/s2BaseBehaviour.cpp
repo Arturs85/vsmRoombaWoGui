@@ -50,10 +50,11 @@ void S2BaseBehavior::ereaseMissingRobots()
         // Accessing VALUE from element pointed by it.
         double timeSeen = it->second;
         if(timeNow-timeSeen>MARK_ABSENT_TIMEOUT_S2)
-            //erease id from available and used list
+           { //erease id from available and used list
             s1ManagementProtocol->availableRobotsSet.erase(it->first);
         s1ManagementProtocol->usedRobots.erase(it->first);
         std::cout<<"s2baseBeh unregistering "<< it->first<<"\n";
+        }
         it++;
     }
 }
