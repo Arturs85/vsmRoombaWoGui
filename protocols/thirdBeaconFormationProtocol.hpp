@@ -27,13 +27,14 @@ double angleToFirstRobot;
 double angleToSecondRobot;
 int measuredDistToFirst[4];
 int measuredDistToSecond[4];
+double refineB2angle(double b1, double b2, double ang);
 
 private:
 int measureRetryCounter=0;
 int measureWaitCounter=0;
 int queryRetryCounter=0;
 int replyWaitCounter=0;
-
+int distB1B2=0;
 
 int latestMeasurement=0;
 int latestMeasuredBeaconId=0;

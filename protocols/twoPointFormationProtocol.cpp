@@ -217,7 +217,7 @@ bool TwoPointFormationProtocol::movingBeaconTick()
             return false;
             break;
         }
-        VSMMessage tpfpFinished(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,"a");
+        VSMMessage tpfpFinished(behaviour->owner->id,Topics::THIRD_BEACON_IN,MessageContents::TPFP_DONE,to_string(latestMeasurement));
 
         querryWithTimeout(tpfpFinished,MessageContents::ACKNOWLEDGE,ProtocolStates::ACKNOWLEDGE_RECEIVED,ProtocolStates::TIMEOUT,3,3);
 

@@ -214,8 +214,8 @@ beta2 = angleToB2-beta;
     beta2 = angleToB1-beta;
 
 }
-float bestDiffToAlfa1 = findTwoClosestValues(vector<float>{alfa1-beta1,alfa1-beta2});//compare by sines
-float bestDiffToAlfa2 = findTwoClosestValues(vector<float>{alfa2-beta1,alfa2-beta2});
+float bestDiffToAlfa1 = minSines(alfa1-beta1,alfa1-beta2);//compare by sines
+float bestDiffToAlfa2 = minSines(alfa2-beta1,alfa2-beta2);
 
 if(bestDiffToAlfa1<bestDiffToAlfa2)
     return alfa1;
@@ -234,6 +234,14 @@ double gamma = PI/2-alfa-beta;
 if(alfa<beta && alfa<gamma) return alfa;
 if(beta<alfa && beta<gamma) return beta;
 return gamma;
+}
+
+float LocalisationProtocol::minSines(float f1, float f2)
+{
+    if(std::abs(std::sin(f1))>std::abs(std::sin(f2)))
+        return f2;
+    else
+        return f1;
 }
 
 
