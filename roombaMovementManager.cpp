@@ -49,6 +49,10 @@ bool RoombaMovementManager::turnLeft(int degrees)
 {
     if(state==MovementStates::DRIVING||state==MovementStates::TURNING_LEFT||state ==MovementStates::TURNING_RIGHT) return false;// dont let start next movement until previous is finished
 
+    if(degrees==0){// dont try to turn if angle is 0
+        state = MovementStates::FINISHED;
+    return false;
+    }
     roombaController->readAngle();// this clears roomba internal counter
     angleRemaining = degrees;
     state = MovementStates::TURNING_LEFT;

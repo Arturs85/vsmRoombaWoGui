@@ -1,7 +1,7 @@
 #ifndef S2BASEBEHAVIOUR_HPP
 #define S2BASEBEHAVIOUR_HPP
 #include "baseCommunicationBehaviour.hpp"
-
+#include <map>
 class ControlValueProtocol;
 class BaseS1ManagementProtocol;
 class S1ExchangeProtocol;
@@ -23,6 +23,9 @@ S2Types s2type;
 virtual int getS1IdForGiveaway();
 BaseS1ManagementProtocol* s1ManagementProtocol;
 S1ExchangeProtocol* s1ExchangeProtocol;
+
+std::map< int,double  > knownS1OfType;//<id,abs time when last comm >, this map lets know, present agents and time since they was last heard from
+void ereaseMissingRobots();
 
 protected:
 void behaviourStep();

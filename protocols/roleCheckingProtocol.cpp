@@ -19,16 +19,16 @@ RoleCheckingProtocol::RoleCheckingProtocol(RoleInProtocol roleInProtocol, BaseCo
         behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);
     else if(roleInProtocol==RoleInProtocol::INITIATOR)
         behaviour->subscribeToDirectMsgs();
-else if(roleInProtocol==RoleInProtocol::S2BASE){
-    behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);//to receive info of s1 types
-    //erese all old messages of this type, todo add as function
-    VSMMessage* res;
-    do{
-        res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
-    if(res != 0)
-        delete res;
-    }
-    while(res!=0);
+    else if(roleInProtocol==RoleInProtocol::S2BASE){
+        behaviour->subscribeToTopic(Topics::S3_ROLE_CHECKING);//to receive info of s1 types
+        //erese all old messages of this type, todo add as function
+        VSMMessage* res;
+        do{
+            res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
+            if(res != 0)
+                delete res;
+        }
+        while(res!=0);
 
 
     }
@@ -58,7 +58,7 @@ void RoleCheckingProtocol::start()
     //state = STARTED;
     //send message to s3 asking for role,
     waitTicksCounter=0;
-// send own S1 type as msg contents, so s2 will know available robots of coresp. type
+    // send own S1 type as msg contents, so s2 will know available robots of coresp. type
 
     VSMMessage request(behaviour->owner->id,Topics::S3_ROLE_CHECKING,MessageContents::ROLE_CHECK_WITH_S3,std::to_string((int)(behaviour->owner->s1Type)));
 
@@ -119,7 +119,7 @@ bool RoleCheckingProtocol::initiatorTick()
         break;
     }
     
-    behaviour->msgDeque.clear();  //clear unintresting msgs 
+    behaviour->msgDeque.clear();  //clear unintresting msgs
 
     return ended;// not ment to execute
 }
@@ -129,12 +129,12 @@ bool RoleCheckingProtocol::responderTick()
     VSMMessage* res= behaviour->receive(MessageContents::ROLE_CHECK_WITH_S3);
     if(res!=0){
         //see if there is some role to delegate to requesting agent, send reply adressed directly to requester
-       // cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
+        // cout<<"rcp responder received query from "<<res->senderNumber<<std::endl;
         if(res->senderNumber!=behaviour->owner->id){//dont give roles to itsef - s3
             //get unfilled role
             VSMSubsystems unfilled = ((S3Behaviour*)behaviour)->getUnfilledRole();
             if(unfilled!=VSMSubsystems::NONE){
-               std::cout<<"rcp s3 got unfilled role "<<(int)unfilled<<"\n";
+                std::cout<<"rcp s3 got unfilled role "<<(int)unfilled<<"\n";
                 //mark it as filled
                 ((S3Behaviour*)behaviour)->markAsFilled(unfilled,res->senderNumber);//  todo mar as filled after received confirm
 
@@ -175,26 +175,37 @@ bool RoleCheckingProtocol::s2Tick()// for s2base behaviour
 
         switch (((S2BaseBehavior*)behaviour)->s2type) {
         case S2Types::EXPLORERS:
-        if(role==VSMSubsystems::S1_EXPLORERS)
-            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
+            if(role==VSMSubsystems::S1_EXPLORERS)
+                ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
             break;
 
         case S2Types::BEACONS:
-        if(role==VSMSubsystems::S1_BEACONS)
-            ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
+            if(role==VSMSubsystems::S1_BEACONS)
+                ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.insert(res->senderNumber);
             break;
 
         default:
             break;
         }
+        //update time table when agents was last seen
+        std::map< int,double  >* presentRobots =  &((S2BaseBehavior*)behaviour)->knownS1OfType;
+        auto search = presentRobots->find(res->senderNumber);
+        if (search != presentRobots->end()) {
+            presentRobots->at(res->senderNumber)=behaviour->owner->getSystemTimeSec();
+        } else {
+            presentRobots->emplace(res->senderNumber,behaviour->owner->getSystemTimeSec());
 
-      // std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
-       if(availSizeprev!=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()){
-        std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
-       }
-       availSizeprev = ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();
-    //    ((S2BaseBehavior*)behaviour)->lastS1Count=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();//set this value in behaviour for other protocols to use it
+        }
+
+
+
+        // std::cout<<"s2 type "<<(int)((S2BaseBehavior*)behaviour)->s2type<<"\n";
+        if(availSizeprev!=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()){
+            std ::cout<<"available robots size: "<<((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size()<<"\n";
+        }
+        availSizeprev = ((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();
+        //    ((S2BaseBehavior*)behaviour)->lastS1Count=((S2BaseBehavior*)behaviour)->s1ManagementProtocol->availableRobotsSet.size();//set this value in behaviour for other protocols to use it
 
     }
-return false;
+    return false;
 }

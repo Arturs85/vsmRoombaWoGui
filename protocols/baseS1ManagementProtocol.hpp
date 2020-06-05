@@ -15,9 +15,9 @@ virtual bool tick();
 virtual int getUnusedBeaconId();
 void sendChangeType(int robotId, std::string vSMSubsystemsS1NewTypeString );
 std::set<int> availableRobotsSet;
+std::set<int> usedRobots; //use set or vctor?
 
 protected:
-std::set<int> usedRobots; //use set or vctor?
 
 std::set<int> getUnusedRobotsSet();
 

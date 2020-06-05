@@ -22,23 +22,23 @@ public:
 
     void markAsFilled(VSMSubsystems role, int agentId);
     std::map< int,double  > knownAgents;//<id,abs time when last comm >, this map lets know, present agents and time since they was last heard from
-int getActiveRobotsCount();//return nr of robots that has used rcp protocol recently
-void updateCvals(int beaconsNeeded);
-vector<int> cvals;
+    int getActiveRobotsCount();//return nr of robots that has used rcp protocol recently
+    void updateCvals(int beaconsNeeded);
+    vector<int> cvals;
 
-OperationsManagementProtocol* operationsManagementProtocol;
+    OperationsManagementProtocol* operationsManagementProtocol;
 
 private:
-S3States state;
+    S3States state;
     RoleCheckingProtocol* roleCheckingProtocol;
     ControlValueProtocol* controlValueProtocol;
 
     std::map< VSMSubsystems,int  > behaviourCarieers;//<managementBehaviour, agenId>, this map shows, witch behaviours are filled and by whom
 
-static const std::vector<VSMSubsystems> requiredRoles;//contains roles that are needed to be filled prior to start operations
-std::vector<VSMSubsystems> unfilledRoles;// initialize it with requiredRoles;
+    static const std::vector<VSMSubsystems> requiredRoles;//contains roles that are needed to be filled prior to start operations
+    std::vector<VSMSubsystems> unfilledRoles;// initialize it with requiredRoles;
 
-void behaviourStep();
+    void behaviourStep();
 
 };
 
