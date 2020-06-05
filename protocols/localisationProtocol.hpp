@@ -22,6 +22,8 @@ static float checkPointsWithThirdBeacon(int a, int b, int r, float* points);// r
 vector<int> result;// will contain cordinates if protocol result is sucessful
 float findTwoClosestValues(vector<float> l);
 float calcAngleToExplorer(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr);
+float calcAngleToExplorerBestTriangle(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr);
+float calcMinAngleOfTriangle(int a, int b, int c);
 void localise();
 
 private:

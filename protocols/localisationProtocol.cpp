@@ -172,6 +172,7 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
     double distFromMB= mr->BeaconMasterDist;// this implies that BeaconsMaster must bee one of beacons
 
     double beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
+
     double gamma = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
     std::cout<<"beta "<<180*beta/PI<< "gamma "<<180*gamma/PI<<"\n";
     vector<float> possibleAngles;
@@ -183,6 +184,56 @@ float LocalisationProtocol::calcAngleToExplorer(int dToB1, int dToB2, float angl
 
     float closestVal= findTwoClosestValues(possibleAngles);
     return closestVal;//converting to radians
+}
+
+float LocalisationProtocol::calcAngleToExplorerBestTriangle(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr)
+{
+    double distFromMB= mr->BeaconMasterDist;// this implies that BeaconsMaster must bee one of beacons
+float t1Min =  calcMinAngleOfTriangle(distFromMB,dToB1/10,mr->b1Dist);
+float t2Min =  calcMinAngleOfTriangle(distFromMB,dToB2/10,mr->b2Dist);
+
+float alfa1=0;
+float alfa2 =0;
+float beta1 =0;
+float beta2 =0;
+
+if(t1Min > t2Min){//triangle with b1 is better
+float alfa =TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
+float beta = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
+alfa1 = angleToB1+alfa;
+alfa2 = angleToB1-alfa;
+beta1 = angleToB2+beta;
+beta2 = angleToB2-beta;
+
+}else{
+    float beta =TwoPointFormationProtocol::calcAngle(distFromMB,dToB1/10,mr->b1Dist);
+    float alfa = TwoPointFormationProtocol::calcAngle(distFromMB,dToB2/10,mr->b2Dist);
+    alfa1 = angleToB2+alfa;
+    alfa2 = angleToB2-alfa;
+    beta1 = angleToB1+beta;
+    beta2 = angleToB1-beta;
+
+}
+float bestDiffToAlfa1 = findTwoClosestValues(vector<float>{alfa1-beta1,alfa1-beta2});//compare by sines
+float bestDiffToAlfa2 = findTwoClosestValues(vector<float>{alfa2-beta1,alfa2-beta2});
+
+if(bestDiffToAlfa1<bestDiffToAlfa2)
+    return alfa1;
+else
+    return alfa2;
+
+}
+
+
+float LocalisationProtocol::calcMinAngleOfTriangle(int a, int b, int c)
+{
+  double alfa = TwoPointFormationProtocol::calcAngle(b,c,a);
+  double beta = TwoPointFormationProtocol::calcAngle(a,c,b);
+double gamma = PI/2-alfa-beta;
+
+if(alfa<beta && alfa<gamma) return alfa;
+if(beta<alfa && beta<gamma) return beta;
+return gamma;
 }
 
 
@@ -212,7 +263,9 @@ bool LocalisationProtocol::beaconMsterTick()// listens measurements, and waits t
             double angleToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->angleToSecondRobot;
             int distToB1 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToFirst[3];
             int distToB2 = ((BeaconMasterBehaviour*)behaviour)->thirdBeaconFormationProtocol->measuredDistToSecond[3];
-            float angleToExplorer = calcAngleToExplorer(distToB1,distToB2,angleToB1,angleToB2,&mr);
+//            float angleToExplorer = calcAngleToExplorer(distToB1,distToB2,angleToB1,angleToB2,&mr);
+            float angleToExplorer = calcAngleToExplorerBestTriangle(distToB1,distToB2,angleToB1,angleToB2,&mr);
+
             std::cout<<"lp angle to exp "<<angleToExplorer<<"\n";
 
             int x = mr.BeaconMasterDist*std::cos(angleToExplorer);
