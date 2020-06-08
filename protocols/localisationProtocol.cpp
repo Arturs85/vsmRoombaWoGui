@@ -12,7 +12,7 @@
 #include <limits>
 #include "s4Behaviour.hpp"
 #include <iomanip>
-#define POINT_COUNT_FOR_MAP 50
+#define POINT_COUNT_FOR_MAP 6
 
 LocalisationProtocol::LocalisationProtocol(RoleInProtocol roleInProtocol, BaseCommunicationBehaviour *ownerBeh):BaseProtocol(ownerBeh)
 {

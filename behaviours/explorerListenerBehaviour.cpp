@@ -7,10 +7,10 @@
 
 // add this behaviour when unit becomes of explore type, so it can listen to commands from s2
 
-#define NEXT_TARGET_DISTANCE 500 // 2m
+#define NEXT_TARGET_DISTANCE 2000 // 2m
 //#define NEXT_TARGET_DISTANCE 2000 // 2m
 
-#define AREA_RADI 5000
+#define AREA_RADI 4000
 
 ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
 {
@@ -158,8 +158,8 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
         float destAngle = std::atan2(dest.y,dest.x);
         float angleToTurn = destAngle - latestDirection;
         distToTravelAfterTurning = NEXT_TARGET_DISTANCE;
-        //owner->movementManager->turn(angleToTurn*180/PI);
-        owner->movementManager->turn(0);
+        owner->movementManager->turn(angleToTurn*180/PI);
+       // owner->movementManager->turn(0);
 
         explorerState = ExplorerStates::TURNING;
     }break;
