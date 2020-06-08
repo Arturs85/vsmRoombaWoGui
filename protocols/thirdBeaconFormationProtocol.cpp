@@ -7,10 +7,10 @@
 #include "roombaMovementManager.hpp"
 #include <cmath>
 
-#define TRIANGLE_SIDE_MM 1000
-#define BEACONS_TRIANGLE_SIDE_MM 1500
+//#define TRIANGLE_SIDE_MM 1000
+//#define BEACONS_TRIANGLE_SIDE_MM 3000
 
-#define PI 3.1415926
+//#define PI 3.1415926
 bool ThirdBeaconFormationProtocol::tick()
 {
     //cout<<"tpf tick \n";
