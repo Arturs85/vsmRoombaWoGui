@@ -270,7 +270,7 @@ void RoombaAgent::removeBehaviour(BaseCommunicationBehaviour *bcb)
     roleList.erase(std::remove(roleList.begin(),roleList.end(),bcb->type),roleList.end());// remove from enums list, but is this list needed?
 
     behavioursList.erase(std::remove(behavioursList.begin(), behavioursList.end(), bcb), behavioursList.end());// remove by value
-    cout<<"ra removing behaviour: "<<typeid (*bcb).name()<<"\n";
+    cout<< getSystemTimeSec()<<" ra removing behaviour: "<<typeid (*bcb).name()<<"\n";
 }
 
 void RoombaAgent::sendMsg(VSMMessage msg)
