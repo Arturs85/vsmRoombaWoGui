@@ -21,7 +21,7 @@ public:
     VSMMessage* receive(MessageContents messageContents);
     void subscribeToTopic(Topics topic);
     void subscribeToDirectMsgs();
-
+void clearMsgs();
     void unSubscribeToTopic(Topics topic);
     virtual void behaviourStep();
     virtual void remove();

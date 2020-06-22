@@ -122,6 +122,15 @@ void RoombaAgent::distributeMessages()// copy received messages from uwblistener
     distributeMessages();//recursion
 }
 
+void RoombaAgent::clearMessages()
+{
+    for (BaseCommunicationBehaviour* b : behavioursList) {
+
+        b->clearMsgs();
+
+    }
+}
+
 void RoombaAgent::startCycle()
 {
     addBehaviour(VSMSubsystems::ROLE_CHECKING);
@@ -135,6 +144,7 @@ void RoombaAgent::startCycle()
             //cout<<"dt: "<<(diff)<<"\n";
             distributeMessages();
             behavioursStep();
+            clearMessages();//clear masg queue after all behaviours has had a chance to read them
             lastTime = getSystemTimeSec();
             //cout<<"ra timeNow "<<time<<"exec time: "<<(lastTime-time)<<"\n";
 
