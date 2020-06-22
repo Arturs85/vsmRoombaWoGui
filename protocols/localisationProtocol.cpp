@@ -214,8 +214,8 @@ beta2 = angleToB2-beta;
     beta2 = angleToB1-beta;
 
 }
-float bestDiffToAlfa1 = minSines(alfa1-beta1,alfa1-beta2);//compare by sines
-float bestDiffToAlfa2 = minSines(alfa2-beta1,alfa2-beta2);
+float bestDiffToAlfa1 = minSines2(beta1,beta2,alfa1);// minSines(alfa1-beta1,alfa1-beta2);//compare by sines
+float bestDiffToAlfa2 = minSines2(beta1,beta2,alfa2);//minSines(alfa2-beta1,alfa2-beta2);
 
 if(bestDiffToAlfa1<bestDiffToAlfa2)
     return alfa1;
@@ -242,6 +242,15 @@ float LocalisationProtocol::minSines(float f1, float f2)
         return f2;
     else
         return f1;
+}
+
+float LocalisationProtocol::minSines2(float f1, float f2, float et)
+{
+ float v1 = std::abs(std::sin(et)-std::sin(f1));
+ float v2 = std::abs(std::sin(et)-std::sin(f2));
+
+ if(v1<v2) return v1;
+ else return v2;
 }
 
 

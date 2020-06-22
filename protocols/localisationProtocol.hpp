@@ -25,6 +25,8 @@ float calcAngleToExplorer(int dToB1, int dToB2, float angleToB1, float angleToB2
 float calcAngleToExplorerBestTriangle(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr);
 float calcMinAngleOfTriangle(int a, int b, int c);
 float minSines(float f1, float f2);
+float minSines2(float f1, float f2, float et);
+
 void localise();
 
 private:
