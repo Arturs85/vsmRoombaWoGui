@@ -39,6 +39,13 @@ void BaseCommunicationBehaviour::subscribeToDirectMsgs()
 
 }
 
+void BaseCommunicationBehaviour::clearMsgs()
+{
+    if(msgDeque.empty())return ;
+
+    msgDeque.clear();
+}
+
 void BaseCommunicationBehaviour::unSubscribeToTopic(Topics topic)
 {
     std:set<BaseCommunicationBehaviour*> subs = owner->subscribersMap.at((int)topic);

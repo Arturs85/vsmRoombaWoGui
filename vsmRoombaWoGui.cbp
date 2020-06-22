@@ -8,37 +8,37 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/vnpc/vsmRoombaWoGui"/>
+				<Option working_dir="/home/arturs/vsmRoombaWoGui"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/vnpc/vsmRoombaWoGui"/>
+				<Option working_dir="/home/arturs/vsmRoombaWoGui"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="vsmRoombaWoGui">
-				<Option output="/home/vnpc/vsmRoombaWoGui/vsmRoombaWoGui" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/vnpc/vsmRoombaWoGui"/>
+				<Option output="/home/arturs/vsmRoombaWoGui/vsmRoombaWoGui" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/arturs/vsmRoombaWoGui"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/vnpc/vsmRoombaWoGui"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/behaviours"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/protocols"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/include/decadriver"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/include/raspberry"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/behaviours"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/protocols"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/include/decadriver"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/include/raspberry"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -49,24 +49,24 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 vsmRoombaWoGui"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 vsmRoombaWoGui"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="vsmRoombaWoGui/fast">
-				<Option output="/home/vnpc/vsmRoombaWoGui/vsmRoombaWoGui" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/vnpc/vsmRoombaWoGui"/>
+				<Option output="/home/arturs/vsmRoombaWoGui/vsmRoombaWoGui" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/arturs/vsmRoombaWoGui"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/vnpc/vsmRoombaWoGui"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/behaviours"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/protocols"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/include/decadriver"/>
-					<Add directory="/home/vnpc/vsmRoombaWoGui/include/raspberry"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/behaviours"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/protocols"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/include/decadriver"/>
+					<Add directory="/home/arturs/vsmRoombaWoGui/include/raspberry"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -77,240 +77,240 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 vsmRoombaWoGui/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 vsmRoombaWoGui/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/vnpc/vsmRoombaWoGui"/>
+				<Option working_dir="/home/arturs/vsmRoombaWoGui"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vnpc/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/arturs/vsmRoombaWoGui/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/baseCommunicationBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/baseCommunicationBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/baseCommunicationBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/baseCommunicationBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconListenerBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconListenerBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconListenerBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconListenerBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconMasterBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconMasterBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconMasterBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconMasterBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconOneBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconOneBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconOneBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconOneBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconTwoBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconTwoBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/beaconTwoBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/beaconTwoBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/explorerListenerBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/explorerListenerBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/explorerListenerBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/explorerListenerBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/moveToTargetBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/roleCheckingBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/roleCheckingBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/roleCheckingBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/roleCheckingBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s1Behaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s1Behaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s1Behaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s1Behaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2BaseBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2BaseBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2BaseBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2BaseBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2BeaconsBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2BeaconsBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2BeaconsBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2BeaconsBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2ExplorersBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2ExplorersBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s2ExplorersBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s2ExplorersBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s3Behaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s3Behaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s3Behaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s3Behaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s4Behaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s4Behaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/behaviours/s4Behaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/behaviours/s4Behaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/localMap.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/localMap.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/localMap.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/localMap.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/logfilesaver.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/logfilesaver.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/logfilesaver.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/logfilesaver.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/main.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/main.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/obj/decadriver/deca_device.o">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/obj/decadriver/deca_device.o">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/obj/decadriver/deca_params_init.o">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/obj/decadriver/deca_params_init.o">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/obj/raspberry/platform.o">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/obj/raspberry/platform.o">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/baseProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/baseProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/baseProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/baseProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/baseS1ManagementProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/baseS1ManagementProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/baseS1ManagementProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/baseS1ManagementProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/beaconManagementProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/beaconManagementProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/beaconManagementProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/beaconManagementProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/controlValueProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/controlValueProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/controlValueProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/controlValueProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/explorerManagementProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/explorerManagementProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/explorerManagementProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/explorerManagementProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/localisationProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/localisationProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/localisationProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/localisationProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/operationsManagementProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/operationsManagementProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/operationsManagementProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/operationsManagementProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/roleCheckingProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/roleCheckingProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/roleCheckingProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/roleCheckingProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/s1ExchangeProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/s1ExchangeProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/s1ExchangeProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/s1ExchangeProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/thirdBeaconFormationProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/thirdBeaconFormationProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/thirdBeaconFormationProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/thirdBeaconFormationProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/twoPointFormationProtocol.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/twoPointFormationProtocol.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/protocols/twoPointFormationProtocol.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/protocols/twoPointFormationProtocol.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaAgent.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaAgent.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaAgent.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaAgent.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaBehaviour.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaBehaviour.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaBehaviour.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaBehaviour.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaController.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaController.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaController.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaController.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaMovementManager.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaMovementManager.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/roombaMovementManager.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/roombaMovementManager.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/uartTest.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/uartTest.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/uartTest.h">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/uartTest.h">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/uwbmsglistener.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/uwbmsglistener.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/uwbmsglistener.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/uwbmsglistener.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/vSMMessage.cpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/vSMMessage.cpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/vSMMessage.hpp">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/vSMMessage.hpp">
 			<Option target="vsmRoombaWoGui"/>
 		</Unit>
-		<Unit filename="/home/vnpc/vsmRoombaWoGui/CMakeLists.txt">
+		<Unit filename="/home/arturs/vsmRoombaWoGui/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

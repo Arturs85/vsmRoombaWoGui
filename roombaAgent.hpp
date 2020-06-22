@@ -32,6 +32,7 @@ RoombaAgent();
 void getId();
 void advertise();
 void distributeMessages();
+void clearMessages();
 bool isRunning = true;
 void removeBehaviour(BaseCommunicationBehaviour *bcb);
 void sendMsg(VSMMessage msg);
