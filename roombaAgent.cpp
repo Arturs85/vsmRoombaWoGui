@@ -173,6 +173,7 @@ void RoombaAgent::behavioursStep()
     rolesToAdd.clear();
     }
 }
+
 void RoombaAgent::addBehaviour(VSMSubsystems behaviour)//add new behaviour and remove conflicting existing ones
 {
 	rolesToAdd.push_back(behaviour);

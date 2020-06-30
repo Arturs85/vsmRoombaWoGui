@@ -42,8 +42,9 @@ void BaseCommunicationBehaviour::subscribeToDirectMsgs()
 void BaseCommunicationBehaviour::clearMsgs()
 {
     if(msgDeque.empty())return ;
-
-    msgDeque.clear();
+while(msgDeque.size()>5){// workaround for behaviour not to clear all messages at the end of step, because some of them might be added during previous step an not procedssed
+    msgDeque.pop_front();
+}
 }
 
 void BaseCommunicationBehaviour::unSubscribeToTopic(Topics topic)
