@@ -1,5 +1,5 @@
 #include "explorerListenerBehaviour.hpp"
-#include "localisationProtocol.hpp"
+#include "localisationProtocolpf.hpp"
 #include "explorerManagementProtocol.hpp"
 #include "roombaMovementManager.hpp"
 #include <cmath>
@@ -16,7 +16,7 @@ ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):B
 {
     this->ra = roombaAgent;
     explorerManagementProtocol  = new ExplorerManagementProtocol(RoleInProtocol::EXPLORER,this);
-    localisationProtocol=new LocalisationProtocol(RoleInProtocol::CLIENT,this);
+    localisationProtocol=new LocalisationProtocolPf(RoleInProtocol::CLIENT,this);
     type = VSMSubsystems::S1_EXPLORERS;
 
 }

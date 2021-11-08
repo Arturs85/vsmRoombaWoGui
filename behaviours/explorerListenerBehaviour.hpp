@@ -7,13 +7,13 @@ class ExplorerManagementProtocol;
 enum class ExplorerStates{IDLE,EXPLORING,MEASURING_XY, MOVING_FORWARD,TURNING,ARRIVED_DEST,ENCOUNTERED_OBST,ARRIVED_DEST_AND_LOCALISED,FIRST_MEASUREMENT, FIRST_DRIVE, FINAL_DESTINATION};
 struct PointInt{int x;int y;};
 
-class LocalisationProtocol;
+class LocalisationProtocolPf;
 
 class ExplorerListenerBehaviour: public BaseCommunicationBehaviour{// listen s2 commands and explore space, localising time after time
  public:
 
     RoombaAgent* ra;
-  LocalisationProtocol* localisationProtocol;
+  LocalisationProtocolPf* localisationProtocol;
 void localise(ExplorerStates nextState);
 
     ExplorerListenerBehaviour(RoombaAgent *roombaAgent);

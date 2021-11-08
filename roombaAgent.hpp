@@ -7,11 +7,15 @@
 #include "baseCommunicationBehaviour.hpp"
 #include <map>
 #include <set>
+#include "particlefilter.h"
 //class BaseCommunicationBehaviour;
 class RoombaMovementManager;
 class RoombaAgent{
 
 public:
+    std::map<int,Position2D > coordinatesOfPeers;
+
+    ParticleFilter pf; // particles are initialised by calling this
 RoombaController* roombaController;
 UwbMsgListener uwbMsgListener; // start uwb device
 UartTest uartTest;

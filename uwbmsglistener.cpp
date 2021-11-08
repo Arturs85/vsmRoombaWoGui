@@ -437,7 +437,7 @@ void *UwbMsgListener::receivingLoop(void *arg)
                     pthread_mutex_unlock(&rxDequeLock);
 
                     //   cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
-                   // cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" rec: "<<(int)m.receiverNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
+                    // cout <<"rx msg--> sender: "<<(int)m.sender<<" snr: "<<(int)m.senderNumber<<" rec: "<<(int)m.receiverNumber<<" paramName: "<<(int)m.contentDescription<<" value: "<<m.content<<" qsz: "<<rxDeque.size()<<"\n";
                 }
 
                 t = clock();
@@ -584,7 +584,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
     /* Poll for reception of expected "final" frame or error/timeout. See NOTE 8 below. */
     while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
     { };
-  //  printf("statusReg h: %x mask: %x\n",status_reg,(SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR));
+    //  printf("statusReg h: %x mask: %x\n",status_reg,(SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR));
 
     /* Increment frame sequence number after transmission of the response message (modulo 256). */
     frame_seq_nb++;
@@ -593,7 +593,7 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
     {
         /* Clear good RX frame event and TX frame sent in the DW1000 status register. */
         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
-      //  printf("final msg received\n");
+        //  printf("final msg received\n");
 
         /* A frame has been received, read it into the local buffer. */
         uint32 frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
@@ -648,22 +648,25 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
 
 
             /* Display computed twrDistance on LCD. */
-          //  printf("DIST: %3.2f m\n", twrDistance);
+            //  printf("DIST: %3.2f m\n", twrDistance);
 
-            VSMMessage replymsg;
-            replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
+           // VSMMessage replymsg;
+           // replymsg={VSMSubsystems::S1,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,to_string(twrDistance*100)};// todo- update receiver and sender with id
 
-            if(idFromHostname!=ownId)// this is beacon x behavoir targeted measurement, send results to beacons master also
+          //  if(idFromHostname!=ownId)// this is beacon x behavoir targeted measurement, send results to beacons master also
             {
-                vector<int> data{(int)(twrDistance*100),rx_buffer[INITIATOR_ID_IDX]};
-                VSMMessage   replymsg2={ownId,Topics::BEACON_MASTER_IN,MessageContents::DISTANCE_MEASUREMENT_AND_ID,BaseProtocol::intVectorToString(data)};// todo- update receiver and sender with id
-                              replymsg2.setSender(static_cast<VSMSubsystems>(ownId));
+                // get latest coordinates of initiator
+                Position2D initiatorPos = owner->coordinatesOfPeers.at(rx_buffer[INITIATOR_ID_IDX]);
+                vector<int> data = owner->pf.getFarestAndNearestPoints(initiatorPos);
+                data.at(4)= (int)(twrDistance*100);
+                VSMMessage   replymsg2={ownId,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,BaseProtocol::intVectorToString(data)};// todo- update receiver and sender with id
+                replymsg2.setSender(static_cast<VSMSubsystems>(ownId));
 
-               owner->sendMsg(replymsg2);// use owner send, because it will intercept own messages
+                owner->sendMsg(replymsg2);// use owner send, because it will intercept own messages
             }
             //usleep(SLEEP_BETWEEN_SENDING_US);
 
-            addToTxDeque(replymsg);
+            //addToTxDeque(replymsg);
         }
     }
     else

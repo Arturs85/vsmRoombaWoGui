@@ -20,7 +20,9 @@ ExplorerManagementProtocol::ExplorerManagementProtocol(RoleInProtocol roleInProt
     else{
         behaviour->subscribeToTopic(Topics::S2_TO_EXPLORERS);
         behaviour->subscribeToDirectMsgs();
-        state = ProtocolStates::IDLE;
+//        state = ProtocolStates::IDLE;
+        state = ProtocolStates::BEACONS_DEPLOYED; // start with this state, so that start requests are sent after startup, no need to wait formation
+
     }
 }
 
