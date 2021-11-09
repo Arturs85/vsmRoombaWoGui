@@ -2,8 +2,8 @@
 #define BEACONLISTENERBEHAVIOUR_HPP
 #include "roombaAgent.hpp"
 
-class BeaconManagementProtocol;
-
+class BeaconManagementProtocolStatic;
+class LocalisationProtocolPf;
 
 class BeaconListenerBehaviour: public BaseCommunicationBehaviour{// waits for requests from second beacon by TwoPoinFormation protocol
  public:
@@ -14,8 +14,8 @@ class BeaconListenerBehaviour: public BaseCommunicationBehaviour{// waits for re
     BeaconListenerBehaviour(RoombaAgent *roombaAgent);
 private:
     void behaviourStep();
-BeaconManagementProtocol* beaconManagementProtocol;
-
+BeaconManagementProtocolStatic* beaconManagementProtocol;
+LocalisationProtocolPf* localisationProtocol;
 };
 
 

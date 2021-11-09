@@ -34,7 +34,7 @@ list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp"
     "behaviours/s3Behaviour.cpp" "behaviours/baseCommunicationBehaviour.cpp" "behaviours/roleCheckingBehaviour.cpp" "protocols/baseProtocol.cpp" "protocols/roleCheckingProtocol.cpp"
     "vSMMessage.cpp" "protocols/controlValueProtocol.cpp" "behaviours/beaconOneBehaviour.cpp" "protocols/twoPointFormationProtocol.cpp" "roombaMovementManager.cpp"
     "behaviours/beaconTwoBehaviour.cpp" "behaviours/beaconMasterBehaviour.cpp" "behaviours/s2BeaconsBehaviour.cpp" "behaviours/s2BaseBehaviour"
-    "protocols/operationsManagementProtocol.cpp" "protocols/beaconManagementProtocol.cpp" "behaviours/beaconListenerBehaviour.cpp" "protocols/thirdBeaconFormationProtocol.cpp"
+    "protocols/operationsManagementProtocol.cpp" "protocols/beaconManagementProtocol.cpp" "behaviours/beaconListenerBehaviour.cpp" "protocols/thirdBeaconFormationProtocol.cpp" "protocols/beaconManagementProtocolStatic.cpp"
     "behaviours/s2ExplorersBehaviour.cpp" "protocols/s1ExchangeProtocol.cpp" "behaviours/s1Behaviour.cpp" "behaviours/explorerListenerBehaviour.cpp"
     "protocols/baseS1ManagementProtocol.cpp" "protocols/localisationProtocol.cpp" "protocols/explorerManagementProtocol.cpp" "behaviours/s4Behaviour.cpp"
     "behaviours/moveToTargetBehaviour.cpp")

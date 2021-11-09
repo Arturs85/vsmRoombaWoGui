@@ -1,5 +1,5 @@
 #include "s2BeaconsBehaviour.hpp"
-#include "beaconManagementProtocol.hpp"
+#include "beaconManagementProtocolStatic.hpp".hpp"
 #include "operationsManagementProtocol.hpp"
 
 S2BeaconsBehaviour::S2BeaconsBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(roombaAgent)
@@ -7,7 +7,7 @@ S2BeaconsBehaviour::S2BeaconsBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(
     this->ra = roombaAgent;
     s2type = S2Types::BEACONS;
     type = VSMSubsystems::S2_BEACONS;
-    s1ManagementProtocol = new BeaconManagementProtocol(RoleInProtocol::S2BEACON,this);
+    s1ManagementProtocol = new BeaconManagementProtocolStatic(RoleInProtocol::S2BEACON,this);
     operationsManagementProtocol = new OperationsManagementProtocol(RoleInProtocol::S2BEACON,this);
     operationsManagementProtocol->start();
 }
@@ -20,7 +20,7 @@ void S2BeaconsBehaviour::behaviourStep()
     S2BaseBehavior::behaviourStep();
     //cout<<"bmp s2 inherited step returned \n";
 
-    ((BeaconManagementProtocol*)s1ManagementProtocol)->tick();
+    ((BeaconManagementProtocolStatic*)s1ManagementProtocol)->tick();
     BaseCommunicationBehaviour::logKeypoints("bmp s2 tick returned \n");
 
     operationsManagementProtocol->tick();
@@ -40,5 +40,5 @@ int S2BeaconsBehaviour::getS1IdForGiveaway()
 
 void S2BeaconsBehaviour::startRegroupingBeacons(vector<int> cords)
 {
-   ((BeaconManagementProtocol*)s1ManagementProtocol)->startReformation(cords);
+  // ((BeaconManagementProtocol*)s1ManagementProtocol)->startReformation(cords);
 }
