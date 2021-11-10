@@ -48,6 +48,9 @@ void RoombaAgent::initHardware(){
     std::cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
 
     movementManager = new RoombaMovementManager(roombaController);
+    if(id == 10)
+        setS1Type(VSMSubsystems::S1_EXPLORERS);// initialize rocot 10 as explorer for tests
+        else
     setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
     //std::cout<<"ra initHardware complete\n";
 

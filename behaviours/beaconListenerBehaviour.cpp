@@ -1,5 +1,5 @@
 #include "beaconListenerBehaviour.hpp"
-#include "beaconManagementProtocolStatic.hpp".hpp"
+#include "beaconManagementProtocolStatic.hpp"
 #include "localisationProtocolpf.hpp"
 // add this behaviour when unit becomes of beacon type, so it can listen to commands from s2, commands are which particular beacon behaviour to take
 BeaconListenerBehaviour::BeaconListenerBehaviour(RoombaAgent *roombaAgent):BaseCommunicationBehaviour(roombaAgent)
