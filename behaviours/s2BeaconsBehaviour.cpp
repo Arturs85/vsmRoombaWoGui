@@ -1,5 +1,5 @@
 #include "s2BeaconsBehaviour.hpp"
-#include "beaconManagementProtocolStatic.hpp".hpp"
+#include "beaconManagementProtocolStatic.hpp"
 #include "operationsManagementProtocol.hpp"
 
 S2BeaconsBehaviour::S2BeaconsBehaviour(RoombaAgent *roombaAgent):S2BaseBehavior(roombaAgent)

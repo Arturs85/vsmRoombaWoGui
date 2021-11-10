@@ -46,9 +46,7 @@ bool BeaconManagementProtocolStatic::tick()// todo modify from source copy
 
         break;
 
-    case RoleInProtocol::MOVING_BEACON:
-        return   targetGoerBeaconTick();
-        break;
+
 
     default:
         break;

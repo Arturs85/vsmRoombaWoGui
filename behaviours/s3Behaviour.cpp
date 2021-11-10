@@ -82,8 +82,10 @@ void S3Behaviour::updateCvals(int beaconsNeeded)
     //std::cout<<"s3 -robots avail "<<robotsAlvail<<"\n";
     //std::cout<<"s3 -sizeOf cvals  "<<cvals.size()<<"\n";
 
-    cvals.at(S2Types::BEACONS)=beaconsNeeded;
-    cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;
+   // cvals.at(S2Types::BEACONS)=beaconsNeeded;
+   // cvals.at(S2Types::EXPLORERS)=robotsAlvail-beaconsNeeded;
+    cvals.at(S2Types::BEACONS)=robotsAlvail-1; // for haveing at least one explorer
+    cvals.at(S2Types::EXPLORERS)=1;
 }
 
 void S3Behaviour::behaviourStep()
