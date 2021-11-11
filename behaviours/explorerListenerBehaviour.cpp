@@ -16,7 +16,7 @@ ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):B
 {
     this->ra = roombaAgent;
     explorerManagementProtocol  = new ExplorerManagementProtocol(RoleInProtocol::EXPLORER,this);
-    localisationProtocol=new LocalisationProtocolPf(RoleInProtocol::CLIENT,this);
+    localisationProtocol=new LocalisationProtocolPf(RoleInProtocol::INITIATOR,this);
     type = VSMSubsystems::S1_EXPLORERS;
 //for testing
     startExploring();
