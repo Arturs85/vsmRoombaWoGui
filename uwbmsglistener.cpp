@@ -607,7 +607,8 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
         rx_buffer[ALL_MSG_SN_IDX] = 0;
         if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
         {
-            cout<<"initiator id "<<initiatorId+0<<"\n";
+            int initiatorIdInt = initiatorId+0;
+            cout<<"initiator id "<<initiatorIdInt<<"\n";
 
             if(rx_buffer[RESPONDER_ID_IDX]!= 0){//======temp---- id targeted measurement
                 if(rx_buffer[RESPONDER_ID_IDX]!=ownId||rx_buffer[INITIATOR_ID_IDX]!=initiatorId)//response from other responder rather than current one
@@ -656,7 +657,13 @@ void UwbMsgListener::respondToRangingRequest(uint8_t initiatorId, uint8_t ownId)
           //  if(idFromHostname!=ownId)// this is beacon x behavoir targeted measurement, send results to beacons master also
             {
                 // get latest coordinates of initiator
-                Position2D initiatorPos = owner->coordinatesOfPeers.at(rx_buffer[INITIATOR_ID_IDX]);
+               Position2D initiatorPos;
+                if ( owner->coordinatesOfPeers.find(initiatorIdInt) == owner->coordinatesOfPeers.end() ) {
+                   cout<<"unknown pos of "<<initiatorIdInt<<", using 0,0 \n";
+
+               }else
+                 initiatorPos = owner->coordinatesOfPeers.at(initiatorIdInt);
+
                 vector<int> data = owner->pf.getFarestAndNearestPoints(initiatorPos);
                 data.at(4)= (int)(twrDistance*100);
                 VSMMessage   replymsg2={ownId,rx_buffer[INITIATOR_ID_IDX],MessageContents::DISTANCE_MEASUREMENT,BaseProtocol::intVectorToString(data)};// todo- update receiver and sender with id
