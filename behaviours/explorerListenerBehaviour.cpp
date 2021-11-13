@@ -131,7 +131,8 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
 
         int odometryAfterDriving = owner->movementManager->odometry;
         int distanceOdo = odometryAfterDriving-odometryBeforeDriving;
-
+//pf.moveParticles
+        owner->pf.moveForward(distanceOdo);
         latestLocation.x = localisationProtocol->result.at(0);
         latestLocation.y = localisationProtocol->result.at(1);
         int dx =latestLocation.x-previousLocation.x;
@@ -157,7 +158,7 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
         }while(absX*absX+absY*absY > AREA_RADI*AREA_RADI );
         //turn to new destination direction
         float destAngle = std::atan2(dest.y,dest.x);
-        float angleToTurn = destAngle - latestDirection;
+         angleToTurn = destAngle - latestDirection;
         distToTravelAfterTurning = NEXT_TARGET_DISTANCE;
         owner->movementManager->turn(angleToTurn*180/PI);
        // owner->movementManager->turn(0);
@@ -168,7 +169,8 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
     case ExplorerStates::TURNING:{
 
         if(owner->movementManager->state == MovementStates::FINISHED){//finished turning, move forward
-
+//pf.turn
+            owner->pf.turnParticles(angleToTurn);
             odometryBeforeDriving = owner->movementManager->odometry;
             owner->movementManager->driveDistance(distToTravelAfterTurning);
             explorerState = ExplorerStates::MOVING_FORWARD;

@@ -94,6 +94,8 @@ public:
     std::vector<int> getFarestAndNearestPoints(Position2D p);
     void onDistance(double fx, double fy, double nx, double ny, double dist);
     void calcFitnessGeneric(double xOther, double yOther, double deviation);
+    void moveForward(double dist);
+    void turnParticles(double angleRad);
 protected:
     void onOdometry(Position2D position, Position2D deltaPosition);
 private:

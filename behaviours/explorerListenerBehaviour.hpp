@@ -32,7 +32,7 @@ ExplorerStates stateAfterLocalise = ExplorerStates::IDLE;
 
 ExplorerManagementProtocol* explorerManagementProtocol;
 int odometryBeforeDriving=0;
-
+float angleToTurn;
 
 };
 

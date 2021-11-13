@@ -14,7 +14,7 @@
 #include "roombaAgent.hpp"
 #include <pthread.h>
 #include <signal.h>
-
+#include "logfilesaverpf.hpp"
 class MyApp
 {
 public:
@@ -35,12 +35,15 @@ int main(int ac,char**av){
 RoombaAgent* MyApp::roombaAgent = new RoombaAgent();
 
 void MyApp::intHandler(int dummy) {
+
     if(roombaAgent!=0){
 		if(roombaAgent->roombaController!=0){
 			roombaAgent->roombaController->shutDown();
-		     usleep(1000000);
 		}    
-	}	
+    }
+    LogFileSaverPf::logfilesaver.closeFile();
+    usleep(1000000);
+
     exit(0);
 }
 

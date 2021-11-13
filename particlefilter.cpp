@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iomanip>      // std::setprecision
-#include "logfilesaver.hpp"
+#include "logfilesaverpf.hpp"
 #include <sstream>
 #include <float.h>
 ParticleFilter::ParticleFilter()
@@ -27,6 +27,18 @@ void ParticleFilter::onOdometry(double dt){// for use wo actual odometry
 }
 
 void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, double dist){
+
+    //write to file
+
+    std::stringstream ss;
+
+    for (int i = 0; i < particles.size(); ++i) {
+        ss<<particles.at(i).x<<" "<<particles.at(i).y<<" "<<particles.at(i).direction<<std::endl;
+
+    }
+    ss<<"eol"<<std::endl;
+    LogFileSaverPf::logfilesaver.writeString(ss);
+// regenerate
 
     double maxDist = std::sqrt((avgParticle.x-fx)*(avgParticle.x-fx)+(avgParticle.y-fy)*(avgParticle.y-fy))+distMeasErr;
     double minDist = std::sqrt((avgParticle.x-nx)*(avgParticle.x-nx)+(avgParticle.y-ny)*(avgParticle.y-ny))-distMeasErr;
@@ -78,8 +90,26 @@ void ParticleFilter::turnParticles(double angSp, double dt ){
     //std::cout<<std::endl;
 }
 
+void ParticleFilter::turnParticles(double angleRad ){
 
 
+    for (int i = 0; i < particles.size(); i++) {
+        double errYaw = 0;//todo use err (yawSpeedDtribution(generator));
+        //std::cout<<errYawSpDeg<<" " ;
+        particles.at(i).addToDirectionAndNormalize((errYaw+angleRad));
+
+    }
+    //std::cout<<std::endl;
+}
+void ParticleFilter::moveForward(double dist)//
+{
+    // todo add noise
+    for (int i = 0; i < particles.size(); i++) {
+
+        particles.at(i).moveForward(dist);
+
+    }
+}
 void ParticleFilter::moveParticles(double dx, double dy, double dyaw)
 {
     for (int i = 0; i < particles.size(); i++) {

@@ -14,7 +14,7 @@ LogFileSaver* RoombaBehaviour::logFileSaver=0;
 
 RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController,LocalMap* localMap,UwbMsgListener* uwbMsgListener)
 {
-    logFileSaver = new LogFileSaver();
+  //  logFileSaver = new LogFileSaver();
     RoombaBehaviour::roombaController = roombaController;
     RoombaBehaviour::localMap= localMap;
 RoombaBehaviour::uwbMsgListener = uwbMsgListener;
@@ -56,7 +56,7 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
         uint16_t ch = roombaController->readBattCharge();
 
             long int t = static_cast<long int> (time(NULL));
-            logFileSaver->writeEntry(LogEntry(t,dist,angle,lb));
+          //  logFileSaver->writeEntry(LogEntry(t,dist,angle,lb));
 
         localMap->bat=(100*ch/++ca);
 
