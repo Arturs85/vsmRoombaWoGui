@@ -309,7 +309,7 @@ bool LocalisationProtocolPf::initiatorstTick()//  wait for final result timeout
             std::cout<<"integer meas. result "<<latestMeasurement<<"\n";
             //update pf accordingly
             behaviour->owner->pf.onDistance(data.at(0),data.at(1),data.at(2),data.at(3),data.at(4));
-
+result = data; //copy measuren=ment data to global var for later acces
             state = nextStateOnPositeiveResult; //
         }else if(measureWaitCounter>measureResWaitTicks){// if result is not received within timeout(ticks) then retry measurement
             state = ProtocolStates::TIMEOUT;//
@@ -350,9 +350,10 @@ void LocalisationProtocolPf::startDistanceMeasurement(Topics beaconId,ProtocolSt
     //latestMeasurement=0;//dont care about value, we use this msg as confirmation to proceed with next measurement or step
     nextStateOnNegativeResult = nextStateNegResult;// assign these values directly prior this call?
     nextStateOnPositeiveResult = nextStatePosResult;
+    curTargetId = getMeasurementTargetId();
     //before sensing ranging request, send own estimate x,y, so that responder can calculate min and max distance of its particles towards initiator
     vector<int> cords = {(int)behaviour->owner->pf.avgParticle.x,(int)behaviour->owner->pf.avgParticle.y};
-    VSMMessage ownCoorianates(behaviour->owner->id,Topics::MEASUREMENT_REQUESTS,MessageContents::CORDINATES_XY,BaseProtocol::intVectorToString(cords));
+    VSMMessage ownCoorianates(behaviour->owner->id,beaconId,MessageContents::CORDINATES_XY,BaseProtocol::intVectorToString(cords));
     behaviour->owner->sendMsg(ownCoorianates);
     behaviour->owner->uwbMsgListener.addToRangingInitDeque((int)beaconId);//send measurement initation
     state = ProtocolStates::WAITING_DIST_MEASURE_RESULT;
@@ -362,6 +363,7 @@ int LocalisationProtocolPf::getMeasurementTargetId()
 {
     curTargetIndex++;
     if(curTargetIndex>=knownHosts.size())curTargetIndex=0;
+    if(knownHosts.at(curTargetIndex)==behaviour->owner->id) return getMeasurementTargetId();
     return knownHosts.at(curTargetIndex);
 }
 

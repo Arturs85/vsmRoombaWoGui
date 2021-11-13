@@ -31,6 +31,7 @@ void localise();
 
 private:
 int curTargetIndex;
+int curTargetId;
 int measureRetryCounter=0;
 int measureWaitCounter=0;
 int finalResultWaitCounter=0;

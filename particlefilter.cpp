@@ -205,6 +205,7 @@ void ParticleFilter::calcFitnessFromYaw(double yawGPS)
 }
 void ParticleFilter::regenerateParticles()
 {
+    std::cout<<"particle count: "<<particles.size()<<std::endl;
     std::sort(particles.begin(), particles.end());// sort by fitness, at this point fitness should point, how much descendants particle should have
     std::vector<Particle> particlesRegenerated;
     int parentCount =0;
