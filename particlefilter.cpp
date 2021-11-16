@@ -37,16 +37,20 @@ void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, doubl
 
     }
     ss<<"eol"<<std::endl;
-    LogFileSaverPf::logfilesaver.writeString(ss);
 // regenerate
 
     double maxDist = std::sqrt((avgParticle.x-fx)*(avgParticle.x-fx)+(avgParticle.y-fy)*(avgParticle.y-fy))+distMeasErr;
     double minDist = std::sqrt((avgParticle.x-nx)*(avgParticle.x-nx)+(avgParticle.y-ny)*(avgParticle.y-ny))-distMeasErr;
 
     double dev = (maxDist-minDist)/2;
-
+std::cout<<"min, max, dev "<<minDist<<" "<<maxDist<<" "<<dev<<std::endl;
 double midpointX = (nx+fx)/2;
 double midpointY = (ny+fy)/2;
+
+ss<<midpointX<<" "<<midpointY<<" "<<dev<<" "<<dist<<std::endl;
+ss<<"eol"<<std::endl;
+LogFileSaverPf::logfilesaver.writeString(ss);
+
 calcFitnessGeneric(midpointX,midpointY,dev);
 regenerateParticles();
 calcAverageParticle();
