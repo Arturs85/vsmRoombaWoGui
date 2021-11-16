@@ -68,7 +68,10 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
     case ExplorerStates::FIRST_MEASUREMENT:{// at this point location result should be valid
         previousLocation.x = localisationProtocol->result.at(0);
         previousLocation.y = localisationProtocol->result.at(1);
-
+//initialize particles according to the first measurement
+        double midpointX = (localisationProtocol->result.at(0)+localisationProtocol->result.at(2))/2;
+        double midpointY = (localisationProtocol->result.at(1)+localisationProtocol->result.at(3))/2;
+        owner->pf.initializeParticles(midpointX,midpointY,localisationProtocol->result.at(4));
         odometryBeforeDriving = owner->movementManager->odometry;
         owner->movementManager->driveDistance(NEXT_TARGET_DISTANCE);
         explorerState = ExplorerStates::FIRST_DRIVE;

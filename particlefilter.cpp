@@ -361,6 +361,21 @@ void ParticleFilter::initializeParticles(double x, double y) {
 
 }
 
+//for initializing particles at measured distance from beacon in all directions
+void ParticleFilter::initializeParticles(double bx, double by, double dist) {
+   initializeParticles(bx,by); // particles at beacon position in all directions
+   moveForward(dist);
+   //randomize direction after movement, because now all particles is facing away from beacon
+
+
+    for (int i = 0; i < particles.size(); i++) {
+
+        particles.at(i).direction = (rand() % 360)*M_PI / 180 ;
+    }
+    addRegenNoise();// to move particles away from single point, as in this case fitness function will be zero
+
+}
+
 
 Particle::Particle(double x, double y, double yaw)
 {

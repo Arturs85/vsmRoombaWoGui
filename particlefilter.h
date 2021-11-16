@@ -96,6 +96,7 @@ public:
     void calcFitnessGeneric(double xOther, double yOther, double deviation);
     void moveForward(double dist);
     void turnParticles(double angleRad);
+    void initializeParticles(double bx, double by, double dist);
 protected:
     void onOdometry(Position2D position, Position2D deltaPosition);
 private:
