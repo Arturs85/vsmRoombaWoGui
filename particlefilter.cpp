@@ -48,7 +48,7 @@ double midpointX = (nx+fx)/2;
 double midpointY = (ny+fy)/2;
 
 ss<<midpointX<<" "<<midpointY<<" "<<dev<<" "<<dist<<std::endl;
-ss<<"eol"<<std::endl;
+ss<<"eoll"<<std::endl;
 LogFileSaverPf::logfilesaver.writeString(ss);
 
 calcFitnessGeneric(midpointX,midpointY,dev);
@@ -113,6 +113,15 @@ void ParticleFilter::moveForward(double dist)//
         particles.at(i).moveForward(dist);
 
     }
+    std::stringstream ss;
+
+    for (int i = 0; i < particles.size(); ++i) {
+        ss<<particles.at(i).x<<" "<<particles.at(i).y<<" "<<particles.at(i).direction<<std::endl;
+
+    }
+    ss<<"eoll"<<std::endl;
+    LogFileSaverPf::logfilesaver.writeString(ss);
+
 }
 void ParticleFilter::moveParticles(double dx, double dy, double dyaw)
 {
