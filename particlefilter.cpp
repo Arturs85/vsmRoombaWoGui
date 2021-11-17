@@ -28,6 +28,22 @@ void ParticleFilter::onOdometry(double dt){// for use wo actual odometry
 
 void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, double dist){
 
+
+    // regenerate
+
+    double maxDist = std::sqrt((avgParticle.x-fx)*(avgParticle.x-fx)+(avgParticle.y-fy)*(avgParticle.y-fy))+distMeasErr;
+    double minDist = std::sqrt((avgParticle.x-nx)*(avgParticle.x-nx)+(avgParticle.y-ny)*(avgParticle.y-ny))-distMeasErr;
+
+    double dev = (maxDist-minDist)/2;
+    std::cout<<"min, max, dev "<<minDist<<" "<<maxDist<<" "<<dev<<std::endl;
+    double midpointX = (nx+fx)/2;
+    double midpointY = (ny+fy)/2;
+
+
+
+    calcFitnessGeneric(midpointX,midpointY,dev);
+    regenerateParticles();
+    calcAverageParticle();
     //write to file
 
     std::stringstream ss;
@@ -37,50 +53,36 @@ void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, doubl
 
     }
     ss<<"eol"<<std::endl;
-// regenerate
-
-    double maxDist = std::sqrt((avgParticle.x-fx)*(avgParticle.x-fx)+(avgParticle.y-fy)*(avgParticle.y-fy))+distMeasErr;
-    double minDist = std::sqrt((avgParticle.x-nx)*(avgParticle.x-nx)+(avgParticle.y-ny)*(avgParticle.y-ny))-distMeasErr;
-
-    double dev = (maxDist-minDist)/2;
-std::cout<<"min, max, dev "<<minDist<<" "<<maxDist<<" "<<dev<<std::endl;
-double midpointX = (nx+fx)/2;
-double midpointY = (ny+fy)/2;
-
-ss<<midpointX<<" "<<midpointY<<" "<<dev<<" "<<dist<<std::endl;
-ss<<"eoll"<<std::endl;
-LogFileSaverPf::logfilesaver.writeString(ss);
-
-calcFitnessGeneric(midpointX,midpointY,dev);
-regenerateParticles();
-calcAverageParticle();
+    ss<<midpointX<<" "<<midpointY<<" "<<dev<<" "<<dist<<std::endl;
+    ss<<"eoll"<<std::endl;
+    LogFileSaverPf::logfilesaver.writeString(ss);
 }
 
 
 vector<int> ParticleFilter::getFarestAndNearestPoints( Position2D p) { // todo synchronosation needed on particles?
-       double farestDistSaoFar = 0;
-       int farestIndex = 0;
-       double nearestDistSaoFar = DBL_MAX;// from float.h
-       int nearestIndex = 0;
+    double farestDistSaoFar = 0;
+    int farestIndex = 0;
+    double nearestDistSaoFar = DBL_MAX;// from float.h
+    int nearestIndex = 0;
 
-       for (int i = 0; i < particles.size(); i++) {
-           int dx = particles.at(i).x - p.x;
-           int dy = particles.at(i).y - p.y;
-           double dis = std::sqrt(dx * dx + dy * dy);
-           if (dis > farestDistSaoFar) {
-               farestDistSaoFar = dis;
-               farestIndex = i;
-           }
-           if (dis < nearestDistSaoFar) {
-               nearestDistSaoFar = dis;
-               nearestIndex = i;
-           }
-       }
+    for (int i = 0; i < particles.size(); i++) {
+        int dx = particles.at(i).x - p.x;
+        int dy = particles.at(i).y - p.y;
+        double dis = std::sqrt(dx * dx + dy * dy);
+        if (dis > farestDistSaoFar) {
+            farestDistSaoFar = dis;
+            farestIndex = i;
+        }
+        if (dis < nearestDistSaoFar) {
+            nearestDistSaoFar = dis;
+            nearestIndex = i;
+        }
+    }
 
-       vector<int> res{(int)particles.at(nearestIndex).x, (int)particles.at(nearestIndex).y, (int)particles.at(farestIndex).x, (int)particles.at(farestIndex).y, 0};
-       return res;
+    vector<int> res{(int)particles.at(nearestIndex).x, (int)particles.at(nearestIndex).y, (int)particles.at(farestIndex).x, (int)particles.at(farestIndex).y, 0};
+    return res;
 
-   }
+}
 
 void ParticleFilter::turnParticles(double angSp, double dt ){
     
@@ -333,8 +335,8 @@ Particle ParticleFilter::calcAverageParticle()
     //    avg.x=0;
     //    avg.y=0;
     double maxDeltaYawSoFar = 0;// find max dist of two consecutive particles, it should represent deviation TODO- improve to exact method
-double sina =0;// for cirlular mean
-double cosa =0;
+    double sina =0;// for cirlular mean
+    double cosa =0;
     for (int i = 0; i < particles.size(); i++) {
 
         sina += std::sin(particles.at(i).direction);
@@ -376,9 +378,9 @@ void ParticleFilter::initializeParticles(double x, double y) {
 
 //for initializing particles at measured distance from beacon in all directions
 void ParticleFilter::initializeParticles(double bx, double by, double dist) {
-   initializeParticles(bx,by); // particles at beacon position in all directions
-   moveForward(dist);
-   //randomize direction after movement, because now all particles is facing away from beacon
+    initializeParticles(bx,by); // particles at beacon position in all directions
+    moveForward(dist);
+    //randomize direction after movement, because now all particles is facing away from beacon
 
 
     for (int i = 0; i < particles.size(); i++) {

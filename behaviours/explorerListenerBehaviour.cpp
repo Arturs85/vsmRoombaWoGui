@@ -18,7 +18,7 @@ ExplorerListenerBehaviour::ExplorerListenerBehaviour(RoombaAgent *roombaAgent):B
     explorerManagementProtocol  = new ExplorerManagementProtocol(RoleInProtocol::EXPLORER,this);
     localisationProtocol=new LocalisationProtocolPf(RoleInProtocol::INITIATOR,this);
     type = VSMSubsystems::S1_EXPLORERS;
-//for testing
+    //for testing
     startExploring();
 }
 
@@ -27,7 +27,7 @@ void ExplorerListenerBehaviour::startExploring()
     std::cout<<"elb explorer starting explore\n";
     explorerState=ExplorerStates::IDLE;
     localise(ExplorerStates::FIRST_MEASUREMENT);//for testing
-//localise(ExplorerStates::IDLE);//for loop localise
+    //localise(ExplorerStates::IDLE);//for loop localise
 
 }
 
@@ -57,18 +57,18 @@ void ExplorerListenerBehaviour::behaviourStep()
     BaseCommunicationBehaviour::logKeypoints("emp tick returned\n");
     //manage driving
 
-std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
+    std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
 
     switch (explorerState) {
     case ExplorerStates::IDLE:
-//localise(ExplorerStates::IDLE);//for loop localise
+        //localise(ExplorerStates::IDLE);//for loop localise
 
         break;
 
     case ExplorerStates::FIRST_MEASUREMENT:{// at this point location result should be valid
         previousLocation.x = localisationProtocol->result.at(0);
         previousLocation.y = localisationProtocol->result.at(1);
-//initialize particles according to the first measurement
+        //initialize particles according to the first measurement
         double midpointX = (localisationProtocol->result.at(0)+localisationProtocol->result.at(2))/2;
         double midpointY = (localisationProtocol->result.at(1)+localisationProtocol->result.at(3))/2;
         owner->pf.initializeParticles(midpointX,midpointY,localisationProtocol->result.at(4));
@@ -123,7 +123,11 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
     }break;
 
     case ExplorerStates::ARRIVED_DEST:{
-
+        int odometryAfterDriving = owner->movementManager->odometry;
+        int distanceOdo = odometryAfterDriving-odometryBeforeDriving;
+        //pf.moveParticles
+        std::cout<< "moving particles forward by elb distOdo "<<distanceOdo<< std::endl;
+        owner->pf.moveForward(distanceOdo/10.0);
         localise(ExplorerStates::ARRIVED_DEST_AND_LOCALISED);
 
     }break;
@@ -134,8 +138,6 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
 
         int odometryAfterDriving = owner->movementManager->odometry;
         int distanceOdo = odometryAfterDriving-odometryBeforeDriving;
-//pf.moveParticles
-        owner->pf.moveForward(distanceOdo);
         latestLocation.x = localisationProtocol->result.at(0);
         latestLocation.y = localisationProtocol->result.at(1);
         int dx =latestLocation.x-previousLocation.x;
@@ -143,7 +145,7 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
 
         latestDirection = std::atan2(dx,dy);
         int distTriang = std::sqrt(dx*dx+dy*dy);
-        std::cout<< "elb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
+        //std::cout<< "elb distOdo "<<distanceOdo<< " distTriang "<<distTriang<<"\n";
 
         previousLocation.x = localisationProtocol->result.at(0);
         previousLocation.y = localisationProtocol->result.at(1);
@@ -154,17 +156,17 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
         int absY;
         //check if dest is within coverage
         do{
-            dest =getRandomPointAtDistance(NEXT_TARGET_DISTANCE);
+            dest = getRandomPointAtDistance(NEXT_TARGET_DISTANCE);
             absX = latestLocation.x+dest.x;
             absY = latestLocation.y+dest.y;
             //c
         }while(absX*absX+absY*absY > AREA_RADI*AREA_RADI );
         //turn to new destination direction
         float destAngle = std::atan2(dest.y,dest.x);
-         angleToTurn = destAngle - latestDirection;
+        angleToTurn = destAngle - latestDirection;
         distToTravelAfterTurning = NEXT_TARGET_DISTANCE;
         owner->movementManager->turn(angleToTurn*180/PI);
-       // owner->movementManager->turn(0);
+        // owner->movementManager->turn(0);
 
         explorerState = ExplorerStates::TURNING;
     }break;
@@ -172,7 +174,7 @@ std::cout<<" elb msg size "<<msgDeque.size()<<"\n";
     case ExplorerStates::TURNING:{
 
         if(owner->movementManager->state == MovementStates::FINISHED){//finished turning, move forward
-//pf.turn
+            //pf.turn
             owner->pf.turnParticles(angleToTurn);
             odometryBeforeDriving = owner->movementManager->odometry;
             owner->movementManager->driveDistance(distToTravelAfterTurning);
