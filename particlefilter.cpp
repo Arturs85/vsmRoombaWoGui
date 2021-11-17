@@ -41,7 +41,7 @@ void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, doubl
 
 
 
-    calcFitnessGeneric(midpointX,midpointY,dev);
+    calcFitnessGeneric(midpointX,midpointY,dev,dist);
     regenerateParticles();
     calcAverageParticle();
     //write to file
@@ -197,7 +197,7 @@ void ParticleFilter::calcFitness(double xGps, double yGps, double gpsErr)
     //todo calc amount of fitness for one descendant, iterate trough particles, if fitnes > min add new particle, decrease fit by amount
     notValidCount = particles.size()-validCount;
 }
-void ParticleFilter::calcFitnessGeneric(double xOther, double yOther, double deviation)
+void ParticleFilter::calcFitnessGeneric(double xOther, double yOther, double deviation,double measuredDist)
 {
 
     double distanceSum =0;
@@ -207,6 +207,7 @@ void ParticleFilter::calcFitnessGeneric(double xOther, double yOther, double dev
         Particle* p = & (particles.at(i));
 
         p->fitness= sqrt((xOther-p->x)*(xOther-p->x)+(yOther-p->y)*(yOther-p->y));//calc distance
+        p->fitness = std::abs(p->fitness-measuredDist);
         if(p->fitness>deviation)p->isValid=false;
         else{
             validCount++;

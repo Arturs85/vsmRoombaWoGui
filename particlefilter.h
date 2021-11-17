@@ -93,7 +93,7 @@ public:
     void reduceUnequality(double coef,double maxWeigth);
     std::vector<int> getFarestAndNearestPoints(Position2D p);
     void onDistance(double fx, double fy, double nx, double ny, double dist);
-    void calcFitnessGeneric(double xOther, double yOther, double deviation);
+    void calcFitnessGeneric(double xOther, double yOther, double deviation, double measuredDist);
     void moveForward(double dist);
     void turnParticles(double angleRad);
     void initializeParticles(double bx, double by, double dist);
