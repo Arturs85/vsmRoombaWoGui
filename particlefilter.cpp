@@ -8,8 +8,8 @@
 #include <float.h>
 ParticleFilter::ParticleFilter()
 {
-    yawSpeedDtribution = std::normal_distribution<double>(0.0,15.8);// stddev value?
-    linMovementDistribution = std::normal_distribution<double>(0.0,1.8);// stddev value?
+    turnAngleDtribution = std::normal_distribution<double>(0.0,8.0/180*M_PI);// stddev radians
+    linMovementDistribution = std::normal_distribution<double>(0.0,0.1);// stddev in part of distance i.e dist/10
     regenSpatialDist = std::normal_distribution<double>(0.0, 0.05/radiOfEarthForDegr); //0.1m stddev , use speed instead?
     initializeParticles(0,0);
 
@@ -88,9 +88,9 @@ void ParticleFilter::turnParticles(double angSp, double dt ){
     
 
     for (int i = 0; i < particles.size(); i++) {
-        double errYawSpDeg = (yawSpeedDtribution(generator));
+        //   double errYawSpDeg = (yawSpeedDtribution(generator));
         //std::cout<<errYawSpDeg<<" " ;
-        particles.at(i).addToDirectionAndNormalize((errYawSpDeg+angSp)*dt*M_PI/180);
+        //   particles.at(i).addToDirectionAndNormalize((errYawSpDeg+angSp)*dt*M_PI/180);
 
     }
     //std::cout<<std::endl;
@@ -100,7 +100,7 @@ void ParticleFilter::turnParticles(double angleRad ){
 
 
     for (int i = 0; i < particles.size(); i++) {
-        double errYaw = 0;//todo use err (yawSpeedDtribution(generator));
+        double errYaw = (turnAngleDtribution(generator));
         //std::cout<<errYawSpDeg<<" " ;
         particles.at(i).addToDirectionAndNormalize((errYaw+angleRad));
 
@@ -111,8 +111,8 @@ void ParticleFilter::moveForward(double dist)//
 {
     // todo add noise
     for (int i = 0; i < particles.size(); i++) {
-
-        particles.at(i).moveForward(dist);
+        double movementErr = linMovementDistribution(generator);
+        particles.at(i).moveForward(dist+dist*movementErr);
 
     }
     std::stringstream ss;

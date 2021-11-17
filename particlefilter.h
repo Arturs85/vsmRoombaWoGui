@@ -71,7 +71,7 @@ public:
     int notValidCount =0;
 
     double deltaYaw=0;
-    std::normal_distribution<double> yawSpeedDtribution;
+    std::normal_distribution<double> turnAngleDtribution;
     std::normal_distribution<double> linMovementDistribution; //mean = 1m/s
     std::normal_distribution<double> regenSpatialDist; //for gps degrees
 
