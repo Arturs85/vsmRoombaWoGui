@@ -35,10 +35,10 @@ void ParticleFilter::onDistance(double fx,double fy, double nx, double ny, doubl
     double minDist = std::sqrt((avgParticle.x-nx)*(avgParticle.x-nx)+(avgParticle.y-ny)*(avgParticle.y-ny))-distMeasErr;
 
     double dev = (maxDist-minDist)/2;
-    std::cout<<"min, max, dev "<<minDist<<" "<<maxDist<<" "<<dev<<std::endl;
     double midpointX = (nx+fx)/2;
     double midpointY = (ny+fy)/2;
 
+    std::cout<<"min, max, dev "<<minDist<<" "<<maxDist<<" "<<dev<<" otherMidX "<<midpointX<< " oy=therMidY "<< midpointY<<std::endl;
 
 
     calcFitnessGeneric(midpointX,midpointY,dev,dist);
@@ -225,7 +225,7 @@ void ParticleFilter::calcFitnessGeneric(double xOther, double yOther, double dev
 
     //  double avgDist = distanceSum/validCount;//todo calc amount of desc
     for (int i = 0; i < particles.size(); i++) {
-        particles.at(i).fitness = 4*PARTICLE_COUNT*(longestDistance-particles.at(i).fitness)/distanceSum;
+        particles.at(i).fitness = 1*PARTICLE_COUNT*(longestDistance-particles.at(i).fitness)/distanceSum;
     }
     //todo calc amount of fitness for one descendant, iterate trough particles, if fitnes > min add new particle, decrease fit by amount
     notValidCount = particles.size()-validCount;

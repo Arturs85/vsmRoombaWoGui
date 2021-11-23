@@ -18,7 +18,7 @@ virtual bool tick();
 
 static bool calculateXYFromDistances(int a, int b,int r,int R, float* points);
 static float checkPointsWithThirdBeacon(int a, int b, int r, float* points);// returns difference between third beacons measurement and 1-2 closest calculated point
-vector<int> knownHosts ={10,12,14,16};// hardcoded list of id for measurements, for simplicity
+vector<int> knownHosts ={10,12,14,15};// hardcoded list of id for measurements, for simplicity
 vector<int> result;// will contain cordinates if protocol result is sucessful
 float findTwoClosestValues(vector<float> l);
 float calcAngleToExplorer(int dToB1, int dToB2, float angleToB1, float angleToB2, MeasurementResults *mr);

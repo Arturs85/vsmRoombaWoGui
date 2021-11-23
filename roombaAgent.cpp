@@ -54,6 +54,8 @@ void RoombaAgent::initHardware(){
     setS1Type(s1Type);// sets that same parameter, but also adds coresp. behaviour
     //std::cout<<"ra initHardware complete\n";
 
+     if(id == 14)pf.initializeParticles(0,-200); //initial position of rasp14, rasp 10 can be init as default 0,0, because its pf will be initialised after first measurement
+     if(id == 15)pf.initializeParticles(200,0);
 }
 
 RoombaAgent::RoombaAgent()
